@@ -42,7 +42,7 @@ public class LiquidEngineUpgrade extends EngineUpgrade {
 
     @Override
     public void tick() {
-        if (!planeEntity.level().isClientSide) {
+        if (!planeEntity.level().isClientSide()) {
             if (burnTime > 0) {
                 burnTime -= planeEntity.getFuelCost();
                 updateClient();
@@ -99,9 +99,9 @@ public class LiquidEngineUpgrade extends EngineUpgrade {
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        itemStackHandler.deserializeNBT(planeEntity.registryAccess(), nbt.getCompound("items"));
-        fluidTank.readFromNBT(planeEntity.registryAccess(), nbt.getCompound("fluid"));
-        burnTime = nbt.getInt("burnTime");
+        itemStackHandler.deserializeNBT(planeEntity.registryAccess(), nbt.getCompoundOrEmpty("items"));
+        fluidTank.readFromNBT(planeEntity.registryAccess(), nbt.getCompoundOrEmpty("fluid"));
+        burnTime = nbt.getIntOr("burnTime", 0);
     }
 
     @Override

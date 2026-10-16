@@ -46,7 +46,7 @@ public class JukeboxUpgrade extends LargeUpgrade {
 
     @Override
     public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
-        if (!planeEntity.level().isClientSide) {
+        if (!planeEntity.level().isClientSide()) {
             Player player = event.getEntity();
             ItemStack itemStack = player.getItemInHand(event.getHand());
             if (!itemStack.is(record.getItem())) {
@@ -92,7 +92,7 @@ public class JukeboxUpgrade extends LargeUpgrade {
     @Override
     public void onRemoved() {
         planeEntity.spawnAtLocation(record);
-        if (planeEntity.level().isClientSide) {
+        if (planeEntity.level().isClientSide()) {
             MovingSound.remove(planeEntity);
         }
     }

@@ -38,7 +38,7 @@ public class MovingSound extends AbstractTickableSoundInstance {
     public static void playRecord(JukeboxPacket jukeboxPacket) {
         Minecraft minecraft = Minecraft.getInstance();
         Entity entity = minecraft.level.getEntity(jukeboxPacket.planeEntityID());
-        JukeboxSong.fromStack(minecraft.level.registryAccess(), BuiltInRegistries.ITEM.get(jukeboxPacket.record()).getDefaultInstance()).ifPresent(h -> {
+        JukeboxSong.fromStack(minecraft.level.registryAccess(), BuiltInRegistries.ITEM.getValue(jukeboxPacket.record()).getDefaultInstance()).ifPresent(h -> {
             JukeboxSong jukeboxSong = h.value();
             SoundInstance soundInstance = playingRecords.get(entity);
             if (soundInstance != null) {

@@ -73,7 +73,7 @@ public class ElectricEngineUpgrade extends EngineUpgrade {
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        int energy = nbt.getInt("energy");
+        int energy = nbt.getIntOr("energy", 0);
         energyStorage.setEnergy(Math.min(energy, CAPACITY));
     }
 

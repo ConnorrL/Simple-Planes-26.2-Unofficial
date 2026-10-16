@@ -3,6 +3,8 @@ package xyz.przemyk.simpleplanes.entities;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
@@ -50,7 +52,7 @@ public class CargoPlaneEntity extends PlaneEntity {
 
         List<Entity> list = level().getEntities(this, getBoundingBox().inflate(0.2F, -0.01F, 0.2F), EntitySelector.pushableBy(this));
         for (Entity entity : list) {
-            if (!level().isClientSide && !(getControllingPassenger() instanceof Player) &&
+            if (!level().isClientSide() && !(getControllingPassenger() instanceof Player) &&
                     !entity.hasPassenger(this) &&
                     !entity.isPassenger() && entity instanceof LivingEntity && !(entity instanceof Player)) {
                 entity.startRiding(this);
@@ -94,7 +96,7 @@ public class CargoPlaneEntity extends PlaneEntity {
 
     @Override
     protected void addUpgrade(Player playerEntity, ItemStack itemStack, Upgrade upgrade) {
-        if (!level().isClientSide) {
+        if (!level().isClientSide()) {
             upgrade.onApply(itemStack);
             if (!playerEntity.isCreative()) {
                 itemStack.shrink(1);
@@ -124,7 +126,7 @@ public class CargoPlaneEntity extends PlaneEntity {
     }
 
     public void readNewCargoUpgradePacket(Identifier upgradeID, ByteBuf packetBuffer) {
-        UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPE.get(upgradeID);
+        UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPE.getValue(upgradeID);
         Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
         if (upgrade instanceof LargeUpgrade largeUpgrade) {
             largeUpgrades.add(largeUpgrade);
@@ -140,7 +142,7 @@ public class CargoPlaneEntity extends PlaneEntity {
                 if (upgrade.removed) {
                     largeUpgrades.remove(upgrade);
                 }
-                if (level().isClientSide) {
+                if (level().isClientSide()) {
                     PacketDistributor.sendToServer(new DropPayloadPacket());
                 }
                 break;
@@ -153,7 +155,7 @@ public class CargoPlaneEntity extends PlaneEntity {
         upgrade.onRemoved();
         upgrade.removed = true;
 
-        if (!level().isClientSide) {
+        if (!level().isClientSide()) {
             PacketDistributor.sendToPlayersTrackingEntity(this, new CargoUpgradeRemovedPacket((byte) index, getId()));
         }
     }
@@ -235,38 +237,67 @@ public class CargoPlaneEntity extends PlaneEntity {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
-
-        if (compound.contains("large_upgrades")) {
-            ListTag listTag = compound.getList("large_upgrades", CompoundTag.TAG_COMPOUND);
-            largeUpgrades.clear();
-            for (int i = 0; i < listTag.size(); i++) {
-                CompoundTag compoundTag = listTag.getCompound(i);
-                UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPE.get(Identifier.parse(compoundTag.getString("id")));
-                if (upgradeType != null) {
-                    Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
-                    if (upgrade instanceof LargeUpgrade largeUpgrade) {
-                        largeUpgrade.deserializeNBT(compoundTag.getCompound("nbt"));
-                        largeUpgrades.add(largeUpgrade);
-                    }
+    public void readAdditionalSaveData(ValueInput input) {
+        super.readAdditionalSaveData(input);
+        largeUpgrades.clear();
+        for (ValueInput entry : input.childrenListOrEmpty("large_upgrades")) {
+            String upgradeId = entry.getStringOr("id", "");
+            if (upgradeId.isEmpty()) continue;
+            UpgradeType type = SimplePlanesRegistries.UPGRADE_TYPE.getValue(Identifier.parse(upgradeId));
+            if (type != null) {
+                Upgrade upgrade = type.instanceSupplier.apply(this);
+                if (upgrade instanceof LargeUpgrade largeUpgrade) {
+                    largeUpgrade.deserializeNBT(entry.read("nbt", CompoundTag.CODEC).orElseGet(CompoundTag::new));
+                    largeUpgrades.add(largeUpgrade);
                 }
             }
         }
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-
-        ListTag listTag = new ListTag();
+    public void addAdditionalSaveData(ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        ValueOutput.ValueOutputList list = output.childrenList("large_upgrades");
         for (LargeUpgrade upgrade : largeUpgrades) {
-            CompoundTag compoundTag = new CompoundTag();
-            compoundTag.putString("id", SimplePlanesRegistries.UPGRADE_TYPE.getKey(upgrade.getType()).toString());
-            compoundTag.put("nbt", upgrade.serializeNBT());
-            listTag.add(compoundTag);
+            ValueOutput entry = list.addChild();
+            entry.putString("id", SimplePlanesRegistries.UPGRADE_TYPE.getKey(upgrade.getType()).toString());
+            if (upgrade.serializeNBT() instanceof CompoundTag upgradeTag) {
+                entry.store("nbt", CompoundTag.CODEC, upgradeTag);
+            }
         }
-        compound.put("large_upgrades", listTag);
+    }
+
+    @Override
+    public void readPlaneItemData(CompoundTag compound) {
+        super.readPlaneItemData(compound);
+        largeUpgrades.clear();
+        ListTag list = compound.getListOrEmpty("large_upgrades");
+        for (int i = 0; i < list.size(); i++) {
+            CompoundTag entry = list.getCompoundOrEmpty(i);
+            String id = entry.getStringOr("id", "");
+            if (id.isEmpty()) continue;
+            UpgradeType type = SimplePlanesRegistries.UPGRADE_TYPE.getValue(Identifier.parse(id));
+            if (type != null) {
+                Upgrade upgrade = type.instanceSupplier.apply(this);
+                if (upgrade instanceof LargeUpgrade largeUpgrade) {
+                    largeUpgrade.deserializeNBT(entry.getCompoundOrEmpty("nbt"));
+                    largeUpgrades.add(largeUpgrade);
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void writePlaneItemData(CompoundTag compound) {
+        super.writePlaneItemData(compound);
+        ListTag list = new ListTag();
+        for (LargeUpgrade upgrade : largeUpgrades) {
+            CompoundTag entry = new CompoundTag();
+            entry.putString("id", SimplePlanesRegistries.UPGRADE_TYPE.getKey(upgrade.getType()).toString());
+            entry.put("nbt", upgrade.serializeNBT());
+            list.add(entry);
+        }
+        compound.put("large_upgrades", list);
     }
 
     @Override
@@ -287,7 +318,7 @@ public class CargoPlaneEntity extends PlaneEntity {
         int largeUpgradesSize = additionalData.readVarInt();
         for (int i = 0; i < largeUpgradesSize; i++) {
             Identifier upgradeID = additionalData.readIdentifier();
-            UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPE.get(upgradeID);
+            UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPE.getValue(upgradeID);
             Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
             largeUpgrades.add((LargeUpgrade) upgrade);
             upgrade.readPacket(additionalData);

@@ -34,7 +34,7 @@ public class PlaneLiquidFuelReloadListener extends SimpleJsonResourceReloadListe
         for (Map.Entry<Identifier, JsonElement> entry : map.entrySet()) {
             try {
                 JsonObject jsonObject = GsonHelper.convertToJsonObject(entry.getValue(), "top element");
-                Fluid fluidType = BuiltInRegistries.FLUID.get(Identifier.parse(jsonObject.get("fluid").getAsString()));
+                Fluid fluidType = BuiltInRegistries.FLUID.getValue(Identifier.parse(jsonObject.get("fluid").getAsString()));
                 if (fluidType == null) {
                     continue;
                 }

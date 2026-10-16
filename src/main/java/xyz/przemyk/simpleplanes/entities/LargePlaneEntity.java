@@ -40,7 +40,7 @@ public class LargePlaneEntity extends PlaneEntity {
 
         List<Entity> list = level().getEntities(this, getBoundingBox().inflate(0.2F, -0.01F, 0.2F), EntitySelector.pushableBy(this));
         for (Entity entity : list) {
-            if (!level().isClientSide && !(getControllingPassenger() instanceof Player) &&
+            if (!level().isClientSide() && !(getControllingPassenger() instanceof Player) &&
                 !entity.hasPassenger(this) &&
                 !entity.isPassenger() && entity instanceof LivingEntity && !(entity instanceof Player)) {
                 entity.startRiding(this);
@@ -164,7 +164,7 @@ public class LargePlaneEntity extends PlaneEntity {
                 if (upgrade.removed) {
                     upgrades.remove(SimplePlanesRegistries.UPGRADE_TYPE.getKey(upgrade.getType()));
                 }
-                if (level().isClientSide) {
+                if (level().isClientSide()) {
                     PacketDistributor.sendToServer(new DropPayloadPacket());
                 }
                 break;

@@ -28,7 +28,7 @@ public class HealingUpgrade extends Upgrade {
 
     @Override
     public void deserializeNBT(CompoundTag compoundNBT) {
-        cooldown = compoundNBT.getInt("cooldown");
+        cooldown = compoundNBT.getIntOr("cooldown", 0);
     }
 
     @Override

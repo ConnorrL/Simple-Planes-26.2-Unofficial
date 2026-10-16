@@ -40,14 +40,14 @@ public class IronChestsCompat {
     }
 
     public static void registerUpgradeItems() {
-        registerChest(BuiltInRegistries.ITEM.get(Identifier.fromNamespaceAndPath("ironchest", "iron_chest")));
-        registerChest(BuiltInRegistries.ITEM.get(Identifier.fromNamespaceAndPath("ironchest", "gold_chest")));
-        registerChest(BuiltInRegistries.ITEM.get(Identifier.fromNamespaceAndPath("ironchest", "diamond_chest")));
-        registerChest(BuiltInRegistries.ITEM.get(Identifier.fromNamespaceAndPath("ironchest", "copper_chest")));
-        registerChest(BuiltInRegistries.ITEM.get(Identifier.fromNamespaceAndPath("ironchest", "silver_chest")));
-        registerChest(BuiltInRegistries.ITEM.get(Identifier.fromNamespaceAndPath("ironchest", "crystal_chest")));
-        registerChest(BuiltInRegistries.ITEM.get(Identifier.fromNamespaceAndPath("ironchest", "obsidian_chest")));
-        registerChest(BuiltInRegistries.ITEM.get(Identifier.fromNamespaceAndPath("ironchest", "dirt_chest")));
+        registerChest(BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath("ironchest", "iron_chest")));
+        registerChest(BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath("ironchest", "gold_chest")));
+        registerChest(BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath("ironchest", "diamond_chest")));
+        registerChest(BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath("ironchest", "copper_chest")));
+        registerChest(BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath("ironchest", "silver_chest")));
+        registerChest(BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath("ironchest", "crystal_chest")));
+        registerChest(BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath("ironchest", "obsidian_chest")));
+        registerChest(BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath("ironchest", "dirt_chest")));
     }
 
     public static int getSize(String chestType) {

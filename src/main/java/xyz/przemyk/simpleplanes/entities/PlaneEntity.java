@@ -7,6 +7,8 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -190,7 +192,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
 
     public void setMaterial(String material) {
         entityData.set(MATERIAL, material);
-        Block block = BuiltInRegistries.BLOCK.get(Identifier.parse(material));
+        Block block = BuiltInRegistries.BLOCK.getValue(Identifier.parse(material));
         planksMaterial = block == null ? Blocks.OAK_PLANKS : block;
     }
 
@@ -233,7 +235,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
         }
 
         if (itemStack.getItem() == SimplePlanesItems.WRENCH.get()) {
-            if (!level().isClientSide) {
+            if (!level().isClientSide()) {
                 player.openMenu(new SimpleMenuProvider((id, inv, p) -> new ModifyUpgradesContainer(id, player.getInventory(), getId()),
                     Component.empty()), buf -> buf.writeVarInt(getId()));
                 return InteractionResult.CONSUME;
@@ -245,7 +247,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
             return InteractionResult.SUCCESS;
         }
 
-        if (!level().isClientSide) {
+        if (!level().isClientSide()) {
             return player.startRiding(this) ? InteractionResult.CONSUME : InteractionResult.FAIL;
         } else {
             return player.getRootVehicle() == getRootVehicle() ? InteractionResult.FAIL : InteractionResult.SUCCESS;
@@ -274,7 +276,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
         if (upgradeType.isEngine) {
             engineUpgrade = (EngineUpgrade) upgrade;
         }
-        if (!level().isClientSide) {
+        if (!level().isClientSide()) {
             PacketDistributor.sendToPlayersTrackingEntity(this,
                 new UpdateUpgradePacket(true, SimplePlanesRegistries.UPGRADE_TYPE.getKey(upgradeType), getId(), (ServerLevel) level()));
         }
@@ -287,7 +289,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
         if (upgradeType.isEngine) {
             engineUpgrade = (EngineUpgrade) upgrade;
         }
-        if (!level().isClientSide) {
+        if (!level().isClientSide()) {
             PacketDistributor.sendToPlayersTrackingEntity(this,
                 new UpdateUpgradePacket(true, SimplePlanesRegistries.UPGRADE_TYPE.getKey(upgradeType), getId(), (ServerLevel) level()));
         }
@@ -317,7 +319,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
         if (isInvulnerableTo(source) || damageTimeout > 0) {
             return false;
         }
-        if (level().isClientSide || isRemoved()) {
+        if (level().isClientSide() || isRemoved()) {
             return false;
         }
         int health = getHealth();
@@ -373,7 +375,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
         yRotO = getYRot();
         xRotO = getXRot();
         prevRotationRoll = rotationRoll;
-        if (level().isClientSide) {
+        if (level().isClientSide()) {
             propellerRotationOld = propellerRotationNew;
             if (isPowered()) {
                 int throttle = getThrottle();
@@ -381,15 +383,15 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
             }
         }
 
-        if (level().isClientSide && getHealth() <= 0) {
+        if (level().isClientSide() && getHealth() <= 0) {
             level().addAlwaysVisibleParticle(ParticleTypes.LARGE_SMOKE, true, getX(), getY(), getZ(), 0.0, 0.005, 0.0);
         }
 
-        if (level().isClientSide && getTimeSinceHit() > 0) {
+        if (level().isClientSide() && getTimeSinceHit() > 0) {
             setTimeSinceHit(getTimeSinceHit() - 1);
         }
 
-        if (level().isClientSide && !isControlledByLocalInstance()) {
+        if (level().isClientSide() && !isControlledByLocalInstance()) {
             tickLerp();
             setDeltaMovement(Vec3.ZERO);
             tickDeltaRotation(getQ_Client());
@@ -421,7 +423,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
         }
 
         Quaternionf q;
-        if (level().isClientSide) {
+        if (level().isClientSide()) {
             q = getQ_Client();
         } else {
             q = getQ();
@@ -431,7 +433,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
 
         Vec3 oldMotion = getDeltaMovement();
 
-        if (level().isClientSide && isPowered() && getThrottle() > 0) {
+        if (level().isClientSide() && isPowered() && getThrottle() > 0) {
             PlaneSound.tryToPlay(this);
         }
 
@@ -475,7 +477,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
             }
             move(MoverType.SELF, motion);
             setOnGround(((motion.y()) == 0.0) ? onGroundOld : onGround());
-            if (horizontalCollision && !level().isClientSide && onGroundTicks <= 0) {
+            if (horizontalCollision && !level().isClientSide() && onGroundTicks <= 0) {
                 if (getHealth() <= 0) {
                     crash(16);
                 } else {
@@ -504,7 +506,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
         setQ(q);
         tickDeltaRotation(q);
 
-        if (level().isClientSide && isControlledByLocalInstance()) {
+        if (level().isClientSide() && isControlledByLocalInstance()) {
             setQ_Client(q);
 
             PacketDistributor.sendToServer(new RotationPacket(getQ()));
@@ -520,7 +522,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
         if (getDamageTaken() > 0.0F) {
             setDamageTaken(getDamageTaken() - 1.0F);
         }
-        if (!level().isClientSide && getHealth() > getMaxHealth() & goldenHeartsTimeout > (getOnGround() ? 300 : 100)) {
+        if (!level().isClientSide() && getHealth() > getMaxHealth() & goldenHeartsTimeout > (getOnGround() ? 300 : 100)) {
             setHealth(getHealth() - 1);
             goldenHeartsTimeout = 0;
         }
@@ -548,7 +550,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
             upgrades.remove(name);
         }
 
-        if (!level().isClientSide) {
+        if (!level().isClientSide()) {
             if (tickCount % networkUpdateInterval == 0) {
                 upgrades.forEach((rl, upgrade) -> {
                     if (upgrade.updateClient) {
@@ -837,43 +839,32 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compound) {
-        if (compound.contains("max_speed")) {
-            entityData.set(MAX_SPEED, compound.getFloat("max_speed"));
-        }
+    public void readAdditionalSaveData(ValueInput input) {
+        input.getFloat("max_speed").ifPresent(value -> entityData.set(MAX_SPEED, value));
+        input.getInt("max_health").ifPresent(value -> entityData.set(MAX_HEALTH, value <= 0 ? 20 : value));
+        input.getInt("health").ifPresent(value -> entityData.set(HEALTH, value));
+        input.getString("material").ifPresent(this::setMaterial);
+        input.read("upgrades", CompoundTag.CODEC).ifPresent(this::deserializeUpgrades);
+        setQ(MathUtil.toQuaternionf(getYRot(), getXRot(), 0));
+    }
 
-        if (compound.contains("max_health")) {
-            int maxHealth = compound.getInt("max_health");
-            if (maxHealth <= 0) {
-                maxHealth = 20;
-            }
-            entityData.set(MAX_HEALTH, maxHealth);
-        }
-
-        if (compound.contains("health")) {
-            int health = compound.getInt("health");
-            entityData.set(HEALTH, health);
-        }
-
-        if (compound.contains("material")) {
-            setMaterial(compound.getString("material"));
-        }
-
-        if (compound.contains("upgrades")) {
-            CompoundTag upgradesNBT = compound.getCompound("upgrades");
-            deserializeUpgrades(upgradesNBT);
-        }
-
+    /** Read the NBT stored on an aircraft item, separately from world persistence. */
+    public void readPlaneItemData(CompoundTag compound) {
+        if (compound.keySet().contains("max_speed")) entityData.set(MAX_SPEED, compound.getFloatOr("max_speed", getMaxSpeed()));
+        if (compound.keySet().contains("max_health")) entityData.set(MAX_HEALTH, Math.max(1, compound.getIntOr("max_health", 20)));
+        if (compound.keySet().contains("health")) entityData.set(HEALTH, compound.getIntOr("health", getHealth()));
+        if (compound.keySet().contains("material")) setMaterial(compound.getStringOr("material", "minecraft:oak_planks"));
+        if (compound.keySet().contains("upgrades")) deserializeUpgrades(compound.getCompoundOrEmpty("upgrades"));
         setQ(MathUtil.toQuaternionf(getYRot(), getXRot(), 0));
     }
 
     private void deserializeUpgrades(CompoundTag upgradesNBT) {
-        for (String key : upgradesNBT.getAllKeys()) {
+        for (String key : upgradesNBT.keySet()) {
             Identifier resourceLocation = Identifier.parse(key);
-            UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPE.get(resourceLocation);
+            UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPE.getValue(resourceLocation);
             if (upgradeType != null) {
                 Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
-                upgrade.deserializeNBT(upgradesNBT.getCompound(key));
+                upgrade.deserializeNBT(upgradesNBT.getCompoundOrEmpty(key));
                 upgrades.put(resourceLocation, upgrade);
                 if (upgradeType.isEngine) {
                     engineUpgrade = (EngineUpgrade) upgrade;
@@ -883,7 +874,16 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
+    public void addAdditionalSaveData(ValueOutput output) {
+        output.putInt("health", entityData.get(HEALTH));
+        output.putInt("max_health", entityData.get(MAX_HEALTH));
+        output.putFloat("max_speed", entityData.get(MAX_SPEED));
+        output.putString("material", entityData.get(MATERIAL));
+        output.store("upgrades", CompoundTag.CODEC, getUpgradesNBT());
+    }
+
+    /** Preserve the existing component NBT format for planes turned into items. */
+    protected void writePlaneItemData(CompoundTag compound) {
         compound.putInt("health", entityData.get(HEALTH));
         compound.putInt("max_health", entityData.get(MAX_HEALTH));
         compound.putFloat("max_speed", entityData.get(MAX_SPEED));
@@ -923,7 +923,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
     public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
         super.onSyncedDataUpdated(key);
         if (MATERIAL.equals(key) && level().isClientSide()) {
-            Block block = BuiltInRegistries.BLOCK.get(Identifier.parse(entityData.get(MATERIAL)));
+            Block block = BuiltInRegistries.BLOCK.getValue(Identifier.parse(entityData.get(MATERIAL)));
             planksMaterial = block == null ? Blocks.OAK_PLANKS : block;
         } else if (Q.equals(key) && level().isClientSide() && !isControlledByLocalInstance()) {
             if (firstTick) {
@@ -987,7 +987,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
     }
 
     public void crash(float damage) {
-        if (!level().isClientSide && isAlive()) {
+        if (!level().isClientSide() && isAlive()) {
             //TODO: should this additional damage event be here if the explosion itself hurts entities?
 //            for (Entity entity : getPassengers()) {
 //                float damageMod = Math.min(1, 1 - ((float) getHealth() / getMaxHealth()));
@@ -1089,7 +1089,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
     public ItemStack getItemStack() {
         ItemStack itemStack = getItem().getDefaultInstance();
         CompoundTag compound = new CompoundTag();
-        addAdditionalSaveData(compound);
+        writePlaneItemData(compound);
         compound.putInt("health", entityData.get(MAX_HEALTH));
         compound.putBoolean("Used", true);
         itemStack.set(SimplePlanesComponents.ENTITY_TAG, compound);
@@ -1214,7 +1214,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
 
     public void readUpdateUpgradePacket(Identifier upgradeID, ByteBuf buffer, boolean newUpgrade) {
         if (newUpgrade) {
-            UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPE.get(upgradeID);
+            UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPE.getValue(upgradeID);
             Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
             upgrades.put(upgradeID, upgrade);
             if (upgradeType.isEngine) {
@@ -1251,7 +1251,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
         int upgradesSize = additionalData.readVarInt();
         for (int i = 0; i < upgradesSize; i++) {
             Identifier upgradeID = additionalData.readIdentifier();
-            UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPE.get(upgradeID);
+            UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPE.getValue(upgradeID);
             Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
             upgrades.put(upgradeID, upgrade);
             if (upgradeType.isEngine) {
@@ -1267,7 +1267,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
             upgrade.onRemoved();
             upgrade.remove();
 
-            if (!level().isClientSide) {
+            if (!level().isClientSide()) {
                 PacketDistributor.sendToPlayersTrackingEntity(this, new SUpgradeRemovedPacket(upgradeID, getId()));
             }
         }

@@ -3,6 +3,8 @@ package xyz.przemyk.simpleplanes.entities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -62,7 +64,7 @@ public class ParachuteEntity extends Entity {
         if ((passenger == null && !hasStorageCrate()) || !level().getBlockState(new BlockPos((int) getX(), (int) getY() - 1, (int) getZ())).canBeReplaced()) {
             kill();
             spawnAtLocation(SimplePlanesItems.PARACHUTE_ITEM.get());
-            if (hasStorageCrate() && !level().isClientSide) {
+            if (hasStorageCrate() && !level().isClientSide()) {
                 BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos(getBlockX(), getBlockY(), getBlockZ());
                 for (int i = 0; i < 50; i++) {
                     BlockState blockState = level().getBlockState(mutableBlockPos);
@@ -120,19 +122,21 @@ public class ParachuteEntity extends Entity {
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag compoundTag) {
-        entityData.set(HAS_STORAGE_CRATE, compoundTag.getBoolean("has_storage_crate"));
+    protected void readAdditionalSaveData(ValueInput input) {
+        entityData.set(HAS_STORAGE_CRATE, input.getBooleanOr("has_storage_crate", false));
         if (hasStorageCrate()) {
             itemStackHandler = new ItemStackHandler();
-            itemStackHandler.deserializeNBT(level().registryAccess(), compoundTag.getCompound("items"));
+            itemStackHandler.deserializeNBT(level().registryAccess(),
+                input.read("items", CompoundTag.CODEC).orElseGet(CompoundTag::new));
         }
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag compoundTag) {
-        compoundTag.putBoolean("has_storage_crate", hasStorageCrate());
+    protected void addAdditionalSaveData(ValueOutput output) {
+        output.putBoolean("has_storage_crate", hasStorageCrate());
         if (hasStorageCrate()) {
-            compoundTag.put("items", itemStackHandler.serializeNBT(level().registryAccess()));
+            output.store("items", CompoundTag.CODEC,
+                itemStackHandler.serializeNBT(level().registryAccess()));
         }
     }
 }

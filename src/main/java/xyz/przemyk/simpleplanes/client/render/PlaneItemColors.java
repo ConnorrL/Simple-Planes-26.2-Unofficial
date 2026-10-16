@@ -30,7 +30,7 @@ public class PlaneItemColors {
         }
 
         if (entityTag != null && entityTag.contains("material")) {
-            Block block = BuiltInRegistries.BLOCK.get(Identifier.parse(entityTag.getString("material")));
+            Block block = BuiltInRegistries.BLOCK.getValue(Identifier.parse(entityTag.getStringOr("material", "")));
             if (block != null) {
                 if (cachedColors.containsKey(block)) {
                     return cachedColors.get(block);

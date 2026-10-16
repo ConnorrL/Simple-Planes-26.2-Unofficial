@@ -67,9 +67,9 @@ public class PayloadUpgrade extends LargeUpgrade {
 
     @Override
     public void readPacket(RegistryFriendlyByteBuf buffer) {
-        Item item = BuiltInRegistries.ITEM.get(buffer.readIdentifier());
-        Block renderBlock = BuiltInRegistries.BLOCK.get(buffer.readIdentifier());
-        EntityType<?> dropSpawnEntity = BuiltInRegistries.ENTITY_TYPE.get(buffer.readIdentifier());
+        Item item = BuiltInRegistries.ITEM.getValue(buffer.readIdentifier());
+        Block renderBlock = BuiltInRegistries.BLOCK.getValue(buffer.readIdentifier());
+        EntityType<?> dropSpawnEntity = BuiltInRegistries.ENTITY_TYPE.getValue(buffer.readIdentifier());
         CompoundTag compoundTag = buffer.readNbt();
         payloadEntry = new PayloadEntry(item, renderBlock, dropSpawnEntity, compoundTag);
     }
@@ -86,10 +86,10 @@ public class PayloadUpgrade extends LargeUpgrade {
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        Item item = BuiltInRegistries.ITEM.get(Identifier.parse(nbt.getString("item")));
-        Block renderBlock = BuiltInRegistries.BLOCK.get(Identifier.parse(nbt.getString("block")));
-        EntityType<?> dropSpawnEntity = BuiltInRegistries.ENTITY_TYPE.get(Identifier.parse(nbt.getString("entity")));
-        payloadEntry = new PayloadEntry(item, renderBlock, dropSpawnEntity, nbt.getCompound("entityTag"));
+        Item item = BuiltInRegistries.ITEM.getValue(Identifier.parse(nbt.getStringOr("item", "")));
+        Block renderBlock = BuiltInRegistries.BLOCK.getValue(Identifier.parse(nbt.getStringOr("block", "")));
+        EntityType<?> dropSpawnEntity = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.parse(nbt.getStringOr("entity", "")));
+        payloadEntry = new PayloadEntry(item, renderBlock, dropSpawnEntity, nbt.getCompoundOrEmpty("entityTag"));
     }
 
     @Override

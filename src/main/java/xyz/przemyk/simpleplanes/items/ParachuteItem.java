@@ -20,7 +20,7 @@ public class ParachuteItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         ItemStack itemStack = player.getItemInHand(interactionHand);
         if (!player.isPassenger()) {
-            if (!level.isClientSide) {
+            if (!level.isClientSide()) {
                 ParachuteEntity parachuteEntity = new ParachuteEntity(level);
                 parachuteEntity.setPos(player.position());
                 parachuteEntity.setDeltaMovement(player.getDeltaMovement());
@@ -33,7 +33,7 @@ public class ParachuteItem extends Item {
                 itemStack.shrink(1);
             }
 
-            return InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide);
+            return InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide());
         }
         return InteractionResultHolder.pass(itemStack);
     }

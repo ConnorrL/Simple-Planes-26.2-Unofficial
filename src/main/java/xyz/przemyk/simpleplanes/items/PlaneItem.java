@@ -44,19 +44,19 @@ public class PlaneItem extends Item {
         CompoundTag entityTag = pStack.get(SimplePlanesComponents.ENTITY_TAG);
 
         if (entityTag != null) {
-            if (entityTag.contains("material")) {
-                Block block = BuiltInRegistries.BLOCK.get(Identifier.parse(entityTag.getString("material")));
+            if (entityTag.keySet().contains("material")) {
+                Block block = BuiltInRegistries.BLOCK.getValue(Identifier.parse(entityTag.getStringOr("material", "")));
                 if (block != null) {
                     pTooltipComponents.add(Component.translatable(SimplePlanesMod.MODID + ".material").append(block.getName()));
                 }
             }
-            if (entityTag.contains("upgrades")) {
-                CompoundTag upgradesNBT = entityTag.getCompound("upgrades");
-                for (String key : upgradesNBT.getAllKeys()) {
-                    CompoundTag upgradeNbt = upgradesNBT.getCompound(key);
+            if (entityTag.keySet().contains("upgrades")) {
+                CompoundTag upgradesNBT = entityTag.getCompoundOrEmpty("upgrades");
+                for (String key : upgradesNBT.keySet()) {
+                    CompoundTag upgradeNbt = upgradesNBT.getCompoundOrEmpty(key);
                     Identifier resourceLocation = Identifier.parse(key);
-                    if (upgradeNbt.contains("desc")) {
-                        pTooltipComponents.add(Component.literal(upgradeNbt.getString("desc")));
+                    if (upgradeNbt.keySet().contains("desc")) {
+                        pTooltipComponents.add(Component.literal(upgradeNbt.getStringOr("desc", "")));
                     } else {
                         pTooltipComponents.add(Component.translatable("name." + resourceLocation.toString().replace(":", ".")));
                     }
@@ -97,12 +97,12 @@ public class PlaneItem extends Item {
                 }
                 CompoundTag entityTag = itemstack.get(SimplePlanesComponents.ENTITY_TAG);
                 if (entityTag != null) {
-                    planeEntity.readAdditionalSaveData(entityTag);
+                    planeEntity.readPlaneItemData(entityTag);
                 }
                 if (!worldIn.noCollision(planeEntity, planeEntity.getBoundingBox().inflate(-0.1D))) {
                     return InteractionResultHolder.fail(itemstack);
                 } else {
-                    if (!worldIn.isClientSide) {
+                    if (!worldIn.isClientSide()) {
                         worldIn.addFreshEntity(planeEntity);
                         if (!playerIn.getAbilities().instabuild) {
                             itemstack.shrink(1);

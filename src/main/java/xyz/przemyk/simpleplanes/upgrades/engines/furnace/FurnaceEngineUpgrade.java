@@ -70,9 +70,9 @@ public class FurnaceEngineUpgrade extends EngineUpgrade {
 
     @Override
     public void deserializeNBT(CompoundTag compound) {
-        itemStackHandler.deserializeNBT(planeEntity.registryAccess(), compound.getCompound("item"));
-        burnTime = compound.getInt("burnTime");
-        burnTimeTotal = compound.getInt("burnTimeTotal");
+        itemStackHandler.deserializeNBT(planeEntity.registryAccess(), compound.getCompoundOrEmpty("item"));
+        burnTime = compound.getIntOr("burnTime", 0);
+        burnTimeTotal = compound.getIntOr("burnTimeTotal", 0);
     }
 
     @Override

@@ -74,7 +74,7 @@
 //            projectile.setDeltaMovement(motion.x * speed, motion.y * speed, motion.z * speed);
 //            level.addFreshEntity(projectile);
 //
-//            if (!level.isClientSide) {
+//            if (!level.isClientSide()) {
 //                Identifier fireSound = gun.getSounds().getFire();
 //                if (fireSound != null) {
 //                    double posX = player.getX();

@@ -37,9 +37,9 @@ public class PlanePayloadReloadListener extends SimpleJsonResourceReloadListener
         for (Map.Entry<Identifier, JsonElement> entry : map.entrySet()) {
             try {
                 JsonObject jsonObject = GsonHelper.convertToJsonObject(entry.getValue(), "top element");
-                Item item = Objects.requireNonNull(BuiltInRegistries.ITEM.get(Identifier.parse(jsonObject.get("item").getAsString())), "missing item");
-                Block renderBlock = Objects.requireNonNull(BuiltInRegistries.BLOCK.get(Identifier.parse((jsonObject.get("block").getAsString()))), "missing block");
-                EntityType<?> dropSpawnEntity = Objects.requireNonNull(BuiltInRegistries.ENTITY_TYPE.get(Identifier.parse(jsonObject.get("entity").getAsString())), "missing entity");
+                Item item = Objects.requireNonNull(BuiltInRegistries.ITEM.getValue(Identifier.parse(jsonObject.get("item").getAsString())), "missing item");
+                Block renderBlock = Objects.requireNonNull(BuiltInRegistries.BLOCK.getValue(Identifier.parse((jsonObject.get("block").getAsString()))), "missing block");
+                EntityType<?> dropSpawnEntity = Objects.requireNonNull(BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.parse(jsonObject.get("entity").getAsString())), "missing entity");
                 CompoundTag compoundTag;
                 if (jsonObject.has("entity_nbt")) {
                     String tag = GsonHelper.convertToString(jsonObject.get("entity_nbt"), "entity_nbt");

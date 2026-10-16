@@ -103,7 +103,7 @@ public class ModifyUpgradesContainer extends AbstractContainerMenu {
     }
 
     public void itemsChanged(ItemStack previousStack, ItemStack newStack, int slot) {
-        if (planeEntity.level().isClientSide || internalItemsChange || ItemStack.isSameItemSameComponents(previousStack, newStack)) {
+        if (planeEntity.level().isClientSide() || internalItemsChange || ItemStack.isSameItemSameComponents(previousStack, newStack)) {
             return;
         }
 
@@ -177,7 +177,7 @@ public class ModifyUpgradesContainer extends AbstractContainerMenu {
                             break;
                         }
                     }
-                    if (!cargoPlaneEntity.level().isClientSide) {
+                    if (!cargoPlaneEntity.level().isClientSide()) {
                         UpgradeType upgradeType = SimplePlanesUpgrades.LARGE_ITEM_UPGRADE_MAP.get(newStack.getItem());
                         if (upgradeType != null) {
                             cargoPlaneEntity.addCargoUpgradeIntWorkbench(newStack, (LargeUpgrade) upgradeType.instanceSupplier.apply(cargoPlaneEntity));

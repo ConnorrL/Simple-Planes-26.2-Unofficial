@@ -102,7 +102,7 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
     }
 
     public void onCrafting() {
-        if (!player.level().isClientSide) {
+        if (!player.level().isClientSide()) {
             PlaneWorkbenchRecipe recipe = recipeList.get(selectedRecipe.get()).value();
             itemHandler.extractItem(0, recipe.ingredientAmount(), false);
             itemHandler.extractItem(1, recipe.materialAmount(), false);
@@ -112,7 +112,7 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
 
     @SuppressWarnings("deprecation")
     protected void updateCraftingResult() {
-        if (!this.player.level().isClientSide) {
+        if (!this.player.level().isClientSide()) {
             ServerPlayer serverPlayerEntity = (ServerPlayer) this.player;
             ItemStack result = ItemStack.EMPTY;
             ItemStack ingredientStack = itemHandler.getStackInSlot(0);

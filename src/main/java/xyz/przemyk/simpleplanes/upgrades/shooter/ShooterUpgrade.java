@@ -114,7 +114,7 @@ public class ShooterUpgrade extends Upgrade {
 
     @Override
     public void deserializeNBT(CompoundTag compoundTag) {
-        itemStackHandler.deserializeNBT(planeEntity.registryAccess(), compoundTag.getCompound("item"));
+        itemStackHandler.deserializeNBT(planeEntity.registryAccess(), compoundTag.getCompoundOrEmpty("item"));
     }
 
     @Override

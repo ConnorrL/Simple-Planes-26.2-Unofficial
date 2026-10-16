@@ -1,7 +1,8 @@
 package xyz.przemyk.simpleplanes.blocks;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -19,16 +20,17 @@ public class PlaneWorkbenchBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
-        super.saveAdditional(pTag, pRegistries);
-        pTag.put("input", itemStackHandler.serializeNBT(pRegistries));
-        pTag.putInt("selected_recipe", selectedRecipe.get());
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        output.store("input", CompoundTag.CODEC, itemStackHandler.serializeNBT(level.registryAccess()));
+        output.putInt("selected_recipe", selectedRecipe.get());
     }
 
     @Override
-    protected void loadAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
-        super.loadAdditional(pTag, pRegistries);
-        itemStackHandler.deserializeNBT(pRegistries, pTag.getCompound("input"));
-        selectedRecipe.set(pTag.getInt("selected_recipe"));
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        itemStackHandler.deserializeNBT(level.registryAccess(),
+            input.read("input", CompoundTag.CODEC).orElseGet(CompoundTag::new));
+        selectedRecipe.set(input.getIntOr("selected_recipe", 0));
     }
 }

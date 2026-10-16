@@ -57,7 +57,7 @@ public class ChestUpgrade extends LargeUpgrade {
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         itemStackHandler.deserializeNBT(planeEntity.registryAccess(), nbt);
-        Item item = BuiltInRegistries.ITEM.get(Identifier.parse(nbt.getString("ChestType")));
+        Item item = BuiltInRegistries.ITEM.getValue(Identifier.parse(nbt.getStringOr("ChestType", "")));
         chestType = item == null ? Items.CHEST : item;
     }
 
