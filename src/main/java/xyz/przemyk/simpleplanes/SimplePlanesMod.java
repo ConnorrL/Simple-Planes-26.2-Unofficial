@@ -110,8 +110,8 @@ public class SimplePlanesMod {
         event.registerEntity(Capabilities.Item.ENTITY, type,
                 (entity, ctx) -> entity.getCap(Capabilities.Item.ENTITY)
         );
-        event.registerEntity(Capabilities.FluidHandler.ENTITY, type,
-                (entity, ctx) -> entity.getCap(Capabilities.FluidHandler.ENTITY)
+        event.registerEntity(Capabilities.Fluid.ENTITY, type,
+                (entity, ctx) -> entity.getCap(Capabilities.Fluid.ENTITY)
         );
         event.registerEntity(Capabilities.Energy.ENTITY, type,
                 (entity, ctx) -> entity.getCap(Capabilities.Energy.ENTITY)

@@ -239,3 +239,7 @@ Item inventory capability migration starts with a `Container`-backed `ResourceHa
 
 ## Pass 24
 See `COMPILER_TRIAGE_PASS24.md`. Fixed the client fluid texture call and 26.2 payload entity spawn/NBT loader. Neither Java compilation nor Youer compatibility has been validated for this pass.
+
+
+## Pass 25
+See `COMPILER_TRIAGE_PASS25.md`. This port remains experimental and **does not compile yet**; the incoming build had 25 errors.

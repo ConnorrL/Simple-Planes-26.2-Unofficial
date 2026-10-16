@@ -2,6 +2,7 @@ package xyz.przemyk.simpleplanes.upgrades.engines.liquid;
 
 import xyz.przemyk.simpleplanes.porting.InventoryTagAdapter;
 import xyz.przemyk.simpleplanes.porting.FluidTankTagAdapter;
+import xyz.przemyk.simpleplanes.porting.LegacyFluidBridge;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -19,6 +20,8 @@ import net.neoforged.neoforge.capabilities.BaseCapability;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
+import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
@@ -39,6 +42,9 @@ public class LiquidEngineUpgrade extends EngineUpgrade {
     public final ItemStackHandler itemStackHandler = new ItemStackHandler(2);
     public final FluidTank fluidTank = new FluidTank(SimplePlanesConfig.LIQUID_ENGINE_CAPACITY.get(), fluidStack ->
             PlaneLiquidFuelReloadListener.fuelMap.containsKey(fluidStack.getFluid()));
+
+    /** One stable transactional wrapper per tank; keep the old tank for saves and UI. */
+    public final LegacyFluidBridge fluidCapability = new LegacyFluidBridge(fluidTank);
 
     public int burnTime;
 
@@ -62,7 +68,8 @@ public class LiquidEngineUpgrade extends EngineUpgrade {
 
             if (itemStackHandler.getStackInSlot(1).isEmpty()) {
                 ItemStack itemStack = itemStackHandler.getStackInSlot(0);
-                IFluidHandler fluidHandler = itemStack.getCapability(Capabilities.FluidHandler.ITEM);
+                IFluidHandlerItem fluidHandler = itemStack.getCount() == 1
+                        ? FluidUtil.getFluidHandler(itemStack).orElse(null) : null;
                 if (fluidHandler != null) {
                     FluidStack itemFluidStack = fluidHandler.getFluidInTank(0);
                     if (itemFluidStack.isEmpty()) {
@@ -128,8 +135,8 @@ public class LiquidEngineUpgrade extends EngineUpgrade {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getCap(BaseCapability<T, ?> cap) {
-        if (cap == Capabilities.FluidHandler.ENTITY) {
-            return (T) fluidTank;
+        if (cap == Capabilities.Fluid.ENTITY) {
+            return (T) fluidCapability;
         }
 
         return super.getCap(cap);
