@@ -226,7 +226,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
     }
 
     @Override
-    public InteractionResult interact(Player player, InteractionHand hand) {
+    public InteractionResult interact(Player player, InteractionHand hand, Vec3 hitLocation) {
         ItemStack itemStack = player.getItemInHand(hand);
         if (player.isShiftKeyDown() && itemStack.isEmpty()) {
             boolean hasPlayer = false;
@@ -928,7 +928,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
     }
 
     @Override
-    public boolean canBeCollidedWith() {
+    public boolean canBeCollidedWith(Entity other) {
         return true;
     }
 
@@ -957,8 +957,9 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
     public static final TagKey<Block> FIREPROOF_MATERIALS_TAG = BlockTags.create(
         Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "fireproof_materials"));
 
-    @Override
-    public boolean isInvulnerableTo(ServerLevel serverLevel, DamageSource source) {
+    // Entity no longer exposes this hook. Called by hurtServer to retain
+    // the aircraft-specific damage rules while vanilla uses the final base check.
+    private boolean isInvulnerableTo(ServerLevel serverLevel, DamageSource source) {
         if (source.is(DamageTypeTags.IS_EXPLOSION)) {
             return false;
         }
@@ -968,7 +969,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
         if (source.getDirectEntity() != null && source.getDirectEntity().isPassengerOfSameVehicle(this)) {
             return true;
         }
-        return super.isInvulnerableTo(serverLevel, source);
+        return super.isInvulnerableToBase(source);
     }
 
     @Override

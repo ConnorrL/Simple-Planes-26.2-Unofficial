@@ -49,7 +49,7 @@ public class ClientUtil {
 
     public static void renderLiquidEngineFluid(GuiGraphicsExtractor guiGraphics, PlaneInventoryScreen screen, FluidStack fluidStack, int height, int width, int fluidHeight) {
         TextureAtlasSprite fluidSprite = guiGraphics.getSprite(new SpriteId(TextureAtlas.LOCATION_BLOCKS,
-                IClientFluidTypeExtensions.of(fluidStack.getFluid()).getStillTexture()));
+                IClientFluidTypeExtensions.of(fluidStack.getFluid()).getStillTexture(fluidStack)));
 //        setColorRGBA(IClientFluidTypeExtensions.of(fluidStack.getFluid()).getTintColor(fluidStack));
         renderTiledTextureAtlas(guiGraphics, screen, fluidSprite, 151 + 2, 7 + 18 + height - 2 - fluidHeight, width - 4, fluidHeight, 100);
 //        RenderSystem.setShaderColor(1, 1, 1, 1);
