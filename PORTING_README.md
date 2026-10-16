@@ -212,3 +212,7 @@ See `COMPILER_TRIAGE_PASS17.md` for source edits, outstanding API migrations, an
 
 ## Pass 18 — October 16, 2026
 See `COMPILER_TRIAGE_PASS18.md`. Latest input build had 56 errors; these fixes have not yet been compiled.
+
+
+## Pass 19 — October 16, 2026
+Input build: 54 errors. Fixed aircraft picking and absolute movement mapping; enabled verbose javac diagnostics. See `COMPILER_TRIAGE_PASS19.md`. No successful compile yet.

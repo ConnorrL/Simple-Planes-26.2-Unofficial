@@ -40,7 +40,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.dimension.DimensionType;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.BaseCapability;
 import net.neoforged.neoforge.common.NeoForgeMod;
@@ -195,7 +194,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
     }
 
     @Override
-    public ItemStack getPickedResult(HitResult target) {
+    public ItemStack getPickResult() {
         return getItemStack();
     }
 
@@ -1160,7 +1159,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
     }
 
     @Override
-    public void absMoveTo(double x, double y, double z, float yaw, float pitch) {
+    public void absSnapTo(double x, double y, double z, float yaw, float pitch) {
         double d0 = Mth.clamp(x, -3.0E7D, 3.0E7D);
         double d1 = Mth.clamp(z, -3.0E7D, 3.0E7D);
         xOld = d0;
@@ -1180,7 +1179,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
         if (isControlledByLocalInstance()) {
             if (lerpSteps > 0) {
                 lerpSteps = 0;
-                absMoveTo(lerpX, lerpY, lerpZ, getYRot(), getXRot());
+                absSnapTo(lerpX, lerpY, lerpZ, getYRot(), getXRot());
             }
         }
     }

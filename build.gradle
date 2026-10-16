@@ -166,7 +166,7 @@ publishing {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
     // The 1.21.1 -> 26.2 API port needs broad error visibility.
-    options.compilerArgs.addAll(['-Xmaxerrs', '250', '-Xmaxwarns', '20'])
+    options.compilerArgs.addAll(['-Xmaxerrs', '250', '-Xmaxwarns', '20', '-Xdiags:verbose'])
 }
 
 // IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
