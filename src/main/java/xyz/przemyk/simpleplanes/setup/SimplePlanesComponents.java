@@ -1,6 +1,7 @@
 package xyz.przemyk.simpleplanes.setup;
 
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.neoforged.bus.api.IEventBus;
@@ -11,7 +12,7 @@ import java.util.function.Supplier;
 
 public class SimplePlanesComponents {
 
-    public static final DeferredRegister.DataComponents DATA_COMPONENT_TYPES = DeferredRegister.createDataComponents(SimplePlanesMod.MODID);
+    public static final DeferredRegister.DataComponents DATA_COMPONENT_TYPES = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, SimplePlanesMod.MODID);
 
     public static void init(IEventBus bus) {
         DATA_COMPONENT_TYPES.register(bus);

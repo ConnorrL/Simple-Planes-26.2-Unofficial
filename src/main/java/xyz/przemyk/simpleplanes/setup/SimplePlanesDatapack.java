@@ -1,5 +1,7 @@
 package xyz.przemyk.simpleplanes.setup;
 
+import net.minecraft.resources.Identifier;
+import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import xyz.przemyk.simpleplanes.datapack.PlaneLiquidFuelReloadListener;
@@ -12,7 +14,8 @@ public class SimplePlanesDatapack {
     }
 
     private static void addReloadListener(AddServerReloadListenersEvent event) {
-        event.addListener(new PlanePayloadReloadListener());
-        event.addListener(new PlaneLiquidFuelReloadListener());
+        // 26.2 requires stable resource identifiers for dependency sorting.
+        event.addListener(Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "plane_payloads"), new PlanePayloadReloadListener());
+        event.addListener(Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "plane_liquid_fuels"), new PlaneLiquidFuelReloadListener());
     }
 }

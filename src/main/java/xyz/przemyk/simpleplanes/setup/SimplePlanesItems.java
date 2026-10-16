@@ -90,7 +90,7 @@ public class SimplePlanesItems {
                 output.accept(CHARGING_STATION.get());
                 output.accept(PARACHUTE_ITEM.get());
 
-                BuiltInRegistries.BLOCK.getTag(PlaneWorkbenchContainer.PLANE_MATERIALS_TAG).ifPresent(tag -> tag.forEach(block -> {
+                parameters.holders().lookupOrThrow(Registries.BLOCK).get(PlaneWorkbenchContainer.PLANE_MATERIALS_TAG).ifPresent(tag -> tag.forEach(block -> {
                     ItemStack planeStack = new ItemStack(PLANE_ITEM.get());
                     ItemStack largePlaneStack = new ItemStack(LARGE_PLANE_ITEM.get());
                     ItemStack cargoPlaneStack = new ItemStack(CARGO_PLANE_ITEM.get());

@@ -1,6 +1,5 @@
 package xyz.przemyk.simpleplanes.setup;
 
-import com.google.common.collect.ImmutableSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.Block;
@@ -29,6 +28,6 @@ public class SimplePlanesBlocks {
     public static final Supplier<PlaneWorkbenchBlock> PLANE_WORKBENCH_BLOCK = BLOCKS.register("plane_workbench", () -> new PlaneWorkbenchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CRAFTING_TABLE)));
     public static final Supplier<ChargingStationBlock> CHARGING_STATION_BLOCK = BLOCKS.register("charging_station", () -> new ChargingStationBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.COBBLESTONE)));
 
-    public static final Supplier<BlockEntityType<PlaneWorkbenchBlockEntity>> PLANE_WORKBENCH_TILE = TILES.register("plane_workbench", () -> new BlockEntityType<>(PlaneWorkbenchBlockEntity::new, ImmutableSet.of(PLANE_WORKBENCH_BLOCK.get()), null));
-    public static final Supplier<BlockEntityType<ChargingStationBlockEntity>> CHARGING_STATION_TILE = TILES.register("charging_station", () -> new BlockEntityType<>(ChargingStationBlockEntity::new, ImmutableSet.of(CHARGING_STATION_BLOCK.get()), null));
+    public static final Supplier<BlockEntityType<PlaneWorkbenchBlockEntity>> PLANE_WORKBENCH_TILE = TILES.register("plane_workbench", () -> new BlockEntityType<>(PlaneWorkbenchBlockEntity::new, PLANE_WORKBENCH_BLOCK.get()));
+    public static final Supplier<BlockEntityType<ChargingStationBlockEntity>> CHARGING_STATION_TILE = TILES.register("charging_station", () -> new BlockEntityType<>(ChargingStationBlockEntity::new, CHARGING_STATION_BLOCK.get()));
 }

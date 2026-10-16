@@ -164,3 +164,8 @@ https://aldak.netlify.app/javadoc/26.2.x/net/minecraft/world/level/storage/value
 https://aldak.netlify.app/javadoc/26.2.x/net/minecraft/world/level/storage/tagvalueinput
 https://docs.neoforged.net/docs/rendering/screens/
 https://github.com/neoforged/NeoForge/blob/26.2.x/src/main/java/net/neoforged/neoforge/common/extensions/IItemStackExtension.java
+
+
+## Port Pass 10 (2026-10-15)
+
+Based on `logs_105274094375.zip`. Fixed registration API usage for data components, entity types, block entities, creative tab material lookups, custom recipe result codec, and server datapack reload listeners. See `COMPILER_TRIAGE_PASS10.md` for the grouped compiler error summary. **Not compile tested; more errors are expected.**
