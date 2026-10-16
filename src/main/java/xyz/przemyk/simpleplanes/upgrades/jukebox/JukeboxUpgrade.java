@@ -21,6 +21,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import xyz.przemyk.simpleplanes.client.MovingSound;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.network.JukeboxPacket;
+import xyz.przemyk.simpleplanes.porting.ItemStackTagAdapter;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.LargeUpgrade;
@@ -35,12 +36,12 @@ public class JukeboxUpgrade extends LargeUpgrade {
 
     @Override
     public Tag serializeNBT() {
-        return record.save(planeEntity.registryAccess());
+        return ItemStackTagAdapter.save(record, planeEntity.registryAccess());
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        record = ItemStack.parseOptional(planeEntity.registryAccess(), nbt);
+        record = ItemStackTagAdapter.load(nbt, planeEntity.registryAccess());
     }
 
     @Override

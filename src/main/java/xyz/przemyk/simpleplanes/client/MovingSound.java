@@ -46,7 +46,7 @@ public class MovingSound extends AbstractTickableSoundInstance {
                 playingRecords.remove(entity);
             }
 
-            minecraft.gui.setOverlayMessage(jukeboxSong.description(), true);
+            minecraft.gui.hud.setOverlayMessage(jukeboxSong.description(), true);
             MovingSound movingSound = new MovingSound(jukeboxSong.soundEvent().value(), entity);
             playingRecords.put(entity, movingSound);
             minecraft.getSoundManager().play(movingSound);

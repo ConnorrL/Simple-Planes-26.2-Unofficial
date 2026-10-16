@@ -63,7 +63,7 @@ public class SolarPanelUpgrade extends Upgrade {
     }
 
     public static float getSunBrightness(Level world, float partialTicks) {
-        float f = world.getTimeOfDay(partialTicks);
+        float f = world.getSunAngle(partialTicks) / ((float) Math.PI * 2F);
         float f1 = 1.0F - (Mth.cos(f * ((float) Math.PI * 2F)) * 2.0F + 0.2F);
         f1 = Mth.clamp(f1, 0.0F, 1.0F);
         f1 = 1.0F - f1;
