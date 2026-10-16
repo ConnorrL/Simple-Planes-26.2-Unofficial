@@ -19,7 +19,6 @@ import xyz.przemyk.simpleplanes.client.gui.StorageScreen;
 import xyz.przemyk.simpleplanes.client.render.PlaneItemColors;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.upgrades.booster.BoosterUpgrade;
 
 @EventBusSubscriber(value = Dist.CLIENT)
@@ -39,8 +38,9 @@ public class ModBusClientEventHandler {
     }
 
     @SubscribeEvent
-    public static void planeColor(RegisterColorHandlersEvent.Item event) {
-        SimplePlanesItems.getPlaneItems().forEach(item -> event.register(PlaneItemColors::getColor, item));
+    public static void registerPlaneItemTints(RegisterColorHandlersEvent.ItemTintSources event) {
+        event.register(Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "plane_material"),
+                xyz.przemyk.simpleplanes.client.render.PlaneMaterialTint.MAP_CODEC);
     }
 
     @SubscribeEvent

@@ -216,3 +216,7 @@ See `COMPILER_TRIAGE_PASS18.md`. Latest input build had 56 errors; these fixes h
 
 ## Pass 19 — October 16, 2026
 Input build: 54 errors. Fixed aircraft picking and absolute movement mapping; enabled verbose javac diagnostics. See `COMPILER_TRIAGE_PASS19.md`. No successful compile yet.
+
+
+## Pass 20
+Migrated plane-item tints and 26.2 item definitions (all existing item model names) and fluid texture atlas access; see `COMPILER_TRIAGE_PASS20.md`. Source changes have not been compiled here.

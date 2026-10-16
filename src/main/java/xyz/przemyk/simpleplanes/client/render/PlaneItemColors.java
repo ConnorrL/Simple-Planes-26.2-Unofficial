@@ -1,21 +1,23 @@
 package xyz.przemyk.simpleplanes.client.render;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.client.model.data.ModelData;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesComponents;
 
 import java.util.HashMap;
 
-public class PlaneItemColors {
+/**
+ * Minecraft 26.2 replaced the immediate item color handler with model tint
+ * sources. Use the material block's map color as a deterministic approximation
+ * until the legacy block-texture average can be restored using the new atlas API.
+ * Unlike a constant tint, this preserves distinct colors for the wood materials.
+ */
+public final class PlaneItemColors {
+    private PlaneItemColors() {}
+
     public static final HashMap<Block, Integer> cachedColors = new HashMap<>();
     public static final int DEFAULT_COLOR = 0xFFB28F55;
 
@@ -23,63 +25,24 @@ public class PlaneItemColors {
         cachedColors.clear();
     }
 
-    public static int getColor(ItemStack itemStack, int tintIndex) {
+    public static int getColor(ItemStack itemStack) {
         CompoundTag entityTag = itemStack.get(SimplePlanesComponents.ENTITY_TAG);
-        if (tintIndex != 0) {
-            return -1;
+        if (entityTag == null || !entityTag.contains("material")) {
+            return DEFAULT_COLOR;
         }
 
-        if (entityTag != null && entityTag.contains("material")) {
-            Block block = BuiltInRegistries.BLOCK.getValue(Identifier.parse(entityTag.getStringOr("material", "")));
-            if (block != null) {
-                if (cachedColors.containsKey(block)) {
-                    return cachedColors.get(block);
-                }
-
-                try {
-                    TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager()
-                        .getModel(new ModelResourceLocation(BuiltInRegistries.BLOCK.getKey(block), "inventory"))
-                        .getQuads(null, Direction.SOUTH, RandomSource.create(), ModelData.EMPTY, null).getFirst().getSprite();
-
-                    int g = 0;
-                    int b = 0;
-                    int a = 0;
-
-                    for (int x = 0; x < 16; x++) {
-                        for (int y = 0; y < 16; y++) {
-                            int pixelRGBA = sprite.getPixelRGBA(0, x, y);
-
-                            g += (pixelRGBA & 0x00ff0000) >>> 16;
-                            b += (pixelRGBA & 0x0000ff00) >>> 8;
-                            a += (pixelRGBA & 0x000000ff);
-                        }
-                    }
-
-                    g /= 256;
-                    b /= 256;
-                    a /= 256;
-                    g = (int) Math.min(255, g * 1.1);
-                    b = (int) Math.min(255, b * 1.1);
-                    a = (int) Math.min(255, a * 1.1);
-
-                    int redo = g | b << 8 | a << 16;
-
-                    if (redo < 0) {
-                        redo = 0xffffff - redo;
-                    }
-
-                    redo |= 0xff000000;
-
-                    cachedColors.put(block, redo);
-                    return redo;
-
-                } catch (IndexOutOfBoundsException | IllegalArgumentException exception) {
-                    cachedColors.put(block, DEFAULT_COLOR);
-                    return DEFAULT_COLOR;
-                }
-
-            }
+        Identifier identifier = Identifier.tryParse(entityTag.getStringOr("material", ""));
+        if (identifier == null || !BuiltInRegistries.BLOCK.containsKey(identifier)) {
+            return DEFAULT_COLOR;
         }
-        return DEFAULT_COLOR;
+        Block block = BuiltInRegistries.BLOCK.getValue(identifier);
+        if (block == null) {
+            return DEFAULT_COLOR;
+        }
+
+        return cachedColors.computeIfAbsent(block, value -> {
+            int rgb = value.defaultMapColor().col & 0xFFFFFF;
+            return rgb == 0 ? DEFAULT_COLOR : 0xFF000000 | rgb;
+        });
     }
 }
