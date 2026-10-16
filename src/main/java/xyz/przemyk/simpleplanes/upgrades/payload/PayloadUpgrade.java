@@ -11,6 +11,8 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -83,12 +85,18 @@ public class PayloadUpgrade extends LargeUpgrade {
 
     @Override
     public void dropAsPayload() {
-        if (payloadEntry != null) {
-            Entity entity = payloadEntry.dropSpawnEntity().create(planeEntity.level());
-            entity.load(payloadEntry.compoundTag());
-            entity.setPos(planeEntity.position());
-            entity.setDeltaMovement(planeEntity.getDeltaMovement());
-            planeEntity.level().addFreshEntity(entity);
+        // Rehydrate the saved payload on the logical server only. In 26.2,
+        // Entity#load(CompoundTag) has been replaced by typed ValueInput; the
+        // EntityType loader accepts the stored CompoundTag and applies it.
+        if (payloadEntry != null && planeEntity.level() instanceof ServerLevel serverLevel) {
+            Entity entity = EntityType.loadEntityRecursive(
+                    payloadEntry.dropSpawnEntity(), payloadEntry.compoundTag(),
+                    serverLevel, EntitySpawnReason.COMMAND, loadedEntity -> loadedEntity);
+            if (entity != null) {
+                entity.setPos(planeEntity.position());
+                entity.setDeltaMovement(planeEntity.getDeltaMovement());
+                serverLevel.addFreshEntity(entity);
+            }
         }
         remove();
     }

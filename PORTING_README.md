@@ -235,3 +235,7 @@ See `COMPILER_TRIAGE_PASS22.md`. Incoming build: 40 errors, 20 warnings. Energy 
 ## Pass 23 (2026-10-16)
 
 Item inventory capability migration starts with a `Container`-backed `ResourceHandler` adapter that preserves existing `ItemStackHandler` save data and menu slots. See `COMPILER_TRIAGE_PASS23.md`. Requires compilation and transaction tests; fluid and rendering work remain.
+
+
+## Pass 24
+See `COMPILER_TRIAGE_PASS24.md`. Fixed the client fluid texture call and 26.2 payload entity spawn/NBT loader. Neither Java compilation nor Youer compatibility has been validated for this pass.
