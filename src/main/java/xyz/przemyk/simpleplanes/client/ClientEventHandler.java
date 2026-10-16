@@ -145,8 +145,8 @@ public class ClientEventHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onCameraSetup(ViewportEvent.ComputeCameraAngles event) {
         Camera camera = event.getCamera();
-        Entity player = camera.getEntity();
-        if (player.getVehicle() instanceof PlaneEntity planeEntity) {
+        Entity player = Minecraft.getInstance().getCameraEntity();
+        if (player != null && player.getVehicle() instanceof PlaneEntity planeEntity) {
             if (!camera.isDetached()) {
                 double partialTicks = event.getPartialTick();
 
@@ -170,7 +170,8 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public static void onCalculateDetachedCameraDistance(CalculateDetachedCameraDistanceEvent event) {
-        if (event.getCamera().getEntity().getVehicle() instanceof PlaneEntity planeEntity) {
+        if (Minecraft.getInstance().getCameraEntity() != null
+                && Minecraft.getInstance().getCameraEntity().getVehicle() instanceof PlaneEntity planeEntity) {
             event.setDistance((float) (4.0 * planeEntity.getCameraDistanceMultiplayer()));
         }
     }

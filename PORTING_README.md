@@ -204,3 +204,7 @@ See `COMPILER_TRIAGE_PASS15.md`. This is a source-only migration pass, not a suc
 
 ## Pass 16 — 80-error build, 2026-10-16
 See `COMPILER_TRIAGE_PASS16.md`. The four targeted changes address item save typing, armor item enchantability, and the workbench block-entity removal lifecycle. Compilation and gameplay are not yet verified. Do not use on a live server.
+
+
+## Pass 17 (Oct 16, 2026)
+See `COMPILER_TRIAGE_PASS17.md` for source edits, outstanding API migrations, and validation status.

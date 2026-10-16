@@ -13,6 +13,7 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.neoforged.neoforge.capabilities.BaseCapability;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -69,7 +70,8 @@ public class LiquidEngineUpgrade extends EngineUpgrade {
                         fluidHandler.drain(fluidTank.fill(fluidHandler.drain(fluidTank.getSpace(), IFluidHandler.FluidAction.SIMULATE), IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
                     }
                     itemStackHandler.setStackInSlot(0, ItemStack.EMPTY);
-                    itemStackHandler.setStackInSlot(1, itemStack.getCraftingRemainingItem());
+                    ItemStackTemplate remainder = itemStack.getItem().getCraftingRemainder(itemStack);
+                    itemStackHandler.setStackInSlot(1, remainder == null ? ItemStack.EMPTY : remainder.create());
                     updateClient();
                 }
             }

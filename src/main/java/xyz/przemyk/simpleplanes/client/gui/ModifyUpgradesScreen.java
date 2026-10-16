@@ -1,7 +1,5 @@
 package xyz.przemyk.simpleplanes.client.gui;
 
-import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -12,8 +10,9 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
-import org.joml.Matrix4f;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.container.ModifyUpgradesContainer;
 import xyz.przemyk.simpleplanes.entities.CargoPlaneEntity;
@@ -71,24 +70,17 @@ public class ModifyUpgradesScreen extends AbstractContainerScreen<ModifyUpgrades
         }
     }
 
-    @SuppressWarnings("deprecation") // InventoryScreen.renderEntityInInventory uses LivingEntity for some reason
-    public static void renderEntityInInventory(GuiGraphicsExtractor guiGraphics, int x, int y, int scale, Quaternionf quaternionf, @Nullable Quaternionf quaternionf1, Entity entity) {
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(x, y, 50.0D);
-        guiGraphics.pose().mulPose((new Matrix4f()).scaling((float)scale, (float)scale, (float)(-scale)));
-        guiGraphics.pose().mulPose(quaternionf);
-        Lighting.setupForEntityInInventory();
-        EntityRenderDispatcher entityrenderdispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
-        if (quaternionf1 != null) {
-            quaternionf1.conjugate();
-            entityrenderdispatcher.overrideCameraOrientation(quaternionf1);
-        }
-
-        entityrenderdispatcher.setRenderShadow(false);
-        RenderSystem.runAsFancy(() -> entityrenderdispatcher.render(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, guiGraphics.pose(), guiGraphics.bufferSource(), 15728880));
-        guiGraphics.flush();
-        entityrenderdispatcher.setRenderShadow(true);
-        guiGraphics.pose().popPose();
-        Lighting.setupFor3DItems();
+    /**
+     * Capture the entity's current render state, then submit it to the modern GUI
+     * render pipeline. The old immediate-mode entity renderer cannot render into
+     * a GuiGraphicsExtractor. This preserves the rotating aircraft preview.
+     */
+    public static void renderEntityInInventory(GuiGraphicsExtractor guiGraphics, int x, int y, int scale,
+                                                Quaternionf quaternionf, @Nullable Quaternionf quaternionf1,
+                                                Entity entity) {
+        EntityRenderDispatcher dispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
+        EntityRenderState renderState = dispatcher.getRenderer(entity).createRenderState(entity, 1.0F);
+        guiGraphics.entity(renderState, scale, new Vector3f(0.0F, 0.0F, 0.0F),
+                quaternionf, quaternionf1, x - 53, y - 30, x + 53, y + 30);
     }
 }

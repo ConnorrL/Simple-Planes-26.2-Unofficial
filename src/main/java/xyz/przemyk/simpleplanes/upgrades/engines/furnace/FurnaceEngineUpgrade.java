@@ -12,6 +12,7 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.neoforged.neoforge.capabilities.BaseCapability;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -47,8 +48,9 @@ public class FurnaceEngineUpgrade extends EngineUpgrade {
             if (itemBurnTime > 0) {
                 burnTimeTotal = itemBurnTime;
                 burnTime = itemBurnTime;
-                if (itemStack.hasCraftingRemainingItem()) {
-                    itemStackHandler.setStackInSlot(0, itemStack.getCraftingRemainingItem());
+                ItemStackTemplate remainder = itemStack.getItem().getCraftingRemainder(itemStack);
+                if (remainder != null) {
+                    itemStackHandler.setStackInSlot(0, remainder.create());
                 } else {
                     itemStackHandler.extractItem(0, 1, false);
                 }

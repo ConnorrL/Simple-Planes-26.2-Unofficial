@@ -3,6 +3,7 @@ package xyz.przemyk.simpleplanes.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import org.joml.Quaternionf;
@@ -31,8 +32,8 @@ public class CameraMixin {
         )
     )
     private void wrapSetPos(Camera camera, double x, double y, double z, Operation<Void> original) {
-        Entity player = camera.getEntity();
-        if (player.getVehicle() instanceof PlaneEntity planeEntity && !camera.isDetached()) {
+        Entity player = Minecraft.getInstance().getCameraEntity();
+        if (player != null && player.getVehicle() instanceof PlaneEntity planeEntity && !camera.isDetached()) {
             float heightDiff = -0.3f;
 //            if (planeEntity instanceof LargePlaneEntity) {
 //                heightDiff = -0.5f;
