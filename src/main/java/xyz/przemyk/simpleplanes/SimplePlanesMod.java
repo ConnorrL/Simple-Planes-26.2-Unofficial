@@ -85,7 +85,7 @@ public class SimplePlanesMod {
 
     private void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(
-                Capabilities.EnergyStorage.BLOCK,
+                Capabilities.Energy.BLOCK,
                 SimplePlanesBlocks.CHARGING_STATION_TILE.get(),
                 (blockEntity, side) -> blockEntity.energyStorage
         );
@@ -112,8 +112,8 @@ public class SimplePlanesMod {
         event.registerEntity(Capabilities.FluidHandler.ENTITY, type,
                 (entity, ctx) -> entity.getCap(Capabilities.FluidHandler.ENTITY)
         );
-        event.registerEntity(Capabilities.EnergyStorage.ENTITY, type,
-                (entity, ctx) -> entity.getCap(Capabilities.EnergyStorage.ENTITY)
+        event.registerEntity(Capabilities.Energy.ENTITY, type,
+                (entity, ctx) -> entity.getCap(Capabilities.Energy.ENTITY)
         );
     }
 }

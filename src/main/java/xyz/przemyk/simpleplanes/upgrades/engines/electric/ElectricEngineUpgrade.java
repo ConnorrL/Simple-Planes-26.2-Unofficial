@@ -91,7 +91,7 @@ public class ElectricEngineUpgrade extends EngineUpgrade {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getCap(BaseCapability<T, ?> cap) {
-        if (cap == Capabilities.EnergyStorage.ENTITY) {
+        if (cap == Capabilities.Energy.ENTITY) {
             return (T) energyStorage;
         }
 

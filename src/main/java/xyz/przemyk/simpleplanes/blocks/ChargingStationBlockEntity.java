@@ -24,9 +24,13 @@ public class ChargingStationBlockEntity extends BlockEntity {
 
     public static void tick(ChargingStationBlockEntity blockEntity) {
         for (Entity entity : blockEntity.level.getEntities(null, new AABB(blockEntity.worldPosition.above()))) {
-            IEnergyStorage entityEnergy = entity.getCapability(Capabilities.EnergyStorage.ENTITY, Direction.DOWN);
-            if (entityEnergy != null){
-                blockEntity.energyStorage.extractEnergy(entityEnergy.receiveEnergy(blockEntity.energyStorage.extractEnergy(1000, true), false), false);
+            var energyHandler = entity.getCapability(Capabilities.Energy.ENTITY, Direction.DOWN);
+            if (energyHandler != null) {
+                // Bridge older charging logic to the 26.2 transactional energy interface.
+                IEnergyStorage entityEnergy = IEnergyStorage.of(energyHandler);
+                int available = blockEntity.energyStorage.extractEnergy(1000, true);
+                int accepted = entityEnergy.receiveEnergy(available, false);
+                blockEntity.energyStorage.extractEnergy(accepted, false);
             }
         }
     }

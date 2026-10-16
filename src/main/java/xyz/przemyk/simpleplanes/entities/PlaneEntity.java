@@ -993,9 +993,9 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
     }
 
     @Override
-    public boolean causeFallDamage(float fallDistance, float damageMultiplier, DamageSource p_146830_) {
+    public boolean causeFallDamage(double fallDistance, float damageMultiplier, DamageSource p_146830_) {
         if (degreesDifferenceAbs(rotationRoll, 0) > 45) {
-            crash(fallDistance * damageMultiplier);
+            crash((float) (fallDistance * damageMultiplier));
         }
         return false;
     }

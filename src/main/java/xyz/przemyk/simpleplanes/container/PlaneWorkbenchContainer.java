@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -51,7 +52,16 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
         this.player = playerInventory.player;
         this.itemHandler = itemHandler;
         this.usabilityTest = ContainerLevelAccess.create(player.level(), blockPos);
-        this.recipeList = player.level().getRecipeManager().getAllRecipesFor(SimplePlanesRecipes.PLANE_WORKBENCH_RECIPE_TYPE.get());
+        this.recipeList = player.level() instanceof ServerLevel serverLevel
+                ? serverLevel.recipeAccess().recipeMap()
+                    .byType(SimplePlanesRecipes.PLANE_WORKBENCH_RECIPE_TYPE.get()).stream()
+                    .filter(holder -> holder.value() instanceof PlaneWorkbenchRecipe)
+                    .map(holder -> new RecipeHolder<>(holder.id(), (PlaneWorkbenchRecipe) holder.value()))
+                    .toList()
+                : List.of();
+        // The server owns recipe definitions in 26.2; result slots are synced
+        // to the client by ClientboundContainerSetSlotPacket.
+
         this.selectedRecipe = selectedRecipe;
 
         addSlot(new SlotItemHandler(itemHandler, 0, 28, 47));
@@ -73,6 +83,8 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
     }
 
     public void cycleItems(CycleItemsPacket.Direction direction) {
+        if (recipeList.isEmpty()) return;
+        if (selectedRecipe.get() < 0 || selectedRecipe.get() >= recipeList.size()) selectedRecipe.set(0);
         int prevSelectedRecipe = selectedRecipe.get();
         ItemStack ingredient = itemHandler.getStackInSlot(0);
         ItemStack material = itemHandler.getStackInSlot(1);
@@ -102,7 +114,8 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
     }
 
     public void onCrafting() {
-        if (!player.level().isClientSide()) {
+        if (!player.level().isClientSide() && !recipeList.isEmpty()
+                && selectedRecipe.get() >= 0 && selectedRecipe.get() < recipeList.size()) {
             PlaneWorkbenchRecipe recipe = recipeList.get(selectedRecipe.get()).value();
             itemHandler.extractItem(0, recipe.ingredientAmount(), false);
             itemHandler.extractItem(1, recipe.materialAmount(), false);
@@ -119,6 +132,11 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
             ItemStack materialStack = itemHandler.getStackInSlot(1);
             Item materialItem = materialStack.getItem();
 
+            if (recipeList.isEmpty() || selectedRecipe.get() < 0 || selectedRecipe.get() >= recipeList.size()) {
+                resultItemHandler.setStackInSlot(0, ItemStack.EMPTY);
+                serverPlayerEntity.connection.send(new ClientboundContainerSetSlotPacket(containerId, 0, 2, ItemStack.EMPTY));
+                return;
+            }
             PlaneWorkbenchRecipe recipe = recipeList.get(selectedRecipe.get()).value();
 
             if (recipe.canCraft(ingredientStack, materialStack) && materialItem instanceof BlockItem blockItem &&

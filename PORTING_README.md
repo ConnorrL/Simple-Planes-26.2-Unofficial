@@ -225,3 +225,8 @@ Migrated plane-item tints and 26.2 item definitions (all existing item model nam
 ## Port pass 21 (build log `logs_105353543975.zip`)
 
 Build reported 46 errors, 20 warnings. This is a precompilation API pass; changes are documented in `COMPILER_TRIAGE_PASS21.md`. It has **not** compiled. Test new fluid tank serialization with both new and copied old saves before considering server use.
+
+
+## Port Pass 22
+
+See `COMPILER_TRIAGE_PASS22.md`. Incoming build: 40 errors, 20 warnings. Energy storage, workbench server recipes, and plane landing API migrated; no successful compilation or gameplay testing yet.
