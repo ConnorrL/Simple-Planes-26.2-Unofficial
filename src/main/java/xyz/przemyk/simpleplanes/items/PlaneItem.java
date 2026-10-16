@@ -11,6 +11,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -88,7 +89,11 @@ public class PlaneItem extends Item {
             }
 
             if (hitResult.getType() == HitResult.Type.BLOCK) {
-                PlaneEntity planeEntity = planeEntityType.get().create(worldIn);
+                PlaneEntity planeEntity = planeEntityType.get().create(worldIn, EntitySpawnReason.SPAWN_ITEM_USE);
+
+                if (planeEntity == null) {
+                    return InteractionResult.FAIL;
+                }
 
                 planeEntity.setPos(hitResult.getLocation().x(), hitResult.getLocation().y(), hitResult.getLocation().z());
                 planeEntity.setYRot(playerIn.getYRot());

@@ -143,7 +143,7 @@ public class CargoPlaneEntity extends PlaneEntity {
                     largeUpgrades.remove(upgrade);
                 }
                 if (level().isClientSide()) {
-                    PacketDistributor.sendToServer(new DropPayloadPacket());
+                    xyz.przemyk.simpleplanes.client.ClientPlanePackets.sendToServer(new DropPayloadPacket());
                 }
                 break;
             }

@@ -165,7 +165,7 @@ public class LargePlaneEntity extends PlaneEntity {
                     upgrades.remove(SimplePlanesRegistries.UPGRADE_TYPE.getKey(upgrade.getType()));
                 }
                 if (level().isClientSide()) {
-                    PacketDistributor.sendToServer(new DropPayloadPacket());
+                    xyz.przemyk.simpleplanes.client.ClientPlanePackets.sendToServer(new DropPayloadPacket());
                 }
                 break;
             }

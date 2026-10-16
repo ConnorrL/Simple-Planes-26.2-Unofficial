@@ -1,5 +1,8 @@
 package xyz.przemyk.simpleplanes.upgrades.banner;
 
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -20,7 +23,7 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 
 public class BannerModel {
-    private static final BannerBlockEntity BANNER_BLOCK_ENTITY = new BannerBlockEntity(BlockPos.ZERO, Blocks.BLACK_BANNER.defaultBlockState());
+    private static final BannerBlockEntity BANNER_BLOCK_ENTITY = new BannerBlockEntity(BlockPos.ZERO, BuiltInRegistries.BLOCK.getValue(Identifier.parse("minecraft:black_banner")).defaultBlockState());
 
     public static void renderBanner(BannerUpgrade bannerUpgrade, float partialTicks, PoseStack poseStack, MultiBufferSource bufferIn, ItemStack banner, int packedLight) {
         PlaneEntity planeEntity = bannerUpgrade.getPlaneEntity();

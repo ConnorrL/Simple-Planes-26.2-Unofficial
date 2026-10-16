@@ -523,7 +523,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
         if (level().isClientSide() && isControlledByLocalInstance()) {
             setQ_Client(q);
 
-            PacketDistributor.sendToServer(new RotationPacket(getQ()));
+            xyz.przemyk.simpleplanes.client.ClientPlanePackets.sendToServer(new RotationPacket(getQ()));
         } else {
             ServerPlayer player = (ServerPlayer) getPlayer();
             if (player != null) {

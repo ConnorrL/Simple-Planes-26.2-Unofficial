@@ -77,3 +77,25 @@ Changes in this pass:
 - Fix remaining gameplay API changes and test a normal NeoForge server/client before Youer.
 
 Use GitHub Actions for compile diagnostics; do not install this as a functional server mod yet.
+
+
+## Port pass 7 (2026-10-15)
+
+Source: GitHub Actions log `logs_105263020737.zip`, failing at `:compileJava` with the compiler stopping at `-Xmaxerrs 250`.
+
+Targeted, documented changes (not compiled in this environment):
+
+- Replaced 16 removed `Blocks.*_BANNER` fields with item registry lookups by stable `minecraft:<color>_banner` identifiers. 26.2 consolidated the color fields into collections.
+- Updated the banner render block's default state lookup using `minecraft:black_banner` (the renderer itself **still** requires migration).
+- Changed `TagParser.parseTag` to `TagParser.parseCompoundFully` in the payload reload listener.
+- Changed plane placement from `EntityType#create(Level)` to `EntityType#create(Level, EntitySpawnReason.SPAWN_ITEM_USE)`, with a null guard.
+- Moved client-to-server packet sending for plane entities into `client/ClientPlanePackets` using NeoForge's `ClientPacketDistributor` (client-only bridge). Confirm dedicated-server classloading safety at runtime.
+
+### Still required
+
+- Complete redesign of the aircraft rendering submission path (the legacy `MultiBufferSource` and `renderToBuffer` patterns were removed/changed).
+- Migrate all item/fluid/energy capability code to 26.2 resource/transaction handlers, preserving saved inventories and energy.
+- Update entities, GUI screens, recipe manager, and all other compile errors; the next build may show further errors.
+- Validate gameplay on standard NeoForge client + server **before** testing Youer. Do not add this uncompiled code to the production server.
+
+This pass only makes specific verified API replacements; it is **not** a build-tested or functioning port.
