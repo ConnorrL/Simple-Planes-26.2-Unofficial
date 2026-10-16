@@ -96,7 +96,7 @@ public class ClientEventHandler {
                     planeEntity.applyYawToEntity(player);
                 }
 
-                if (mc.gui.screen() == null && mc.getOverlay() == null && openPlaneInventoryKey.consumeClick()) {
+                if (mc.gui.screen() == null && openPlaneInventoryKey.consumeClick()) {
                     ClientPacketDistributor.sendToServer(new OpenPlaneInventoryPacket());
                 } else if (dropPayloadKey.consumeClick()) {
                     planeEntity.dropPayload();

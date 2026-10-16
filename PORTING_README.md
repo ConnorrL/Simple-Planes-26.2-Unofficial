@@ -208,3 +208,7 @@ See `COMPILER_TRIAGE_PASS16.md`. The four targeted changes address item save typ
 
 ## Pass 17 (Oct 16, 2026)
 See `COMPILER_TRIAGE_PASS17.md` for source edits, outstanding API migrations, and validation status.
+
+
+## Pass 18 — October 16, 2026
+See `COMPILER_TRIAGE_PASS18.md`. Latest input build had 56 errors; these fixes have not yet been compiled.

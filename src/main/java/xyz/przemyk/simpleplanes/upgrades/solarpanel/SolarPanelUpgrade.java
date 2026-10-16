@@ -63,7 +63,15 @@ public class SolarPanelUpgrade extends Upgrade {
     }
 
     public static float getSunBrightness(Level world, float partialTicks) {
-        float f = world.getSunAngle(partialTicks) / ((float) Math.PI * 2F);
+        // The old Level#getSunAngle method was removed. Compute its legacy
+        // normalized day/night cycle from world time so solar generation
+        // continues to use the plane world's clock, not a client-only sky API.
+        float dayFraction = ((world.getDefaultClockTime() % 24000L) + partialTicks) / 24000.0F - 0.25F;
+        if (dayFraction < 0.0F) dayFraction += 1.0F;
+        if (dayFraction > 1.0F) dayFraction -= 1.0F;
+        float originalFraction = dayFraction;
+        float easedFraction = 1.0F - (Mth.cos(dayFraction * (float) Math.PI) + 1.0F) / 2.0F;
+        float f = originalFraction + (easedFraction - originalFraction) / 3.0F;
         float f1 = 1.0F - (Mth.cos(f * ((float) Math.PI * 2F)) * 2.0F + 0.2F);
         f1 = Mth.clamp(f1, 0.0F, 1.0F);
         f1 = 1.0F - f1;
