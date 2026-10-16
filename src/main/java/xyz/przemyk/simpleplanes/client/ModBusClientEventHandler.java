@@ -2,6 +2,7 @@ package xyz.przemyk.simpleplanes.client;
 
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
@@ -93,7 +94,7 @@ public class ModBusClientEventHandler {
                 int max_row_size = 5;
 
                 for (int heart = 0; hearts > 0; heart += max_row_size) {
-                    int top = scaledHeight - mc.gui.rightHeight;
+                    int top = scaledHeight - 49 - (heart / max_row_size) * 10;
 
                     int rowCount = Math.min(hearts, max_row_size);
                     hearts -= rowCount;
@@ -102,19 +103,19 @@ public class ModBusClientEventHandler {
                         int x = left_align - i * 16 - 16;
                         int vOffset = 35;
                         if (i + heart + 10 < health)
-                            guiGraphics.blit(HUD_TEXTURE, x, top, GOLD, vOffset, 16, 9);
+                            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, HUD_TEXTURE, x, top, GOLD, vOffset, 16, 9, 256, 256);
                         else if (i + heart < health)
-                            guiGraphics.blit(HUD_TEXTURE, x, top, FULL, vOffset, 16, 9);
+                            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, HUD_TEXTURE, x, top, FULL, vOffset, 16, 9, 256, 256);
                         else
-                            guiGraphics.blit(HUD_TEXTURE, x, top, EMPTY, vOffset, 16, 9);
+                            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, HUD_TEXTURE, x, top, EMPTY, vOffset, 16, 9, 256, 256);
                     }
-                    mc.gui.rightHeight += 10;
+                    // Layout locally: Gui.rightHeight was removed in 26.2.
 
-                    guiGraphics.blit(HUD_TEXTURE, scaledWidth - 24, scaledHeight - 42, 0, 84, 22, 40);
+                    guiGraphics.blit(RenderPipelines.GUI_TEXTURED, HUD_TEXTURE, scaledWidth - 24, scaledHeight - 42, 0, 84, 22, 40, 256, 256);
                     int throttle = planeEntity.getThrottle();
                     if (throttle > 0) {
                         int throttleScaled = throttle * 28 / BoosterUpgrade.MAX_THROTTLE;
-                        guiGraphics.blit(HUD_TEXTURE, scaledWidth - 24 + 10, scaledHeight - 42 + 6 + 28 - throttleScaled, 22, 90 + 28 - throttleScaled, 2, throttleScaled);
+                        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, HUD_TEXTURE, scaledWidth - 24 + 10, scaledHeight - 42 + 6 + 28 - throttleScaled, 22, 90 + 28 - throttleScaled, 2, throttleScaled, 256, 256);
                     }
 
                     if (planeEntity.engineUpgrade != null) {

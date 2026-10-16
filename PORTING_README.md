@@ -188,3 +188,8 @@ Based on `logs_105274094375.zip`. Fixed registration API usage for data componen
 * Archives the 12 legacy immediate-render overrides and old BannerModel source in `PORTING_LEGACY_RENDERING/`; their corresponding incompatible 1.21.1 source definitions are removed from compilation. Gameplay methods, inventories, packets and recipes are preserved.
 * Dynamic banners, folding parts, cargo block models, armor-window tint, and other specialized visual features **still require a correct render-state rewrite** and are not currently submitted.
 * No build or runtime verification was possible locally (JDK 21 here; project targets JDK 25). GitHub Actions is needed to validate the compiler result. The 250-error limit may hide other problems.
+
+
+## Pass 13 — HUD and engine model compatibility
+
+The 2026-10-16 uploaded GitHub Actions log reports 135 Java compilation errors and 20 warnings, rather than 250. This pass migrates 19 legacy HUD and inventory texture draws to `RenderPipelines.GUI_TEXTURED` and fixes seven legacy engine/booster `setupAnim` declarations. The aircraft health overlay no longer uses the removed `Gui.rightHeight` field. Original 256x256 textures and model geometry are retained. This source remains uncompiled and is not a gameplay release. See `COMPILER_TRIAGE_PASS13.md`.

@@ -43,5 +43,7 @@ public class FurnaceEngineModel extends EntityModel<PlaneRenderState> {
 
 
 	@Override
-	public void setupAnim(PlaneEntity p_102618_, float p_102619_, float p_102620_, float p_102621_, float p_102622_, float p_102623_) {}
+	public void setupAnim(PlaneRenderState state) {
+	    super.setupAnim(state);
+	}
 }

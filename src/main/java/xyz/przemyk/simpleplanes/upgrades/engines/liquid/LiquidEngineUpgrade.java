@@ -3,6 +3,7 @@ package xyz.przemyk.simpleplanes.upgrades.engines.liquid;
 import xyz.przemyk.simpleplanes.porting.InventoryTagAdapter;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -149,7 +150,7 @@ public class LiquidEngineUpgrade extends EngineUpgrade {
 
     @Override
     public void renderScreenBg(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks, PlaneInventoryScreen screen) {
-        guiGraphics.blit(PlaneInventoryScreen.GUI, screen.getGuiLeft() + 151, screen.getGuiTop() + 7, 176, 72, 18, 72);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, PlaneInventoryScreen.GUI, screen.getGuiLeft() + 151, screen.getGuiTop() + 7, 176, 72, 18, 72, 256, 256);
         FluidStack fluidStack = fluidTank.getFluid();
         int height = 36;
         int width = 18;
@@ -159,7 +160,7 @@ public class LiquidEngineUpgrade extends EngineUpgrade {
         if (!fluidStack.isEmpty()) {
             ClientUtil.renderLiquidEngineFluid(guiGraphics, screen, fluidStack, height, width, fluidHeight);
         }
-        guiGraphics.blit(PlaneInventoryScreen.GUI, screen.getGuiLeft() + 154, screen.getGuiTop() + 28, 194, 72, 12, 30);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, PlaneInventoryScreen.GUI, screen.getGuiLeft() + 154, screen.getGuiTop() + 28, 194, 72, 12, 30, 256, 256);
     }
 
 }

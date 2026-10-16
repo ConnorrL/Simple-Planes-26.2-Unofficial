@@ -1,6 +1,7 @@
 package xyz.przemyk.simpleplanes.upgrades.engines.electric;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -47,9 +48,9 @@ public class ElectricEngineUpgrade extends EngineUpgrade {
     public void renderPowerHUD(GuiGraphicsExtractor guiGraphics, HumanoidArm side, int scaledWidth, int scaledHeight, float partialTicks) {
         int i = scaledWidth / 2;
         if (side == HumanoidArm.LEFT) {
-            guiGraphics.blit(ModBusClientEventHandler.HUD_TEXTURE, i - 91 - 29, scaledHeight - 22, 38, 44, 22, 21);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, ModBusClientEventHandler.HUD_TEXTURE, i - 91 - 29, scaledHeight - 22, 38, 44, 22, 21, 256, 256);
         } else {
-            guiGraphics.blit(ModBusClientEventHandler.HUD_TEXTURE, i + 91, scaledHeight - 22, 38, 44, 22, 21);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, ModBusClientEventHandler.HUD_TEXTURE, i + 91, scaledHeight - 22, 38, 44, 22, 21, 256, 256);
         }
 
         int energy = energyStorage.getEnergyStored();
@@ -57,9 +58,9 @@ public class ElectricEngineUpgrade extends EngineUpgrade {
         if (energy > 0) {
             int energyScaled = energy * 15 / CAPACITY;
             if (side == HumanoidArm.LEFT) {
-                guiGraphics.blit(ModBusClientEventHandler.HUD_TEXTURE, i - 91 - 29 + 3, scaledHeight - 22 + 16 - energyScaled, 60, 57 - energyScaled, 16, energyScaled + 2);
+                guiGraphics.blit(RenderPipelines.GUI_TEXTURED, ModBusClientEventHandler.HUD_TEXTURE, i - 91 - 29 + 3, scaledHeight - 22 + 16 - energyScaled, 60, 57 - energyScaled, 16, energyScaled + 2, 256, 256);
             } else {
-                guiGraphics.blit(ModBusClientEventHandler.HUD_TEXTURE, i + 91 + 3, scaledHeight - 22 + 16 - energyScaled, 60, 57 - energyScaled, 16, energyScaled + 2);
+                guiGraphics.blit(RenderPipelines.GUI_TEXTURED, ModBusClientEventHandler.HUD_TEXTURE, i + 91 + 3, scaledHeight - 22 + 16 - energyScaled, 60, 57 - energyScaled, 16, energyScaled + 2, 256, 256);
             }
         }
     }
@@ -111,12 +112,12 @@ public class ElectricEngineUpgrade extends EngineUpgrade {
 
     @Override
     public void renderScreenBg(GuiGraphicsExtractor guiGraphics, int x, int y, float partialTicks, PlaneInventoryScreen screen) {
-        guiGraphics.blit(PlaneInventoryScreen.GUI, screen.getGuiLeft() + 152, screen.getGuiTop() + 7, 176, 0, 16, 72);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, PlaneInventoryScreen.GUI, screen.getGuiLeft() + 152, screen.getGuiTop() + 7, 176, 0, 16, 72, 256, 256);
 
         int energy = energyStorage.getEnergyStored();
         if (energy > 0) {
             int energyScaled = energy * 71 / CAPACITY;
-            guiGraphics.blit(PlaneInventoryScreen.GUI, screen.getGuiLeft() + 152, screen.getGuiTop() + 78 - energyScaled, 192, 71 - energyScaled, 16, energyScaled + 1);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, PlaneInventoryScreen.GUI, screen.getGuiLeft() + 152, screen.getGuiTop() + 78 - energyScaled, 192, 71 - energyScaled, 16, energyScaled + 1, 256, 256);
         }
     }
 }
