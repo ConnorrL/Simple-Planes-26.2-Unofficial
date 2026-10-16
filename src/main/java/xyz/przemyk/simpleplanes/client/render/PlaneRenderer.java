@@ -1,51 +1,47 @@
 package xyz.przemyk.simpleplanes.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.client.model.data.ModelData;
-import org.joml.Quaternionf;
-import xyz.przemyk.simpleplanes.entities.CargoPlaneEntity;
+import xyz.przemyk.simpleplanes.client.render.state.PlaneRenderState;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
-import xyz.przemyk.simpleplanes.upgrades.LargeUpgrade;
-import xyz.przemyk.simpleplanes.upgrades.Upgrade;
-import xyz.przemyk.simpleplanes.upgrades.storage.ChestUpgrade;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
-
-    protected final EntityModel<PlaneEntity> propellerModel;
-    protected final EntityModel<T> planeEntityModel;
-    protected final EntityModel<PlaneEntity> planeMetalModel;
+/**
+ * Work-in-progress 26.2 render-state renderer for the base aircraft meshes.
+ * Upgrade overlays and crates MUST be migrated separately to collector submissions.
+ */
+public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T, PlaneRenderState> {
+    protected final EntityModel<PlaneRenderState> propellerModel;
+    protected final EntityModel<PlaneRenderState> planeEntityModel;
+    protected final EntityModel<PlaneRenderState> planeMetalModel;
     protected final Identifier metalTexture;
     protected final Identifier propellerTexture;
 
-    public PlaneRenderer(EntityRendererProvider.Context context, EntityModel<T> planeModel, EntityModel<PlaneEntity> planeMetalModel, EntityModel<PlaneEntity> propellerModel, float shadowSize, Identifier metalTexture, Identifier propellerTexture) {
+    public PlaneRenderer(EntityRendererProvider.Context context,
+                         EntityModel<PlaneRenderState> planeModel,
+                         EntityModel<PlaneRenderState> planeMetalModel,
+                         EntityModel<PlaneRenderState> propellerModel,
+                         float shadowSize, Identifier metalTexture, Identifier propellerTexture) {
         super(context);
-        this.propellerModel = propellerModel;
         this.planeEntityModel = planeModel;
         this.planeMetalModel = planeMetalModel;
+        this.propellerModel = propellerModel;
         this.metalTexture = metalTexture;
         this.propellerTexture = propellerTexture;
         this.shadowRadius = shadowSize;
@@ -56,103 +52,64 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
     }
 
     @Override
-    public void render(T planeEntity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
-        poseStack.pushPose();
-        poseStack.translate(0.0D, 0.375D, 0.0D);
-        poseStack.scale(-1.0F, -1.0F, 1.0F);
-
-        poseStack.mulPose(Axis.YP.rotationDegrees(180));
-
-        Quaternionf q = MathUtil.lerpQ(partialTicks, planeEntity.getQ_Prev(), planeEntity.getQ_Client());
-        poseStack.mulPose(q);
-        EntityType<?> entityType = planeEntity.getType();
-        if (entityType == SimplePlanesEntities.PLANE.get()) {
-            poseStack.translate(0, -0.5, -0.5);
-        } else if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
-            poseStack.translate(0, -0.3, -1);
-        } else if (entityType == SimplePlanesEntities.CARGO_PLANE.get()) {
-            poseStack.translate(0, -0.8, -1);
-        } else {
-            poseStack.translate(0, 0, 0.9);
-        }
-
-        float timeSinceHitWithPartial = (float) planeEntity.getTimeSinceHit() - partialTicks;
-
-        if (timeSinceHitWithPartial > 0.0F) {
-            float angle = Mth.clamp(timeSinceHitWithPartial / 10.0F, -30, 30);
-            timeSinceHitWithPartial = planeEntity.tickCount + partialTicks;
-            poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.sin(timeSinceHitWithPartial) * angle));
-        }
-
-        poseStack.translate(0, -1.1, 0);
-
-        VertexConsumer materialVertexConsumer = buffer.getBuffer(planeEntityModel.renderType(getMaterialTexture(planeEntity)));
-        planeEntityModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
-        planeEntityModel.renderToBuffer(poseStack, materialVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
-
-        VertexConsumer vertexConsumer = ItemRenderer.getArmorFoilBuffer(buffer, planeEntityModel.renderType(propellerTexture), false);
-        propellerModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
-        propellerModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
-
-        vertexConsumer = buffer.getBuffer(planeMetalModel.renderType(metalTexture));
-        planeMetalModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
-        planeMetalModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
-        for (Upgrade upgrade : planeEntity.upgrades.values()) {
-                upgrade.render(poseStack, buffer, packedLight, partialTicks);
-        }
-
-        if (planeEntity instanceof CargoPlaneEntity cargoPlaneEntity) {
-            if (!planeEntity.upgrades.containsKey(SimplePlanesRegistries.UPGRADE_TYPE.getKey(SimplePlanesUpgrades.SEATS.get()))) {
-                UpgradesModels.WOODEN_CARGO_SEATS.renderToBuffer(poseStack, buffer.getBuffer(UpgradesModels.SEATS.renderType(PlaneRenderer.getMaterialTexture(planeEntity))), packedLight, OverlayTexture.NO_OVERLAY);
-            }
-
-            for (int i = 0; i < cargoPlaneEntity.largeUpgrades.size(); i++) {
-                LargeUpgrade upgrade = cargoPlaneEntity.largeUpgrades.get(i);
-                poseStack.pushPose();
-                if (i < 6) {
-                    //noinspection IntegerDivisionInFloatingPointContext
-                    poseStack.translate(i % 2 - 0.5, 0.3125, i / 2 + 0.5);
-                } else {
-                    if (upgrade instanceof ChestUpgrade) {
-                        poseStack.translate(0, -0.1, 0);
-                    }
-                    if (i == 6) {
-                        poseStack.translate(2.875, 1.05, 2.1375);
-                    } else {
-                        poseStack.translate(-2.875, 1.05, 2.1375);
-                    }
-                }
-                upgrade.render(poseStack, buffer, packedLight, partialTicks);
-                poseStack.popPose();
-            }
-        }
-
-        poseStack.popPose();
-
-        super.render(planeEntity, 0, partialTicks, poseStack, buffer, packedLight);
+    public PlaneRenderState createRenderState() {
+        return new PlaneRenderState();
     }
 
     @Override
-    public Identifier getTextureLocation(PlaneEntity entity) {
-        return getMaterialTexture(entity);
+    public void extractRenderState(T plane, PlaneRenderState state, float partialTick) {
+        super.extractRenderState(plane, state, partialTick);
+        state.propellerRotation = getPropellerRotation(plane, partialTick);
+        state.planeRotation.set(MathUtil.lerpQ(partialTick, plane.getQ_Prev(), plane.getQ_Client()));
+        state.materialTexture = getMaterialTexture(plane);
+        EntityType<?> type = plane.getType();
+        state.planeVariant = type == SimplePlanesEntities.PLANE.get() ? 0
+            : type == SimplePlanesEntities.LARGE_PLANE.get() ? 1
+            : type == SimplePlanesEntities.CARGO_PLANE.get() ? 2 : 3;
+        float hitRemaining = plane.getTimeSinceHit() - partialTick;
+        state.hitShake = hitRemaining > 0 ? Mth.clamp(hitRemaining / 10.0f, -30.0f, 30.0f) : 0.0f;
+        state.hitPhase = plane.tickCount + partialTick;
     }
 
-    public static Identifier getMaterialTexture(PlaneEntity entity) {
-        Block block = entity.getMaterial();
-        if (cachedTextures.containsKey(block)) {
-            return cachedTextures.get(block);
+    @Override
+    public void submit(PlaneRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState cameraState) {
+        super.submit(state, poseStack, collector, cameraState);
+        poseStack.pushPose();
+        poseStack.translate(0.0, 0.375, 0.0);
+        poseStack.scale(-1.0f, -1.0f, 1.0f);
+        poseStack.mulPose(Axis.YP.rotationDegrees(180));
+        poseStack.mulPose(state.planeRotation);
+        switch (state.planeVariant) {
+            case 0 -> poseStack.translate(0, -0.5, -0.5);
+            case 1 -> poseStack.translate(0, -0.3, -1);
+            case 2 -> poseStack.translate(0, -0.8, -1);
+            default -> poseStack.translate(0, 0, 0.9);
         }
-
-        Identifier texture;
-        try {
-            Identifier sprite = Minecraft.getInstance().getModelManager().getModel(new ModelResourceLocation(BuiltInRegistries.BLOCK.getKey(block), "inventory")).getQuads(null, Direction.SOUTH, RandomSource.create(), ModelData.EMPTY, null).getFirst().getSprite().contents().name();
-            texture = Identifier.fromNamespaceAndPath(sprite.getNamespace(), "textures/" + sprite.getPath() + ".png");
-        } catch (IndexOutOfBoundsException | NullPointerException exception) {
-            texture = FALLBACK_TEXTURE;
+        if (state.hitShake > 0) {
+            poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.sin(state.hitPhase) * state.hitShake));
         }
+        poseStack.translate(0, -1.1, 0);
+        // Copy model transforms into the queued model submissions. The render graph draws later.
+        collector.submitModel(planeEntityModel, state, poseStack, RenderTypes.entityCutout(state.materialTexture),
+            state.lightCoords, OverlayTexture.NO_OVERLAY, -1, null, 0, null);
+        collector.submitModel(propellerModel, state, poseStack, RenderTypes.entityCutout(propellerTexture),
+            state.lightCoords, OverlayTexture.NO_OVERLAY, -1, null, 0, null);
+        collector.submitModel(planeMetalModel, state, poseStack, RenderTypes.entityCutout(metalTexture),
+            state.lightCoords, OverlayTexture.NO_OVERLAY, -1, null, 0, null);
+        poseStack.popPose();
+        // TODO: submit seats, equipment, large upgrades and banners from immutable state.
+    }
 
-        cachedTextures.put(block, texture);
-        return texture;
+    // Placeholder for 26.2's redesigned block-model sprite API; preserve the legacy
+    // material reference and allow all named plank textures until atlas lookup is ported.
+    public static Identifier getMaterialTexture(PlaneEntity plane) {
+        return cachedTextures.computeIfAbsent(plane.getMaterial(), block -> {
+            Identifier id = BuiltInRegistries.BLOCK.getKey(block);
+            if (id != null && id.getPath().endsWith("_planks")) {
+                return Identifier.fromNamespaceAndPath(id.getNamespace(), "textures/block/" + id.getPath() + ".png");
+            }
+            return FALLBACK_TEXTURE;
+        });
     }
 
     public static final Map<Block, Identifier> cachedTextures = new HashMap<>();

@@ -169,3 +169,13 @@ https://github.com/neoforged/NeoForge/blob/26.2.x/src/main/java/net/neoforged/ne
 ## Port Pass 10 (2026-10-15)
 
 Based on `logs_105274094375.zip`. Fixed registration API usage for data components, entity types, block entities, creative tab material lookups, custom recipe result codec, and server datapack reload listeners. See `COMPILER_TRIAGE_PASS10.md` for the grouped compiler error summary. **Not compile tested; more errors are expected.**
+
+
+## Pass 11 — Model API migration (UNTESTED)
+
+- Migrated 39 upgrade model classes to `EntityModel<PlaneRenderState>` with `super(root)` and single-argument `setupAnim`. Removed overrides of final `Model.renderToBuffer`; the baked root now draws all children.
+- Migrated the core plane meshes (hull, propeller and metal) and parachute cloth mesh to 26.2 `EntityRenderer#extractRenderState` and `#submit` with `SubmitNodeCollector#submitModel`.
+- Kept original asset files and Java flight/gameplay logic.
+- **Incomplete:** Upgrade overlays, cargo barrels, animated equipment and banners are NOT submitted by the new renderer, so they may be invisible even if this branch eventually compiles. Non-plank aircraft material texture lookups currently use oak as fallback. Restore proper dynamic sprite lookup before release.
+- NeoForge item/fluid/energy capabilities, workbench recipes, GUI and tint sources still need migrating. Expect many compile errors. No successful build or playtest has been performed.
+- No live server testing: test with an isolated 26.2 NeoForge client and server first.

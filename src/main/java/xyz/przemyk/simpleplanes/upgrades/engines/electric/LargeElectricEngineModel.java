@@ -1,17 +1,17 @@
 package xyz.przemyk.simpleplanes.upgrades.engines.electric;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
+import xyz.przemyk.simpleplanes.client.render.state.PlaneRenderState;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
-public class LargeElectricEngineModel extends EntityModel<PlaneEntity> {
+public class LargeElectricEngineModel extends EntityModel<PlaneRenderState> {
 	private final ModelPart ElectricalEngine;
 
 	public LargeElectricEngineModel(ModelPart root) {
+        super(root);
 		this.ElectricalEngine = root.getChild("ElectricalEngine");
 	}
 
@@ -51,10 +51,6 @@ public class LargeElectricEngineModel extends EntityModel<PlaneEntity> {
 		return LayerDefinition.create(meshdefinition, 256, 256);
 	}
 
-	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
-		ElectricalEngine.render(poseStack, vertexConsumer, packedLight, packedOverlay);
-	}
 
 	@Override
 	public void setupAnim(PlaneEntity p_102618_, float p_102619_, float p_102620_, float p_102621_, float p_102622_, float p_102623_) {}

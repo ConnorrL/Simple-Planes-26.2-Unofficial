@@ -1,23 +1,20 @@
 package xyz.przemyk.simpleplanes.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.model.data.ModelData;
 import xyz.przemyk.simpleplanes.client.render.models.ParachuteModel;
+import xyz.przemyk.simpleplanes.client.render.state.ParachuteRenderState;
 import xyz.przemyk.simpleplanes.entities.ParachuteEntity;
 
-public class ParachuteRenderer extends EntityRenderer<ParachuteEntity> {
-
+/** 26.2 entity state renderer. Cargo barrel geometry still needs a collector submission. */
+public class ParachuteRenderer extends EntityRenderer<ParachuteEntity, ParachuteRenderState> {
     public static final Identifier TEXTURE = Identifier.fromNamespaceAndPath("minecraft", "textures/block/white_wool.png");
-
     private final ParachuteModel parachuteModel;
 
     public ParachuteRenderer(EntityRendererProvider.Context context, ParachuteModel parachuteModel) {
@@ -26,30 +23,22 @@ public class ParachuteRenderer extends EntityRenderer<ParachuteEntity> {
     }
 
     @Override
-    public Identifier getTextureLocation(ParachuteEntity p_114482_) {
-        return TEXTURE;
+    public ParachuteRenderState createRenderState() { return new ParachuteRenderState(); }
+
+    @Override
+    public void extractRenderState(ParachuteEntity entity, ParachuteRenderState state, float partialTick) {
+        super.extractRenderState(entity, state, partialTick);
+        state.hasStorageCrate = entity.hasStorageCrate();
     }
 
     @Override
-    public void render(ParachuteEntity parachuteEntity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packetLight) {
+    public void submit(ParachuteRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState cameraState) {
+        super.submit(state, poseStack, collector, cameraState);
         poseStack.pushPose();
-
-        if (parachuteEntity.hasStorageCrate()) {
-            poseStack.pushPose();
-            poseStack.translate(-0.5, 0, -0.5);
-            BlockState state = Blocks.BARREL.defaultBlockState();
-            Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, poseStack, buffer, packetLight, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, null);
-            poseStack.popPose();
-            poseStack.scale(-1.0f, -1.0f, 1.0f);
-            poseStack.translate(0, -2.0, 0);
-        } else {
-            poseStack.scale(-1.0f, -1.0f, 1.0f);
-            poseStack.translate(0, -3.0, 0);
-        }
-
-        VertexConsumer vertexConsumer = buffer.getBuffer(parachuteModel.renderType(getTextureLocation(parachuteEntity)));
-        parachuteModel.renderToBuffer(poseStack, vertexConsumer, packetLight, OverlayTexture.NO_OVERLAY);
+        poseStack.scale(-1.0f, -1.0f, 1.0f);
+        poseStack.translate(0, state.hasStorageCrate ? -2.0 : -3.0, 0);
+        collector.submitModel(parachuteModel, state, poseStack, RenderTypes.entityCutout(TEXTURE),
+            state.lightCoords, OverlayTexture.NO_OVERLAY, -1, null, 0, null);
         poseStack.popPose();
-        super.render(parachuteEntity, entityYaw, partialTicks, poseStack, buffer, packetLight);
     }
 }

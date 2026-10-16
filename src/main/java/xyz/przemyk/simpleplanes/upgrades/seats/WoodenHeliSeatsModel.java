@@ -1,17 +1,17 @@
 package xyz.przemyk.simpleplanes.upgrades.seats;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
+import xyz.przemyk.simpleplanes.client.render.state.PlaneRenderState;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
-public class WoodenHeliSeatsModel extends EntityModel<PlaneEntity> {
+public class WoodenHeliSeatsModel extends EntityModel<PlaneRenderState> {
 	private final ModelPart Seats;
 
 	public WoodenHeliSeatsModel(ModelPart root) {
+        super(root);
 		this.Seats = root.getChild("Seats");
 	}
 
@@ -26,10 +26,8 @@ public class WoodenHeliSeatsModel extends EntityModel<PlaneEntity> {
 	}
 
 	@Override
-	public void setupAnim(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {}
+    public void setupAnim(PlaneRenderState state) {
+        super.setupAnim(state);
+    }
 
-	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
-		Seats.render(poseStack, vertexConsumer, packedLight, packedOverlay);
-	}
 }

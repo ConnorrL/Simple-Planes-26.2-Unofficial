@@ -3,7 +3,7 @@ package xyz.przemyk.simpleplanes.client.render;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.monster.shulker.ShulkerModel;
 import net.minecraft.resources.Identifier;
-import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+import xyz.przemyk.simpleplanes.client.render.state.PlaneRenderState;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 import xyz.przemyk.simpleplanes.upgrades.armor.ArmorWindowModel;
 import xyz.przemyk.simpleplanes.upgrades.floating.WoodenCargoFloatingModel;
@@ -25,8 +25,8 @@ public class UpgradesModels {
 
     public static final HashMap<UpgradeType, ModelEntry> MODEL_ENTRIES = new HashMap<>();
 
-    public record ModelEntry(EntityModel<PlaneEntity> normal, Identifier normalTexture,
-                             EntityModel<PlaneEntity> large, Identifier largeTexture,
-                             EntityModel<PlaneEntity> heli, Identifier heliTexture,
-                             EntityModel<PlaneEntity> cargo, Identifier cargoTexture) {}
+    public record ModelEntry(EntityModel<PlaneRenderState> normal, Identifier normalTexture,
+                             EntityModel<PlaneRenderState> large, Identifier largeTexture,
+                             EntityModel<PlaneRenderState> heli, Identifier heliTexture,
+                             EntityModel<PlaneRenderState> cargo, Identifier cargoTexture) {}
 }

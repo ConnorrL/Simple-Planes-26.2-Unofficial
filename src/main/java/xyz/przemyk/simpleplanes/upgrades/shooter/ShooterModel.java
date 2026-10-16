@@ -1,19 +1,19 @@
 package xyz.przemyk.simpleplanes.upgrades.shooter;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
+import xyz.przemyk.simpleplanes.client.render.state.PlaneRenderState;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
-public class ShooterModel extends EntityModel<PlaneEntity> {
+public class ShooterModel extends EntityModel<PlaneRenderState> {
 
     private final ModelPart Shooter;
     private final ModelPart bb_main;
 
     public ShooterModel(ModelPart root) {
+        super(root);
         this.Shooter = root.getChild("Shooter");
         this.bb_main = root.getChild("bb_main");
     }
@@ -38,11 +38,6 @@ public class ShooterModel extends EntityModel<PlaneEntity> {
         return LayerDefinition.create(meshdefinition, 32, 32);
     }
 
-    @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
-        Shooter.render(poseStack, vertexConsumer, packedLight, packedOverlay);
-        bb_main.render(poseStack, vertexConsumer, packedLight, packedOverlay);
-    }
 
     @Override
     public void setupAnim(PlaneEntity p_102618_, float p_102619_, float p_102620_, float p_102621_, float p_102622_, float p_102623_) {}
