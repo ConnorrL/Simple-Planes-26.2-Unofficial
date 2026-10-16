@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.Entity;
@@ -123,7 +123,7 @@ public class CargoPlaneEntity extends PlaneEntity {
             new NewCargoUpgradePacket(SimplePlanesRegistries.UPGRADE_TYPE.getKey(largeUpgrade.getType()), getId(), largeUpgrade));
     }
 
-    public void readNewCargoUpgradePacket(ResourceLocation upgradeID, ByteBuf packetBuffer) {
+    public void readNewCargoUpgradePacket(Identifier upgradeID, ByteBuf packetBuffer) {
         UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPE.get(upgradeID);
         Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
         if (upgrade instanceof LargeUpgrade largeUpgrade) {
@@ -243,7 +243,7 @@ public class CargoPlaneEntity extends PlaneEntity {
             largeUpgrades.clear();
             for (int i = 0; i < listTag.size(); i++) {
                 CompoundTag compoundTag = listTag.getCompound(i);
-                UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPE.get(ResourceLocation.parse(compoundTag.getString("id")));
+                UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPE.get(Identifier.parse(compoundTag.getString("id")));
                 if (upgradeType != null) {
                     Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
                     if (upgrade instanceof LargeUpgrade largeUpgrade) {
@@ -275,8 +275,8 @@ public class CargoPlaneEntity extends PlaneEntity {
 
         buffer.writeVarInt(largeUpgrades.size());
         for (LargeUpgrade upgrade : largeUpgrades) {
-            ResourceLocation upgradeID = SimplePlanesRegistries.UPGRADE_TYPE.getKey(upgrade.getType());
-            buffer.writeResourceLocation(upgradeID);
+            Identifier upgradeID = SimplePlanesRegistries.UPGRADE_TYPE.getKey(upgrade.getType());
+            buffer.writeIdentifier(upgradeID);
             upgrade.writePacket(buffer);
         }
     }
@@ -286,7 +286,7 @@ public class CargoPlaneEntity extends PlaneEntity {
         super.readSpawnData(additionalData);
         int largeUpgradesSize = additionalData.readVarInt();
         for (int i = 0; i < largeUpgradesSize; i++) {
-            ResourceLocation upgradeID = additionalData.readResourceLocation();
+            Identifier upgradeID = additionalData.readIdentifier();
             UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPE.get(upgradeID);
             Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
             largeUpgrades.add((LargeUpgrade) upgrade);

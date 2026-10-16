@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
@@ -38,10 +38,10 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
     protected final EntityModel<PlaneEntity> propellerModel;
     protected final EntityModel<T> planeEntityModel;
     protected final EntityModel<PlaneEntity> planeMetalModel;
-    protected final ResourceLocation metalTexture;
-    protected final ResourceLocation propellerTexture;
+    protected final Identifier metalTexture;
+    protected final Identifier propellerTexture;
 
-    public PlaneRenderer(EntityRendererProvider.Context context, EntityModel<T> planeModel, EntityModel<PlaneEntity> planeMetalModel, EntityModel<PlaneEntity> propellerModel, float shadowSize, ResourceLocation metalTexture, ResourceLocation propellerTexture) {
+    public PlaneRenderer(EntityRendererProvider.Context context, EntityModel<T> planeModel, EntityModel<PlaneEntity> planeMetalModel, EntityModel<PlaneEntity> propellerModel, float shadowSize, Identifier metalTexture, Identifier propellerTexture) {
         super(context);
         this.propellerModel = propellerModel;
         this.planeEntityModel = planeModel;
@@ -133,20 +133,20 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(PlaneEntity entity) {
+    public Identifier getTextureLocation(PlaneEntity entity) {
         return getMaterialTexture(entity);
     }
 
-    public static ResourceLocation getMaterialTexture(PlaneEntity entity) {
+    public static Identifier getMaterialTexture(PlaneEntity entity) {
         Block block = entity.getMaterial();
         if (cachedTextures.containsKey(block)) {
             return cachedTextures.get(block);
         }
 
-        ResourceLocation texture;
+        Identifier texture;
         try {
-            ResourceLocation sprite = Minecraft.getInstance().getModelManager().getModel(new ModelResourceLocation(BuiltInRegistries.BLOCK.getKey(block), "inventory")).getQuads(null, Direction.SOUTH, RandomSource.create(), ModelData.EMPTY, null).getFirst().getSprite().contents().name();
-            texture = ResourceLocation.fromNamespaceAndPath(sprite.getNamespace(), "textures/" + sprite.getPath() + ".png");
+            Identifier sprite = Minecraft.getInstance().getModelManager().getModel(new ModelResourceLocation(BuiltInRegistries.BLOCK.getKey(block), "inventory")).getQuads(null, Direction.SOUTH, RandomSource.create(), ModelData.EMPTY, null).getFirst().getSprite().contents().name();
+            texture = Identifier.fromNamespaceAndPath(sprite.getNamespace(), "textures/" + sprite.getPath() + ".png");
         } catch (IndexOutOfBoundsException | NullPointerException exception) {
             texture = FALLBACK_TEXTURE;
         }
@@ -155,6 +155,6 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
         return texture;
     }
 
-    public static final Map<Block, ResourceLocation> cachedTextures = new HashMap<>();
-    public static final ResourceLocation FALLBACK_TEXTURE = ResourceLocation.fromNamespaceAndPath("minecraft", "textures/block/oak_planks.png");
+    public static final Map<Block, Identifier> cachedTextures = new HashMap<>();
+    public static final Identifier FALLBACK_TEXTURE = Identifier.fromNamespaceAndPath("minecraft", "textures/block/oak_planks.png");
 }

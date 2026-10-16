@@ -4,7 +4,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
@@ -25,13 +25,13 @@ public class IronChestsCompat {
     public static final String OBSIDIAN_CHEST_NAME = MODID + ":obsidian_chest";
     public static final String DIRT_CHEST_NAME = MODID + ":dirt_chest";
 
-    public static final ResourceLocation IRON_CHEST_GUI = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/iron_container.png");
-    public static final ResourceLocation GOLD_CHEST_GUI = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/gold_container.png");
-    public static final ResourceLocation DIAMOND_CHEST_GUI = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/diamond_container.png");
-    public static final ResourceLocation COPPER_CHEST_GUI = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/copper_container.png");
-    public static final ResourceLocation SILVER_CHEST_GUI = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/silver_container.png");
-    public static final ResourceLocation DIRT_CHEST_GUI = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dirt_container.png");
-    public static final ResourceLocation VANILLA_CHEST_GUI = ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "textures/gui/vanilla_chest.png");
+    public static final Identifier IRON_CHEST_GUI = Identifier.fromNamespaceAndPath(MODID, "textures/gui/iron_container.png");
+    public static final Identifier GOLD_CHEST_GUI = Identifier.fromNamespaceAndPath(MODID, "textures/gui/gold_container.png");
+    public static final Identifier DIAMOND_CHEST_GUI = Identifier.fromNamespaceAndPath(MODID, "textures/gui/diamond_container.png");
+    public static final Identifier COPPER_CHEST_GUI = Identifier.fromNamespaceAndPath(MODID, "textures/gui/copper_container.png");
+    public static final Identifier SILVER_CHEST_GUI = Identifier.fromNamespaceAndPath(MODID, "textures/gui/silver_container.png");
+    public static final Identifier DIRT_CHEST_GUI = Identifier.fromNamespaceAndPath(MODID, "textures/gui/dirt_container.png");
+    public static final Identifier VANILLA_CHEST_GUI = Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "textures/gui/vanilla_chest.png");
 
     private static void registerChest(Item chestItem) {
         if (chestItem != Items.AIR) {
@@ -40,14 +40,14 @@ public class IronChestsCompat {
     }
 
     public static void registerUpgradeItems() {
-        registerChest(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("ironchest", "iron_chest")));
-        registerChest(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("ironchest", "gold_chest")));
-        registerChest(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("ironchest", "diamond_chest")));
-        registerChest(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("ironchest", "copper_chest")));
-        registerChest(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("ironchest", "silver_chest")));
-        registerChest(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("ironchest", "crystal_chest")));
-        registerChest(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("ironchest", "obsidian_chest")));
-        registerChest(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("ironchest", "dirt_chest")));
+        registerChest(BuiltInRegistries.ITEM.get(Identifier.fromNamespaceAndPath("ironchest", "iron_chest")));
+        registerChest(BuiltInRegistries.ITEM.get(Identifier.fromNamespaceAndPath("ironchest", "gold_chest")));
+        registerChest(BuiltInRegistries.ITEM.get(Identifier.fromNamespaceAndPath("ironchest", "diamond_chest")));
+        registerChest(BuiltInRegistries.ITEM.get(Identifier.fromNamespaceAndPath("ironchest", "copper_chest")));
+        registerChest(BuiltInRegistries.ITEM.get(Identifier.fromNamespaceAndPath("ironchest", "silver_chest")));
+        registerChest(BuiltInRegistries.ITEM.get(Identifier.fromNamespaceAndPath("ironchest", "crystal_chest")));
+        registerChest(BuiltInRegistries.ITEM.get(Identifier.fromNamespaceAndPath("ironchest", "obsidian_chest")));
+        registerChest(BuiltInRegistries.ITEM.get(Identifier.fromNamespaceAndPath("ironchest", "dirt_chest")));
     }
 
     public static int getSize(String chestType) {
@@ -118,7 +118,7 @@ public class IronChestsCompat {
         };
     }
 
-    public static ResourceLocation getGuiTexture(String chestType) {
+    public static Identifier getGuiTexture(String chestType) {
         return switch (chestType) {
             case IRON_CHEST_NAME -> IRON_CHEST_GUI;
             case GOLD_CHEST_NAME -> GOLD_CHEST_GUI;

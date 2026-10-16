@@ -1,7 +1,7 @@
 package xyz.przemyk.simpleplanes.setup;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -16,5 +16,5 @@ public class SimplePlanesSounds {
         SOUND_EVENTS.register(bus);
     }
 
-    public static final Supplier<SoundEvent> PLANE_LOOP_SOUND_EVENT = SOUND_EVENTS.register("plane_loop", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "plane_loop")));
+    public static final Supplier<SoundEvent> PLANE_LOOP_SOUND_EVENT = SOUND_EVENTS.register("plane_loop", () -> SoundEvent.createVariableRangeEvent(Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "plane_loop")));
 }

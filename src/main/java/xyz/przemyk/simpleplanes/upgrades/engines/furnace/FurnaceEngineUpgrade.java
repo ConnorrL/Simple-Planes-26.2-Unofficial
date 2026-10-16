@@ -1,7 +1,7 @@
 package xyz.przemyk.simpleplanes.upgrades.engines.furnace;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -110,7 +110,7 @@ public class FurnaceEngineUpgrade extends EngineUpgrade {
     }
 
     @Override
-    public void renderPowerHUD(GuiGraphics guiGraphics, HumanoidArm side, int scaledWidth, int scaledHeight, float partialTicks) {
+    public void renderPowerHUD(GuiGraphicsExtractor guiGraphics, HumanoidArm side, int scaledWidth, int scaledHeight, float partialTicks) {
         int i = scaledWidth / 2;
         Minecraft mc = Minecraft.getInstance();
         if (side == HumanoidArm.LEFT) {
@@ -150,7 +150,7 @@ public class FurnaceEngineUpgrade extends EngineUpgrade {
     }
 
     @Override
-    public void renderScreenBg(GuiGraphics guiGraphics, int x, int y, float partialTicks, PlaneInventoryScreen screen) {
+    public void renderScreenBg(GuiGraphicsExtractor guiGraphics, int x, int y, float partialTicks, PlaneInventoryScreen screen) {
         guiGraphics.blit(PlaneInventoryScreen.GUI, screen.getGuiLeft() + 151, screen.getGuiTop() + 44, 208, 0, 18, 35);
 
         if (burnTime > 0) {

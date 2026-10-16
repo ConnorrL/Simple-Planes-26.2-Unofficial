@@ -1,6 +1,6 @@
 package xyz.przemyk.simpleplanes.upgrades.engines.liquid;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -127,7 +127,7 @@ public class LiquidEngineUpgrade extends EngineUpgrade {
     }
 
     @Override
-    public void renderPowerHUD(GuiGraphics guiGraphics, HumanoidArm side, int scaledWidth, int scaledHeight, float partialTicks) {
+    public void renderPowerHUD(GuiGraphicsExtractor guiGraphics, HumanoidArm side, int scaledWidth, int scaledHeight, float partialTicks) {
         //TODO
     }
 
@@ -138,7 +138,7 @@ public class LiquidEngineUpgrade extends EngineUpgrade {
     }
 
     @Override
-    public void renderScreen(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks, PlaneInventoryScreen planeInventoryScreen) {
+    public void renderScreen(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks, PlaneInventoryScreen planeInventoryScreen) {
         if (planeInventoryScreen.isHovering(153, 7 + 18 + 2, 16, 32, mouseX, mouseY)) {
             FluidStack fluidStack = fluidTank.getFluid();
             guiGraphics.renderTooltip(planeInventoryScreen.getMinecraft().font, Component.translatable(SimplePlanesMod.MODID + ".gui.fluid", fluidStack.getHoverName(), fluidStack.getAmount()), mouseX, mouseY);
@@ -146,7 +146,7 @@ public class LiquidEngineUpgrade extends EngineUpgrade {
     }
 
     @Override
-    public void renderScreenBg(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks, PlaneInventoryScreen screen) {
+    public void renderScreenBg(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks, PlaneInventoryScreen screen) {
         guiGraphics.blit(PlaneInventoryScreen.GUI, screen.getGuiLeft() + 151, screen.getGuiTop() + 7, 176, 72, 18, 72);
         FluidStack fluidStack = fluidTank.getFluid();
         int height = 36;

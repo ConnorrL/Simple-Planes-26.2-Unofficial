@@ -1,10 +1,10 @@
 package xyz.przemyk.simpleplanes.client.gui;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.network.PacketDistributor;
 import xyz.przemyk.simpleplanes.compat.ironchest.IronChestsCompat;
@@ -13,7 +13,7 @@ import xyz.przemyk.simpleplanes.network.CyclePlaneInventoryPacket;
 
 public class StorageScreen extends AbstractContainerScreen<StorageContainer> {
 
-    public final ResourceLocation texture;
+    public final Identifier texture;
     public final int textureYSize;
 
     public StorageScreen(StorageContainer screenContainer, Inventory inv, Component titleIn) {
@@ -36,13 +36,13 @@ public class StorageScreen extends AbstractContainerScreen<StorageContainer> {
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
         renderTooltip(guiGraphics, mouseX, mouseY);
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(GuiGraphicsExtractor guiGraphics, float partialTicks, int mouseX, int mouseY) {
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
         guiGraphics.blit(texture, x, y, 0.0F, 0.0F, imageWidth, imageHeight, 256, textureYSize);

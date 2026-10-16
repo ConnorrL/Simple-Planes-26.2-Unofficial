@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.model.data.ModelData;
@@ -16,7 +16,7 @@ import xyz.przemyk.simpleplanes.entities.ParachuteEntity;
 
 public class ParachuteRenderer extends EntityRenderer<ParachuteEntity> {
 
-    public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("minecraft", "textures/block/white_wool.png");
+    public static final Identifier TEXTURE = Identifier.fromNamespaceAndPath("minecraft", "textures/block/white_wool.png");
 
     private final ParachuteModel parachuteModel;
 
@@ -26,7 +26,7 @@ public class ParachuteRenderer extends EntityRenderer<ParachuteEntity> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(ParachuteEntity p_114482_) {
+    public Identifier getTextureLocation(ParachuteEntity p_114482_) {
         return TEXTURE;
     }
 

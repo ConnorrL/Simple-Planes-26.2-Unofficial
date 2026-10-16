@@ -6,7 +6,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
@@ -15,18 +15,18 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 public class UpdateUpgradePacket implements CustomPacketPayload {
 
     public final boolean newUpgrade;
-    public final ResourceLocation upgradeID;
+    public final Identifier upgradeID;
     public final int planeEntityID;
     public ByteBuf buf;
     private ServerLevel serverLevel;
 
-    public UpdateUpgradePacket(boolean newUpgrade, ResourceLocation upgradeID, int planeEntityID, ByteBuf buf) {
+    public UpdateUpgradePacket(boolean newUpgrade, Identifier upgradeID, int planeEntityID, ByteBuf buf) {
         this.newUpgrade = newUpgrade;
         this.upgradeID = upgradeID;
         this.planeEntityID = planeEntityID;
         this.buf = buf;
     }
-    public UpdateUpgradePacket(boolean newUpgrade, ResourceLocation upgradeID, int planeEntityID, ServerLevel serverLevel) {
+    public UpdateUpgradePacket(boolean newUpgrade, Identifier upgradeID, int planeEntityID, ServerLevel serverLevel) {
         this.newUpgrade = newUpgrade;
         this.upgradeID = upgradeID;
         this.planeEntityID = planeEntityID;
@@ -34,7 +34,7 @@ public class UpdateUpgradePacket implements CustomPacketPayload {
     }
 
     public static final CustomPacketPayload.Type<UpdateUpgradePacket> TYPE =
-        new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "update_upgrade"));
+        new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "update_upgrade"));
 
     public static final StreamCodec<ByteBuf, UpdateUpgradePacket> STREAM_CODEC = new StreamCodec<>() {
         @Override
@@ -42,7 +42,7 @@ public class UpdateUpgradePacket implements CustomPacketPayload {
             FriendlyByteBuf buffer = new FriendlyByteBuf(pBuffer);
             boolean newUpgrade = buffer.readBoolean();
             int planeEntityID = buffer.readVarInt();
-            ResourceLocation upgradeID = buffer.readResourceLocation();
+            Identifier upgradeID = buffer.readIdentifier();
             ByteBuf cloned = pBuffer.copy();
             pBuffer.clear();
             return new UpdateUpgradePacket(newUpgrade, upgradeID, planeEntityID, cloned);
@@ -53,7 +53,7 @@ public class UpdateUpgradePacket implements CustomPacketPayload {
             FriendlyByteBuf buffer = new FriendlyByteBuf(pBuffer);
             buffer.writeBoolean(pValue.newUpgrade);
             buffer.writeVarInt(pValue.planeEntityID);
-            buffer.writeResourceLocation(pValue.upgradeID);
+            buffer.writeIdentifier(pValue.upgradeID);
             PlaneEntity planeEntity = (PlaneEntity) pValue.serverLevel.getEntity(pValue.planeEntityID);
             planeEntity.writeUpdateUpgradePacket(pValue.upgradeID, new FriendlyByteBuf(pBuffer));
         }

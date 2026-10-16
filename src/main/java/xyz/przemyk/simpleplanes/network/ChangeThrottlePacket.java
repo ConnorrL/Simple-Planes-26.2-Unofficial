@@ -3,7 +3,7 @@ package xyz.przemyk.simpleplanes.network;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
@@ -11,7 +11,7 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 public record ChangeThrottlePacket(Direction direction) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<ChangeThrottlePacket> TYPE =
-        new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "throttle"));
+        new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "throttle"));
 
     public static final StreamCodec<ByteBuf, ChangeThrottlePacket> STREAM_CODEC = new StreamCodec<>() {
         @Override

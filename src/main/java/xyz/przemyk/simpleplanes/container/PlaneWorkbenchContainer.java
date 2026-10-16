@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
@@ -30,7 +30,7 @@ import java.util.List;
 
 public class PlaneWorkbenchContainer extends AbstractContainerMenu {
 
-    public static final ResourceLocation PLANE_MATERIALS = ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "plane_materials");
+    public static final Identifier PLANE_MATERIALS = Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "plane_materials");
     public static final TagKey<Block> PLANE_MATERIALS_TAG = BlockTags.create(PLANE_MATERIALS);
 
     private final ItemStackHandler itemHandler;

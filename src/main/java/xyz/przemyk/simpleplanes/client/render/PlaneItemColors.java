@@ -6,7 +6,7 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -30,7 +30,7 @@ public class PlaneItemColors {
         }
 
         if (entityTag != null && entityTag.contains("material")) {
-            Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(entityTag.getString("material")));
+            Block block = BuiltInRegistries.BLOCK.get(Identifier.parse(entityTag.getString("material")));
             if (block != null) {
                 if (cachedColors.containsKey(block)) {
                     return cachedColors.get(block);

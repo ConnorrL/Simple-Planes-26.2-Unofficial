@@ -2,7 +2,7 @@ package xyz.przemyk.simpleplanes.setup;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
@@ -14,7 +14,7 @@ import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 @EventBusSubscriber(modid = SimplePlanesMod.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class SimplePlanesRegistries {
 
-    public static final ResourceKey<Registry<UpgradeType>> UPGRADE_TYPE_REGISTRY_KEY = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "upgrade_types"));
+    public static final ResourceKey<Registry<UpgradeType>> UPGRADE_TYPE_REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "upgrade_types"));
     public static final Registry<UpgradeType> UPGRADE_TYPE = new RegistryBuilder<>(UPGRADE_TYPE_REGISTRY_KEY)
         .sync(true).create();
 

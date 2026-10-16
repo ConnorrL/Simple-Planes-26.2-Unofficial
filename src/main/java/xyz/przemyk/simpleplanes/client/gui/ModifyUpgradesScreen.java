@@ -3,11 +3,11 @@ package xyz.przemyk.simpleplanes.client.gui;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
 
 public class ModifyUpgradesScreen extends AbstractContainerScreen<ModifyUpgradesContainer> {
 
-    public static final ResourceLocation GUI = ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "textures/gui/modify_upgrades.png");
+    public static final Identifier GUI = Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "textures/gui/modify_upgrades.png");
     public static final Component UPGRADES_TOOLTIP = Component.translatable(SimplePlanesMod.MODID + ".add_upgrades");
     public static final Component CARGO_TOOLTIP = Component.translatable(SimplePlanesMod.MODID + ".add_cargo");
 
@@ -32,7 +32,7 @@ public class ModifyUpgradesScreen extends AbstractContainerScreen<ModifyUpgrades
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
         renderTooltip(guiGraphics, mouseX, mouseY);
 
@@ -46,12 +46,12 @@ public class ModifyUpgradesScreen extends AbstractContainerScreen<ModifyUpgrades
     }
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    protected void renderLabels(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
         guiGraphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 4210752, false);
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int x, int y) {
+    protected void renderBg(GuiGraphicsExtractor guiGraphics, float partialTicks, int x, int y) {
         int i = this.leftPos;
         int j = (this.height - this.imageHeight) / 2;
         guiGraphics.blit(GUI, i, j, 0, 0, this.imageWidth, this.imageHeight);
@@ -72,7 +72,7 @@ public class ModifyUpgradesScreen extends AbstractContainerScreen<ModifyUpgrades
     }
 
     @SuppressWarnings("deprecation") // InventoryScreen.renderEntityInInventory uses LivingEntity for some reason
-    public static void renderEntityInInventory(GuiGraphics guiGraphics, int x, int y, int scale, Quaternionf quaternionf, @Nullable Quaternionf quaternionf1, Entity entity) {
+    public static void renderEntityInInventory(GuiGraphicsExtractor guiGraphics, int x, int y, int scale, Quaternionf quaternionf, @Nullable Quaternionf quaternionf1, Entity entity) {
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(x, y, 50.0D);
         guiGraphics.pose().mulPose((new Matrix4f()).scaling((float)scale, (float)scale, (float)(-scale)));

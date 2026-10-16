@@ -3,7 +3,7 @@ package xyz.przemyk.simpleplanes.network;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
@@ -13,7 +13,7 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 public record CyclePlaneInventoryPacket(Direction direction) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<CyclePlaneInventoryPacket> TYPE =
-        new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "cycle_inventory"));
+        new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "cycle_inventory"));
 
     public static final StreamCodec<ByteBuf, CyclePlaneInventoryPacket> STREAM_CODEC = new StreamCodec<>() {
         @Override

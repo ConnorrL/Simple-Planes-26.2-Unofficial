@@ -7,7 +7,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.GsonHelper;
@@ -32,14 +32,14 @@ public class PlanePayloadReloadListener extends SimpleJsonResourceReloadListener
     }
 
     @Override
-    protected void apply(Map<ResourceLocation, JsonElement> map, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
+    protected void apply(Map<Identifier, JsonElement> map, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
         payloadEntries.clear();
-        for (Map.Entry<ResourceLocation, JsonElement> entry : map.entrySet()) {
+        for (Map.Entry<Identifier, JsonElement> entry : map.entrySet()) {
             try {
                 JsonObject jsonObject = GsonHelper.convertToJsonObject(entry.getValue(), "top element");
-                Item item = Objects.requireNonNull(BuiltInRegistries.ITEM.get(ResourceLocation.parse(jsonObject.get("item").getAsString())), "missing item");
-                Block renderBlock = Objects.requireNonNull(BuiltInRegistries.BLOCK.get(ResourceLocation.parse((jsonObject.get("block").getAsString()))), "missing block");
-                EntityType<?> dropSpawnEntity = Objects.requireNonNull(BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(jsonObject.get("entity").getAsString())), "missing entity");
+                Item item = Objects.requireNonNull(BuiltInRegistries.ITEM.get(Identifier.parse(jsonObject.get("item").getAsString())), "missing item");
+                Block renderBlock = Objects.requireNonNull(BuiltInRegistries.BLOCK.get(Identifier.parse((jsonObject.get("block").getAsString()))), "missing block");
+                EntityType<?> dropSpawnEntity = Objects.requireNonNull(BuiltInRegistries.ENTITY_TYPE.get(Identifier.parse(jsonObject.get("entity").getAsString())), "missing entity");
                 CompoundTag compoundTag;
                 if (jsonObject.has("entity_nbt")) {
                     String tag = GsonHelper.convertToString(jsonObject.get("entity_nbt"), "entity_nbt");

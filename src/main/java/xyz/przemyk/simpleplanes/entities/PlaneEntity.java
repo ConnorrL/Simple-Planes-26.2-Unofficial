@@ -13,7 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
@@ -32,7 +32,7 @@ import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -86,7 +86,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
     public Quaternionf Q_Prev = new Quaternionf();
 
     private int onGroundTicks;
-    public final HashMap<ResourceLocation, Upgrade> upgrades = new HashMap<>();
+    public final HashMap<Identifier, Upgrade> upgrades = new HashMap<>();
     public EngineUpgrade engineUpgrade = null;
 
     public float rotationRoll;
@@ -190,7 +190,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
 
     public void setMaterial(String material) {
         entityData.set(MATERIAL, material);
-        Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(material));
+        Block block = BuiltInRegistries.BLOCK.get(Identifier.parse(material));
         planksMaterial = block == null ? Blocks.OAK_PLANKS : block;
     }
 
@@ -199,7 +199,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
         planksMaterial = material;
     }
 
-    public static final TagKey<DimensionType> BLACKLISTED_DIMENSIONS_TAG = TagKey.create(Registries.DIMENSION_TYPE, ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "blacklisted_dimensions"));
+    public static final TagKey<DimensionType> BLACKLISTED_DIMENSIONS_TAG = TagKey.create(Registries.DIMENSION_TYPE, Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "blacklisted_dimensions"));
 
     public boolean isPowered() {
         return isAlive() && !level().dimensionTypeRegistration().is(BLACKLISTED_DIMENSIONS_TAG) && (isCreative() || (engineUpgrade != null && engineUpgrade.isPowered()));
@@ -536,7 +536,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
     }
 
     public void tickUpgrades() {
-        List<ResourceLocation> upgradesToRemove = new ArrayList<>();
+        List<Identifier> upgradesToRemove = new ArrayList<>();
         upgrades.forEach((rl, upgrade) -> {
             upgrade.tick();
             if (upgrade.removed) {
@@ -544,7 +544,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
             }
         });
 
-        for (ResourceLocation name : upgradesToRemove) {
+        for (Identifier name : upgradesToRemove) {
             upgrades.remove(name);
         }
 
@@ -869,7 +869,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
 
     private void deserializeUpgrades(CompoundTag upgradesNBT) {
         for (String key : upgradesNBT.getAllKeys()) {
-            ResourceLocation resourceLocation = ResourceLocation.parse(key);
+            Identifier resourceLocation = Identifier.parse(key);
             UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPE.get(resourceLocation);
             if (upgradeType != null) {
                 Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
@@ -923,7 +923,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
     public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
         super.onSyncedDataUpdated(key);
         if (MATERIAL.equals(key) && level().isClientSide()) {
-            Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(entityData.get(MATERIAL)));
+            Block block = BuiltInRegistries.BLOCK.get(Identifier.parse(entityData.get(MATERIAL)));
             planksMaterial = block == null ? Blocks.OAK_PLANKS : block;
         } else if (Q.equals(key) && level().isClientSide() && !isControlledByLocalInstance()) {
             if (firstTick) {
@@ -942,7 +942,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
     }
 
     public static final TagKey<Block> FIREPROOF_MATERIALS_TAG = BlockTags.create(
-        ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "fireproof_materials"));
+        Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "fireproof_materials"));
 
     @Override
     public boolean isInvulnerableTo(DamageSource source) {
@@ -1208,11 +1208,11 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
         return SimplePlanesConfig.PLANE_CAMERA_DISTANCE_MULTIPLIER.get();
     }
 
-    public void writeUpdateUpgradePacket(ResourceLocation upgradeID, FriendlyByteBuf buffer) {
+    public void writeUpdateUpgradePacket(Identifier upgradeID, FriendlyByteBuf buffer) {
         upgrades.get(upgradeID).writePacket(new RegistryFriendlyByteBuf(buffer, level().registryAccess(), ConnectionType.NEOFORGE));
     }
 
-    public void readUpdateUpgradePacket(ResourceLocation upgradeID, ByteBuf buffer, boolean newUpgrade) {
+    public void readUpdateUpgradePacket(Identifier upgradeID, ByteBuf buffer, boolean newUpgrade) {
         if (newUpgrade) {
             UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPE.get(upgradeID);
             Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
@@ -1240,8 +1240,8 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
         Collection<Upgrade> upgrades = this.upgrades.values();
         buffer.writeVarInt(upgrades.size());
         for (Upgrade upgrade : upgrades) {
-            ResourceLocation upgradeID = SimplePlanesRegistries.UPGRADE_TYPE.getKey(upgrade.getType());
-            buffer.writeResourceLocation(upgradeID);
+            Identifier upgradeID = SimplePlanesRegistries.UPGRADE_TYPE.getKey(upgrade.getType());
+            buffer.writeIdentifier(upgradeID);
             upgrade.writePacket(buffer);
         }
     }
@@ -1250,7 +1250,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
     public void readSpawnData(RegistryFriendlyByteBuf additionalData) {
         int upgradesSize = additionalData.readVarInt();
         for (int i = 0; i < upgradesSize; i++) {
-            ResourceLocation upgradeID = additionalData.readResourceLocation();
+            Identifier upgradeID = additionalData.readIdentifier();
             UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPE.get(upgradeID);
             Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
             upgrades.put(upgradeID, upgrade);
@@ -1261,7 +1261,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
         }
     }
 
-    public void removeUpgrade(ResourceLocation upgradeID) {
+    public void removeUpgrade(Identifier upgradeID) {
         Upgrade upgrade = upgrades.remove(upgradeID);
         if (upgrade != null) {
             upgrade.onRemoved();

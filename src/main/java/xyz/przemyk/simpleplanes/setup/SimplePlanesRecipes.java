@@ -1,7 +1,7 @@
 package xyz.przemyk.simpleplanes.setup;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.neoforged.bus.api.IEventBus;
@@ -23,5 +23,5 @@ public class SimplePlanesRecipes {
     }
 
     public static final Supplier<RecipeSerializer<?>> PLANE_WORKBENCH_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("plane_workbench", PlaneWorkbenchRecipeSerializer::new);
-    public static final Supplier<RecipeType<PlaneWorkbenchRecipe>> PLANE_WORKBENCH_RECIPE_TYPE = RECIPE_TYPES.register("plane_workbench", () -> RecipeType.simple(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "plane_workbench")));
+    public static final Supplier<RecipeType<PlaneWorkbenchRecipe>> PLANE_WORKBENCH_RECIPE_TYPE = RECIPE_TYPES.register("plane_workbench", () -> RecipeType.simple(Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "plane_workbench")));
 }

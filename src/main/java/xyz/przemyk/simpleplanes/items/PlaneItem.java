@@ -4,7 +4,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -45,7 +45,7 @@ public class PlaneItem extends Item {
 
         if (entityTag != null) {
             if (entityTag.contains("material")) {
-                Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(entityTag.getString("material")));
+                Block block = BuiltInRegistries.BLOCK.get(Identifier.parse(entityTag.getString("material")));
                 if (block != null) {
                     pTooltipComponents.add(Component.translatable(SimplePlanesMod.MODID + ".material").append(block.getName()));
                 }
@@ -54,7 +54,7 @@ public class PlaneItem extends Item {
                 CompoundTag upgradesNBT = entityTag.getCompound("upgrades");
                 for (String key : upgradesNBT.getAllKeys()) {
                     CompoundTag upgradeNbt = upgradesNBT.getCompound(key);
-                    ResourceLocation resourceLocation = ResourceLocation.parse(key);
+                    Identifier resourceLocation = Identifier.parse(key);
                     if (upgradeNbt.contains("desc")) {
                         pTooltipComponents.add(Component.literal(upgradeNbt.getString("desc")));
                     } else {

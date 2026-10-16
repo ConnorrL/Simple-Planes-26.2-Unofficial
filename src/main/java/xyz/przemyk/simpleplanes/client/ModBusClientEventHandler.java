@@ -2,7 +2,7 @@ package xyz.przemyk.simpleplanes.client;
 
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -24,7 +24,7 @@ import xyz.przemyk.simpleplanes.upgrades.booster.BoosterUpgrade;
 @EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
 public class ModBusClientEventHandler {
 
-    public static final ResourceLocation HUD_TEXTURE = ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "textures/gui/plane_hud.png");
+    public static final Identifier HUD_TEXTURE = Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "textures/gui/plane_hud.png");
 
     @SubscribeEvent
     public static void registerMenuScreens(RegisterMenuScreensEvent event) {
@@ -68,7 +68,7 @@ public class ModBusClientEventHandler {
 
     @SubscribeEvent
     public static void registerHUDOverlay(RegisterGuiLayersEvent event) {
-        event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "plane_hud"), (guiGraphics, deltaTracker) -> {
+        event.registerAboveAll(Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "plane_hud"), (guiGraphics, deltaTracker) -> {
             Minecraft mc = Minecraft.getInstance();
 
             int scaledWidth = mc.getWindow().getGuiScaledWidth();

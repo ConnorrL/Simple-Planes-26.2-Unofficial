@@ -2,7 +2,7 @@ package xyz.przemyk.simpleplanes.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -13,7 +13,7 @@ import xyz.przemyk.simpleplanes.client.gui.PlaneInventoryScreen;
 
 public class ClientUtil {
 
-    public static void renderTiledTextureAtlas(GuiGraphics guiGraphics, AbstractContainerScreen<?> screen, TextureAtlasSprite sprite, int x, int y, int width, int height, int depth) {
+    public static void renderTiledTextureAtlas(GuiGraphicsExtractor guiGraphics, AbstractContainerScreen<?> screen, TextureAtlasSprite sprite, int x, int y, int width, int height, int depth) {
         RenderSystem.setShaderTexture(0, sprite.atlasLocation());
         BufferBuilder builder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
@@ -87,7 +87,7 @@ public class ClientUtil {
         RenderSystem.setShaderColor(r, g, b, a);
     }
 
-    public static void renderLiquidEngineFluid(GuiGraphics guiGraphics, PlaneInventoryScreen screen, FluidStack fluidStack, int height, int width, int fluidHeight) {
+    public static void renderLiquidEngineFluid(GuiGraphicsExtractor guiGraphics, PlaneInventoryScreen screen, FluidStack fluidStack, int height, int width, int fluidHeight) {
         TextureAtlasSprite fluidSprite = screen.getMinecraft().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(IClientFluidTypeExtensions.of(fluidStack.getFluid()).getStillTexture(fluidStack));
 //        setColorRGBA(IClientFluidTypeExtensions.of(fluidStack.getFluid()).getTintColor(fluidStack));
         renderTiledTextureAtlas(guiGraphics, screen, fluidSprite, 151 + 2, 7 + 18 + height - 2 - fluidHeight, width - 4, fluidHeight, 100);

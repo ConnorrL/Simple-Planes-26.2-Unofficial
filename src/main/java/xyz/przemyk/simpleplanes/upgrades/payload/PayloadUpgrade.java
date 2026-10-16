@@ -9,7 +9,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -59,17 +59,17 @@ public class PayloadUpgrade extends LargeUpgrade {
 
     @Override
     public void writePacket(RegistryFriendlyByteBuf buffer) {
-        buffer.writeResourceLocation(BuiltInRegistries.ITEM.getKey(payloadEntry.item()));
-        buffer.writeResourceLocation(BuiltInRegistries.BLOCK.getKey(payloadEntry.renderBlock()));
-        buffer.writeResourceLocation(BuiltInRegistries.ENTITY_TYPE.getKey(payloadEntry.dropSpawnEntity()));
+        buffer.writeIdentifier(BuiltInRegistries.ITEM.getKey(payloadEntry.item()));
+        buffer.writeIdentifier(BuiltInRegistries.BLOCK.getKey(payloadEntry.renderBlock()));
+        buffer.writeIdentifier(BuiltInRegistries.ENTITY_TYPE.getKey(payloadEntry.dropSpawnEntity()));
         buffer.writeNbt(payloadEntry.compoundTag());
     }
 
     @Override
     public void readPacket(RegistryFriendlyByteBuf buffer) {
-        Item item = BuiltInRegistries.ITEM.get(buffer.readResourceLocation());
-        Block renderBlock = BuiltInRegistries.BLOCK.get(buffer.readResourceLocation());
-        EntityType<?> dropSpawnEntity = BuiltInRegistries.ENTITY_TYPE.get(buffer.readResourceLocation());
+        Item item = BuiltInRegistries.ITEM.get(buffer.readIdentifier());
+        Block renderBlock = BuiltInRegistries.BLOCK.get(buffer.readIdentifier());
+        EntityType<?> dropSpawnEntity = BuiltInRegistries.ENTITY_TYPE.get(buffer.readIdentifier());
         CompoundTag compoundTag = buffer.readNbt();
         payloadEntry = new PayloadEntry(item, renderBlock, dropSpawnEntity, compoundTag);
     }
@@ -86,9 +86,9 @@ public class PayloadUpgrade extends LargeUpgrade {
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(nbt.getString("item")));
-        Block renderBlock = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(nbt.getString("block")));
-        EntityType<?> dropSpawnEntity = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(nbt.getString("entity")));
+        Item item = BuiltInRegistries.ITEM.get(Identifier.parse(nbt.getString("item")));
+        Block renderBlock = BuiltInRegistries.BLOCK.get(Identifier.parse(nbt.getString("block")));
+        EntityType<?> dropSpawnEntity = BuiltInRegistries.ENTITY_TYPE.get(Identifier.parse(nbt.getString("entity")));
         payloadEntry = new PayloadEntry(item, renderBlock, dropSpawnEntity, nbt.getCompound("entityTag"));
     }
 

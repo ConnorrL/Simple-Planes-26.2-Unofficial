@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
@@ -21,10 +21,10 @@ import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 public class SeatsUpgrade extends Upgrade {
 
-    public static final ResourceLocation TEXTURE = SimplePlanesMod.texture("seats.png");
-    public static final ResourceLocation LARGE_TEXTURE = SimplePlanesMod.texture("seats_large.png");
-    public static final ResourceLocation CARGO_TEXTURE = SimplePlanesMod.texture("cargo_plane_metal.png");
-    public static final ResourceLocation HELI_TEXTURE = SimplePlanesMod.texture("seats_heli.png");
+    public static final Identifier TEXTURE = SimplePlanesMod.texture("seats.png");
+    public static final Identifier LARGE_TEXTURE = SimplePlanesMod.texture("seats_large.png");
+    public static final Identifier CARGO_TEXTURE = SimplePlanesMod.texture("cargo_plane_metal.png");
+    public static final Identifier HELI_TEXTURE = SimplePlanesMod.texture("seats_heli.png");
 
     public SeatsUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.SEATS.get(), planeEntity);

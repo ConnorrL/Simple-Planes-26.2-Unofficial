@@ -1,7 +1,7 @@
 package xyz.przemyk.simpleplanes.container;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
@@ -121,7 +121,7 @@ public class ModifyUpgradesContainer extends AbstractContainerMenu {
                     }
                 }
                 if (upgradeType != null) {
-                    ResourceLocation resourceLocation = SimplePlanesRegistries.UPGRADE_TYPE.getKey(upgradeType);
+                    Identifier resourceLocation = SimplePlanesRegistries.UPGRADE_TYPE.getKey(upgradeType);
                     Upgrade upgrade = planeEntity.upgrades.get(resourceLocation);
                     if (upgrade != null) {
                         if (ItemStack.isSameItemSameComponents(previousStack, upgrade.getItemStack())) {

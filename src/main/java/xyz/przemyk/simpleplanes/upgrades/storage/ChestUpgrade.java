@@ -14,7 +14,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -57,7 +57,7 @@ public class ChestUpgrade extends LargeUpgrade {
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         itemStackHandler.deserializeNBT(planeEntity.registryAccess(), nbt);
-        Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(nbt.getString("ChestType")));
+        Item item = BuiltInRegistries.ITEM.get(Identifier.parse(nbt.getString("ChestType")));
         chestType = item == null ? Items.CHEST : item;
     }
 

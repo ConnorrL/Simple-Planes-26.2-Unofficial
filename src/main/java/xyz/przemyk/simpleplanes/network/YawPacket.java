@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
@@ -13,7 +13,7 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 public record YawPacket(byte yawRight) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<YawPacket> TYPE =
-        new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "yaw"));
+        new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "yaw"));
 
     public static final StreamCodec<ByteBuf, YawPacket> STREAM_CODEC = StreamCodec.composite(
         ByteBufCodecs.BYTE,

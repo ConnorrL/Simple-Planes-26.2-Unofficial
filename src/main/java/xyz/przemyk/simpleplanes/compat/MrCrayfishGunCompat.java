@@ -11,7 +11,7 @@
 //import com.mrcrayfish.guns.item.IAmmo;
 //import com.mrcrayfish.guns.network.PacketHandler;
 //import com.mrcrayfish.guns.network.message.S2CMessageGunSound;
-//import net.minecraft.resources.ResourceLocation;
+//import net.minecraft.resources.Identifier;
 //import net.minecraft.sounds.SoundSource;
 //import net.minecraft.world.entity.Entity;
 //import net.minecraft.world.entity.player.Player;
@@ -75,7 +75,7 @@
 //            level.addFreshEntity(projectile);
 //
 //            if (!level.isClientSide) {
-//                ResourceLocation fireSound = gun.getSounds().getFire();
+//                Identifier fireSound = gun.getSounds().getFire();
 //                if (fireSound != null) {
 //                    double posX = player.getX();
 //                    double posY = player.getY();

@@ -2,7 +2,7 @@ package xyz.przemyk.simpleplanes.client.render;
 
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.ShulkerModel;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 import xyz.przemyk.simpleplanes.upgrades.armor.ArmorWindowModel;
@@ -25,8 +25,8 @@ public class UpgradesModels {
 
     public static final HashMap<UpgradeType, ModelEntry> MODEL_ENTRIES = new HashMap<>();
 
-    public record ModelEntry(EntityModel<PlaneEntity> normal, ResourceLocation normalTexture,
-                             EntityModel<PlaneEntity> large, ResourceLocation largeTexture,
-                             EntityModel<PlaneEntity> heli, ResourceLocation heliTexture,
-                             EntityModel<PlaneEntity> cargo, ResourceLocation cargoTexture) {}
+    public record ModelEntry(EntityModel<PlaneEntity> normal, Identifier normalTexture,
+                             EntityModel<PlaneEntity> large, Identifier largeTexture,
+                             EntityModel<PlaneEntity> heli, Identifier heliTexture,
+                             EntityModel<PlaneEntity> cargo, Identifier cargoTexture) {}
 }

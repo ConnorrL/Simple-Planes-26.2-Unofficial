@@ -1,11 +1,11 @@
 package xyz.przemyk.simpleplanes.client.gui;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.network.PacketDistributor;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
@@ -15,14 +15,14 @@ import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 public class PlaneInventoryScreen extends AbstractContainerScreen<PlaneInventoryContainer> {
 
-    public static final ResourceLocation GUI = ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "textures/gui/plane_inventory.png");
+    public static final Identifier GUI = Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "textures/gui/plane_inventory.png");
     public static final WidgetSprites LEFT_BUTTON_SPRITES = new WidgetSprites(
-        ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "left"),
-        ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "left_highlighted")
+        Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "left"),
+        Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "left_highlighted")
     );
     public static final WidgetSprites RIGHT_BUTTON_SPRITES = new WidgetSprites(
-        ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "right"),
-        ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "right_highlighted")
+        Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "right"),
+        Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "right_highlighted")
     );
 
     public PlaneInventoryScreen(PlaneInventoryContainer screenContainer, Inventory inventory, Component title) {
@@ -37,7 +37,7 @@ public class PlaneInventoryScreen extends AbstractContainerScreen<PlaneInventory
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
         if (menu.planeEntity != null) {
             for (Upgrade upgrade : menu.planeEntity.upgrades.values()) {
@@ -48,7 +48,7 @@ public class PlaneInventoryScreen extends AbstractContainerScreen<PlaneInventory
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int x, int y) {
+    protected void renderBg(GuiGraphicsExtractor guiGraphics, float partialTicks, int x, int y) {
         guiGraphics.blit(GUI, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
 
         if (menu.planeEntity != null) {
@@ -64,7 +64,7 @@ public class PlaneInventoryScreen extends AbstractContainerScreen<PlaneInventory
     }
 
     @Override
-    public void renderTooltip(GuiGraphics p_283594_, int p_282171_, int p_281909_) {
+    public void renderTooltip(GuiGraphicsExtractor p_283594_, int p_282171_, int p_281909_) {
         super.renderTooltip(p_283594_, p_282171_, p_281909_);
     }
 }
