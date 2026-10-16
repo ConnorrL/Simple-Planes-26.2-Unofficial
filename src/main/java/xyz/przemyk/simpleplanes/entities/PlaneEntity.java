@@ -49,6 +49,7 @@ import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.connection.ConnectionType;
 import org.joml.Quaternionf;
+import org.joml.Quaternionfc;
 import org.joml.Vector3f;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.PlaneSound;
@@ -79,7 +80,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
     public static final EntityDataAccessor<String> MATERIAL = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<Integer> TIME_SINCE_HIT = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Float> DAMAGE_TAKEN = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.FLOAT);
-    public static final EntityDataAccessor<Quaternionf> Q = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.QUATERNION);
+    public static final EntityDataAccessor<Quaternionfc> Q = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.QUATERNION);
     public static final EntityDataAccessor<Integer> THROTTLE = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Byte> PITCH_UP = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.BYTE);
     public static final EntityDataAccessor<Byte> YAW_RIGHT = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.BYTE);
@@ -150,7 +151,15 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
     }
 
     public void setQ(Quaternionf q) {
-        entityData.set(Q, q);
+        entityData.set(Q, new Quaternionf(q));
+    }
+
+    /**
+     * True only when the first seated pilot is the player's local client.
+     * This check must remain safe to load on dedicated servers.
+     */
+    private boolean isControlledByLocalInstance() {
+        return getFirstPassenger() instanceof Player player && player.isLocalPlayer();
     }
 
     public Quaternionf getQ_Client() {

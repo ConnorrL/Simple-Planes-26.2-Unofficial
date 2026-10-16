@@ -55,3 +55,25 @@ References:
 - https://aldak.netlify.app/javadoc/26.2.x/net/neoforged/neoforge/event/addserverreloadlistenersevent
 
 - Updated 11 client UI/input serverbound packet calls to `ClientPacketDistributor.sendToServer`, which replaced the serverbound method on the common `PacketDistributor`. Common entity-side calls still require client-safe reorganization.
+
+
+## Port pass 6 (based on user GitHub Actions build log `logs_105257299732.zip`)
+
+The latest build still fails during `compileJava` at the 250-error reporting limit.
+Changes in this pass:
+
+- Adapt both datapack listeners to the 26.2 typed `SimpleJsonResourceReloadListener<JsonElement>` API. A passthrough codec keeps existing JSON-entry parsing and paths intact.
+- Replace all 16 removed `Items.*_BANNER` constant lookups with `Blocks.*_BANNER.asItem()`.
+- Align `PlaneEntity.Q` with the serializer's `Quaternionfc` type. Copy assigned quaternions to avoid mutable synced-data aliasing.
+- Implement an entity-side local-pilot test via the first passenger's `Player.isLocalPlayer()`, without Minecraft client-only class references.
+
+**The source has been statically checked but is NOT compiled or runtime-tested.** The local runtime has Java 21 and no Gradle cache for Minecraft 26.2, while the GitHub build needs Java 25.
+
+### Major remaining work
+
+- Migrate entity and upgrade rendering to 26.2's render-state pipeline and rewrite old model overrides.
+- Migrate `Capabilities.ItemHandler/FluidHandler/EnergyStorage` to the new transactional resource and energy handlers (do **not** blindly rename the fields; old and new return types differ).
+- Migrate item storage persistence and screen/menu rendering while preserving aircraft inventories.
+- Fix remaining gameplay API changes and test a normal NeoForge server/client before Youer.
+
+Use GitHub Actions for compile diagnostics; do not install this as a functional server mod yet.

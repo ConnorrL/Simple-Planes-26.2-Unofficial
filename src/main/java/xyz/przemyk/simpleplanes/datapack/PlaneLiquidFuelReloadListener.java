@@ -3,9 +3,13 @@ package xyz.przemyk.simpleplanes.datapack;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.Dynamic;
+import com.mojang.serialization.JsonOps;
 import com.google.gson.JsonObject;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.GsonHelper;
@@ -17,15 +21,21 @@ import org.apache.logging.log4j.Logger;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PlaneLiquidFuelReloadListener extends SimpleJsonResourceReloadListener {
+public class PlaneLiquidFuelReloadListener extends SimpleJsonResourceReloadListener<JsonElement> {
 
+    // Pass raw JSON into the existing per-entry parser. The 26.2 reload API
+    // requires a Codec<T> and FileToIdConverter rather than Gson + folder string.
+    private static final Codec<JsonElement> JSON_ELEMENT_CODEC = Codec.PASSTHROUGH.xmap(
+        dynamic -> dynamic.convert(JsonOps.INSTANCE).getValue(),
+        json -> new Dynamic<>(JsonOps.INSTANCE, json)
+    );
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     private static final Logger LOGGER = LogManager.getLogger();
 
     public static final Map<Fluid, Integer> fuelMap = new HashMap<>();
 
     public PlaneLiquidFuelReloadListener() {
-        super(GSON, "plane_liquid_fuels");
+        super(JSON_ELEMENT_CODEC, FileToIdConverter.json("plane_liquid_fuels"));
     }
 
     @Override

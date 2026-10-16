@@ -3,11 +3,15 @@ package xyz.przemyk.simpleplanes.datapack;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.Dynamic;
+import com.mojang.serialization.JsonOps;
 import com.google.gson.JsonObject;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.GsonHelper;
@@ -22,13 +26,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class PlanePayloadReloadListener extends SimpleJsonResourceReloadListener {
+public class PlanePayloadReloadListener extends SimpleJsonResourceReloadListener<JsonElement> {
+    // Pass raw JSON into the existing per-entry parser. The 26.2 reload API
+    // requires a Codec<T> and FileToIdConverter rather than Gson + folder string.
+    private static final Codec<JsonElement> JSON_ELEMENT_CODEC = Codec.PASSTHROUGH.xmap(
+        dynamic -> dynamic.convert(JsonOps.INSTANCE).getValue(),
+        json -> new Dynamic<>(JsonOps.INSTANCE, json)
+    );
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     private static final Logger LOGGER = LogManager.getLogger();
     public static final Map<Item, PayloadEntry> payloadEntries = new HashMap<>();
 
     public PlanePayloadReloadListener() {
-        super(GSON, "plane_payload");
+        super(JSON_ELEMENT_CODEC, FileToIdConverter.json("plane_payload"));
     }
 
     @Override
