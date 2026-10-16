@@ -7,9 +7,10 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 
-public class PlaneWorkbenchRecipeSerializer implements RecipeSerializer<PlaneWorkbenchRecipe> {
+public final class PlaneWorkbenchRecipeSerializer {
+
+    private PlaneWorkbenchRecipeSerializer() {}
 
     public static final MapCodec<PlaneWorkbenchRecipe> CODEC = RecordCodecBuilder.mapCodec(
         kind -> kind.group(
@@ -39,13 +40,4 @@ public class PlaneWorkbenchRecipeSerializer implements RecipeSerializer<PlaneWor
         ItemStack.STREAM_CODEC.encode(buffer, recipe.result());
     }
 
-    @Override
-    public MapCodec<PlaneWorkbenchRecipe> codec() {
-        return CODEC;
-    }
-
-    @Override
-    public StreamCodec<RegistryFriendlyByteBuf, PlaneWorkbenchRecipe> streamCodec() {
-        return STREAM_CODEC;
-    }
 }

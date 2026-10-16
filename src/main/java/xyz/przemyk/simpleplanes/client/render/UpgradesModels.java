@@ -1,7 +1,7 @@
 package xyz.przemyk.simpleplanes.client.render;
 
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.ShulkerModel;
+import net.minecraft.client.model.monster.shulker.ShulkerModel;
 import net.minecraft.resources.Identifier;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
@@ -12,7 +12,7 @@ import xyz.przemyk.simpleplanes.upgrades.seats.*;
 import java.util.HashMap;
 
 public class UpgradesModels {
-    public static ShulkerModel<?> SHULKER_FOLDING;
+    public static ShulkerModel SHULKER_FOLDING;
     public static SeatsModel SEATS;
     public static LargeSeatsModel LARGE_SEATS;
     public static CargoSeatsModel CARGO_SEATS;

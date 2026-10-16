@@ -21,8 +21,11 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.upgrades.booster.BoosterUpgrade;
 
-@EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(value = Dist.CLIENT)
 public class ModBusClientEventHandler {
+
+    private static final KeyMapping.Category PLANES_KEY_CATEGORY =
+            new KeyMapping.Category(Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "planes"));
 
     public static final Identifier HUD_TEXTURE = Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "textures/gui/plane_hud.png");
 
@@ -46,15 +49,16 @@ public class ModBusClientEventHandler {
 
     @SubscribeEvent
     public static void registerKeyBindings(RegisterKeyMappingsEvent event) {
-        ClientEventHandler.moveHeliUpKey = new KeyMapping("key.move_heli_up.desc", GLFW.GLFW_KEY_SPACE, "key.simpleplanes.category");
-        ClientEventHandler.openPlaneInventoryKey = new KeyMapping("key.plane_inventory_open.desc", GLFW.GLFW_KEY_X, "key.simpleplanes.category");
-        ClientEventHandler.dropPayloadKey = new KeyMapping("key.plane_drop_payload.desc", GLFW.GLFW_KEY_C, "key.simpleplanes.category");
-        ClientEventHandler.throttleUp = new KeyMapping("key.plane_throttle_up.desc", GLFW.GLFW_KEY_UP, "key.simpleplanes.category");
-        ClientEventHandler.throttleDown = new KeyMapping("key.plane_throttle_down.desc", GLFW.GLFW_KEY_DOWN, "key.simpleplanes.category");
-        ClientEventHandler.pitchUp = new KeyMapping("key.plane_pitch_up.desc", GLFW.GLFW_KEY_W, "key.simpleplanes.category");
-        ClientEventHandler.pitchDown = new KeyMapping("key.plane_pitch_down.desc", GLFW.GLFW_KEY_S, "key.simpleplanes.category");
-        ClientEventHandler.yawRight = new KeyMapping("key.plane_yaw_right.desc", GLFW.GLFW_KEY_RIGHT, "key.simpleplanes.category");
-        ClientEventHandler.yawLeft = new KeyMapping("key.plane_yaw_left.desc", GLFW.GLFW_KEY_LEFT, "key.simpleplanes.category");
+        event.registerCategory(PLANES_KEY_CATEGORY);
+        ClientEventHandler.moveHeliUpKey = new KeyMapping("key.move_heli_up.desc", GLFW.GLFW_KEY_SPACE, PLANES_KEY_CATEGORY);
+        ClientEventHandler.openPlaneInventoryKey = new KeyMapping("key.plane_inventory_open.desc", GLFW.GLFW_KEY_X, PLANES_KEY_CATEGORY);
+        ClientEventHandler.dropPayloadKey = new KeyMapping("key.plane_drop_payload.desc", GLFW.GLFW_KEY_C, PLANES_KEY_CATEGORY);
+        ClientEventHandler.throttleUp = new KeyMapping("key.plane_throttle_up.desc", GLFW.GLFW_KEY_UP, PLANES_KEY_CATEGORY);
+        ClientEventHandler.throttleDown = new KeyMapping("key.plane_throttle_down.desc", GLFW.GLFW_KEY_DOWN, PLANES_KEY_CATEGORY);
+        ClientEventHandler.pitchUp = new KeyMapping("key.plane_pitch_up.desc", GLFW.GLFW_KEY_W, PLANES_KEY_CATEGORY);
+        ClientEventHandler.pitchDown = new KeyMapping("key.plane_pitch_down.desc", GLFW.GLFW_KEY_S, PLANES_KEY_CATEGORY);
+        ClientEventHandler.yawRight = new KeyMapping("key.plane_yaw_right.desc", GLFW.GLFW_KEY_RIGHT, PLANES_KEY_CATEGORY);
+        ClientEventHandler.yawLeft = new KeyMapping("key.plane_yaw_left.desc", GLFW.GLFW_KEY_LEFT, PLANES_KEY_CATEGORY);
         event.register(ClientEventHandler.moveHeliUpKey);
         event.register(ClientEventHandler.openPlaneInventoryKey);
         event.register(ClientEventHandler.dropPayloadKey);

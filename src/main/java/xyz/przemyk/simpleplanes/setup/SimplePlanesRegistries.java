@@ -11,7 +11,7 @@ import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 @SuppressWarnings("unused")
-@EventBusSubscriber(modid = SimplePlanesMod.MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = SimplePlanesMod.MODID)
 public class SimplePlanesRegistries {
 
     public static final ResourceKey<Registry<UpgradeType>> UPGRADE_TYPE_REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "upgrade_types"));

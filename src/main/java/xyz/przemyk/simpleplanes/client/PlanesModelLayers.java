@@ -1,7 +1,7 @@
 package xyz.przemyk.simpleplanes.client;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.ShulkerModel;
+import net.minecraft.client.model.monster.shulker.ShulkerModel;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -43,7 +43,7 @@ import xyz.przemyk.simpleplanes.upgrades.solarpanel.CargoSolarPanelModel;
 import xyz.przemyk.simpleplanes.upgrades.solarpanel.LargeSolarPanelModel;
 import xyz.przemyk.simpleplanes.upgrades.solarpanel.SolarPanelModel;
 
-@EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(value = Dist.CLIENT)
 public class PlanesModelLayers {
     public static final ModelLayerLocation PLANE_LAYER = new ModelLayerLocation(Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "plane"), "main");
     public static final ModelLayerLocation PLANE_METAL_LAYER = new ModelLayerLocation(Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "plane"), "metal");
@@ -196,7 +196,7 @@ public class PlanesModelLayers {
     @SubscribeEvent
     public static void bakeModelLayers(EntityRenderersEvent.AddLayers event) {
         EntityModelSet entityModelSet = event.getEntityModels();
-        UpgradesModels.SHULKER_FOLDING = new ShulkerModel<>(entityModelSet.bakeLayer(ModelLayers.SHULKER));
+        UpgradesModels.SHULKER_FOLDING = new ShulkerModel(entityModelSet.bakeLayer(ModelLayers.SHULKER));
 
         UpgradesModels.MODEL_ENTRIES.put(SimplePlanesUpgrades.FURNACE_ENGINE.get(), new UpgradesModels.ModelEntry(
                 new FurnaceEngineModel(entityModelSet.bakeLayer(FURNACE_ENGINE)), SimplePlanesMod.texture("furnace_engine.png"),

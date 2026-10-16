@@ -21,3 +21,19 @@ API references:
 https://docs.neoforged.net/docs/items/interactions/
 https://docs.neoforged.net/docs/resources/server/recipes/custom/
 https://aldak.netlify.app/javadoc/26.2.x/net/minecraft/world/item/crafting/recipe
+
+
+## Port pass 4 (based on logs_105253683562.zip)
+
+- Removed the obsolete `bus` property of all three `@EventBusSubscriber` usages; 26.2 auto-detects event bus.
+- Adapted the workbench recipe serializer to Minecraft 26.2's `RecipeSerializer` record, retaining the existing JSON and network codecs.
+- Registered a typed `KeyMapping.Category` for aircraft key bindings.
+- Corrected the moved `ShulkerModel` imports and non-generic type references.
+
+**Still blocked:** Aircraft rendering uses the obsolete immediate rendering pipeline and must be redesigned for modern entity render states/submission; the energy, item and fluid transfer/capability API has changed, networking and save/load remain incomplete. No successful build or in-game test has been established.
+
+API references:
+- https://docs.neoforged.net/docs/concepts/events/
+- https://docs.neoforged.net/docs/resources/server/recipes/custom/
+- https://aldak.netlify.app/javadoc/26.2.x/net/minecraft/world/item/crafting/recipeserializer
+- https://aldak.netlify.app/javadoc/26.2.x/net/minecraft/client/keymapping.category
