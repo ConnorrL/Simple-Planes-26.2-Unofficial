@@ -7,7 +7,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.container.PlaneInventoryContainer;
 import xyz.przemyk.simpleplanes.network.CyclePlaneInventoryPacket;
@@ -33,7 +33,7 @@ public class PlaneInventoryScreen extends AbstractContainerScreen<PlaneInventory
     protected void init() {
         super.init();
         addRenderableWidget(new ImageButton(leftPos + 8, topPos + 54, 10, 15, LEFT_BUTTON_SPRITES,
-                button -> PacketDistributor.sendToServer(new CyclePlaneInventoryPacket(CyclePlaneInventoryPacket.Direction.LEFT))));
+                button -> ClientPacketDistributor.sendToServer(new CyclePlaneInventoryPacket(CyclePlaneInventoryPacket.Direction.LEFT))));
     }
 
     @Override

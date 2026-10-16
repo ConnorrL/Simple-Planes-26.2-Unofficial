@@ -18,7 +18,7 @@ import net.neoforged.neoforge.client.event.CalculateDetachedCameraDistanceEvent;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.joml.Quaternionf;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.misc.MathUtil;
@@ -97,15 +97,15 @@ public class ClientEventHandler {
                 }
 
                 if (mc.screen == null && mc.getOverlay() == null && openPlaneInventoryKey.consumeClick()) {
-                    PacketDistributor.sendToServer(new OpenPlaneInventoryPacket());
+                    ClientPacketDistributor.sendToServer(new OpenPlaneInventoryPacket());
                 } else if (dropPayloadKey.consumeClick()) {
                     planeEntity.dropPayload();
                 }
 
                 if (throttleUp.consumeClick()) {
-                    PacketDistributor.sendToServer(new ChangeThrottlePacket(ChangeThrottlePacket.Direction.UP));
+                    ClientPacketDistributor.sendToServer(new ChangeThrottlePacket(ChangeThrottlePacket.Direction.UP));
                 } else if (throttleDown.consumeClick()) {
-                    PacketDistributor.sendToServer(new ChangeThrottlePacket(ChangeThrottlePacket.Direction.DOWN));
+                    ClientPacketDistributor.sendToServer(new ChangeThrottlePacket(ChangeThrottlePacket.Direction.DOWN));
                 }
 
                 boolean isMoveHeliUp = moveHeliUpKey.isDown();
@@ -115,15 +115,15 @@ public class ClientEventHandler {
                 boolean isYawLeft = yawLeft.isDown();
 
                 if (isMoveHeliUp != oldMoveHeliUpState) {
-                    PacketDistributor.sendToServer(new MoveHeliUpPacket(isMoveHeliUp));
+                    ClientPacketDistributor.sendToServer(new MoveHeliUpPacket(isMoveHeliUp));
                 }
 
                 if (isPitchUp != oldPitchUpState || isPitchDown != oldPitchDownState) {
-                    PacketDistributor.sendToServer(new PitchPacket((byte) Boolean.compare(isPitchUp, isPitchDown)));
+                    ClientPacketDistributor.sendToServer(new PitchPacket((byte) Boolean.compare(isPitchUp, isPitchDown)));
                 }
 
                 if (isYawRight != oldYawRightState || isYawLeft != oldYawLeftState) {
-                    PacketDistributor.sendToServer(new YawPacket((byte) Boolean.compare(isYawRight, isYawLeft)));
+                    ClientPacketDistributor.sendToServer(new YawPacket((byte) Boolean.compare(isYawRight, isYawLeft)));
                 }
 
                 oldMoveHeliUpState = isMoveHeliUp;

@@ -2,6 +2,8 @@ package xyz.przemyk.simpleplanes.entities;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -62,8 +64,10 @@ public class ParachuteEntity extends Entity {
         Entity passenger = getControllingPassenger();
         // Can't use onGround since it detects plane collisions too.
         if ((passenger == null && !hasStorageCrate()) || !level().getBlockState(new BlockPos((int) getX(), (int) getY() - 1, (int) getZ())).canBeReplaced()) {
-            kill();
-            spawnAtLocation(SimplePlanesItems.PARACHUTE_ITEM.get());
+            if (level() instanceof ServerLevel serverLevel) {
+                kill(serverLevel);
+                spawnAtLocation(serverLevel, SimplePlanesItems.PARACHUTE_ITEM.get());
+            }
             if (hasStorageCrate() && !level().isClientSide()) {
                 BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos(getBlockX(), getBlockY(), getBlockZ());
                 for (int i = 0; i < 50; i++) {
@@ -91,7 +95,7 @@ public class ParachuteEntity extends Entity {
                 for (int i = 0; i < itemStackHandler.getSlots(); i++) {
                     ItemStack itemStack = itemStackHandler.getStackInSlot(i);
                     if (!itemStack.isEmpty()) {
-                        spawnAtLocation(itemStack);
+                        spawnAtLocation((ServerLevel) level(), itemStack);
                     }
                 }
             }
@@ -114,6 +118,12 @@ public class ParachuteEntity extends Entity {
 
             move(MoverType.SELF, getDeltaMovement());
         }
+    }
+
+    @Override
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource source, float damage) {
+        // Parachutes did not implement damage behavior in 1.21.1.
+        return false;
     }
 
     @Override

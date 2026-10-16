@@ -6,7 +6,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.container.PlaneWorkbenchContainer;
 import xyz.przemyk.simpleplanes.network.CycleItemsPacket;
@@ -23,10 +23,10 @@ public class PlaneWorkbenchScreen extends AbstractContainerScreen<PlaneWorkbench
     protected void init() {
         super.init();
         addRenderableWidget(new ImageButton(leftPos + 122, topPos + 47, 10, 15, PlaneInventoryScreen.LEFT_BUTTON_SPRITES,
-                button -> PacketDistributor.sendToServer(new CycleItemsPacket(CycleItemsPacket.Direction.CRAFTING_LEFT))));
+                button -> ClientPacketDistributor.sendToServer(new CycleItemsPacket(CycleItemsPacket.Direction.CRAFTING_LEFT))));
 
         addRenderableWidget(new ImageButton(leftPos + 152, topPos + 47, 10, 15, PlaneInventoryScreen.RIGHT_BUTTON_SPRITES,
-                button -> PacketDistributor.sendToServer(new CycleItemsPacket(CycleItemsPacket.Direction.CRAFTING_RIGHT))));
+                button -> ClientPacketDistributor.sendToServer(new CycleItemsPacket(CycleItemsPacket.Direction.CRAFTING_RIGHT))));
     }
 
     @Override

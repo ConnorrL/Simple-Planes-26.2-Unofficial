@@ -17,7 +17,7 @@ public record RotationPacket(Quaternionf quaternion) implements CustomPacketPayl
         new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "rotation"));
 
     public static final StreamCodec<ByteBuf, RotationPacket> STREAM_CODEC = StreamCodec.composite(
-        ByteBufCodecs.QUATERNIONF,
+        ByteBufCodecs.QUATERNIONF.map(Quaternionf::new, quaternion -> quaternion),
         RotationPacket::quaternion,
         RotationPacket::new
     );

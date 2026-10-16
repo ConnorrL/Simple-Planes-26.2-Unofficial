@@ -296,7 +296,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource source, float amount) {
         Entity entity = source.getDirectEntity();
         if (entity == getControllingPassenger() && entity instanceof Player player) {
             if (upgrades.get(SimplePlanesRegistries.UPGRADE_TYPE.getKey(SimplePlanesUpgrades.SHOOTER.get())) instanceof ShooterUpgrade shooterUpgrade) {
@@ -316,7 +316,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
         setTimeSinceHit(20);
         setDamageTaken(getDamageTaken() + 10 * amount);
 
-        if (isInvulnerableTo(source) || damageTimeout > 0) {
+        if (isInvulnerableTo(serverLevel, source) || damageTimeout > 0) {
             return false;
         }
         if (level().isClientSide() || isRemoved()) {
@@ -332,10 +332,10 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
         boolean isPlayer = source.getDirectEntity() instanceof Player;
         boolean creativePlayer = isPlayer && ((Player) source.getEntity()).getAbilities().instabuild;
         if (creativePlayer) {
-            kill();
+            kill(serverLevel);
         } else if (getOnGround() && getHealth() <= 0) {
-            kill();
-            if (level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+            kill(serverLevel);
+            if (((ServerLevel) level()).getGameRules().get(GameRules.ENTITY_DROPS)) {
                 dropItem();
             }
         }
@@ -358,7 +358,12 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
 
     protected void dropItem() {
         ItemStack itemStack = getItemStack();
-        spawnAtLocation(itemStack).setInvulnerable(true);
+        if (level() instanceof ServerLevel serverLevel) {
+            var droppedEntity = spawnAtLocation(serverLevel, itemStack);
+            if (droppedEntity != null) {
+                droppedEntity.setInvulnerable(true);
+            }
+        }
     }
 
     public boolean isPickable() {
@@ -840,7 +845,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
 
     @Override
     public void readAdditionalSaveData(ValueInput input) {
-        input.getFloat("max_speed").ifPresent(value -> entityData.set(MAX_SPEED, value));
+        entityData.set(MAX_SPEED, input.getFloatOr("max_speed", entityData.get(MAX_SPEED)));
         input.getInt("max_health").ifPresent(value -> entityData.set(MAX_HEALTH, value <= 0 ? 20 : value));
         input.getInt("health").ifPresent(value -> entityData.set(HEALTH, value));
         input.getString("material").ifPresent(this::setMaterial);
@@ -945,7 +950,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
         Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "fireproof_materials"));
 
     @Override
-    public boolean isInvulnerableTo(DamageSource source) {
+    public boolean isInvulnerableTo(ServerLevel serverLevel, DamageSource source) {
         if (source.is(DamageTypeTags.IS_EXPLOSION)) {
             return false;
         }
@@ -955,7 +960,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
         if (source.getDirectEntity() != null && source.getDirectEntity().isPassengerOfSameVehicle(this)) {
             return true;
         }
-        return super.isInvulnerableTo(source);
+        return super.isInvulnerableTo(serverLevel, source);
     }
 
     @Override
@@ -995,9 +1000,9 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
 //            }
 
             explode();
-            kill();
+            kill((ServerLevel) level());
 
-            if (level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+            if (((ServerLevel) level()).getGameRules().get(GameRules.ENTITY_DROPS)) {
                 dropItem();
             }
         }
@@ -1071,7 +1076,9 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
                     if (!player.addItem(itemStack)) {
                         player.drop(itemStack, false);
                     }
-                    kill();
+                    if (level() instanceof ServerLevel serverLevel) {
+                        kill(serverLevel);
+                    }
                     return player.position();
                 }
             }

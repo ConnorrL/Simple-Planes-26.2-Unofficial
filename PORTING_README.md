@@ -37,3 +37,21 @@ API references:
 - https://docs.neoforged.net/docs/resources/server/recipes/custom/
 - https://aldak.netlify.app/javadoc/26.2.x/net/minecraft/world/item/crafting/recipeserializer
 - https://aldak.netlify.app/javadoc/26.2.x/net/minecraft/client/keymapping.category
+
+
+## Port pass 5 (based on logs_105255533209.zip)
+
+- Updated `SimplePlanesDatapack` from the removed `AddReloadListenerEvent` to `AddServerReloadListenersEvent`. Its underlying data reload listeners still require migration (old `SimpleJsonResourceReloadListener` API).
+- Converted the `Quaternionfc` networking codec to the mutable `Quaternionf` used by rotation packets.
+- Migrated `PlaneEntity.hurt` to server-only `hurtServer`, including the corresponding server-aware invulnerability override.
+- Updated the aircraft's entity drop gamerule lookup, server-only kill/drop APIs, null-safe dropped item handling, and `ValueInput.getFloatOr` for speed serialization.
+- Added `ParachuteEntity.hurtServer` (non-damageable, matching its prior absence of custom damage behavior) and guarded parachute item drops against client-side execution.
+
+**No successful compilation or runtime test yet.** The 250-error reporting limit was reached before all errors could be shown. Rendering, GUI, data reload listeners, capabilities, and networking remain major tasks. Port pass 5 does not constitute a working mod.
+
+References:
+- https://docs.neoforged.net/docs/entities/
+- https://docs.neoforged.net/docs/resources/reloadlisteners/
+- https://aldak.netlify.app/javadoc/26.2.x/net/neoforged/neoforge/event/addserverreloadlistenersevent
+
+- Updated 11 client UI/input serverbound packet calls to `ClientPacketDistributor.sendToServer`, which replaced the serverbound method on the common `PacketDistributor`. Common entity-side calls still require client-safe reorganization.
