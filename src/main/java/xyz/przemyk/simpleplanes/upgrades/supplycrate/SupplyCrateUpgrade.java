@@ -5,7 +5,6 @@ import xyz.przemyk.simpleplanes.porting.InventoryTagAdapter;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -21,7 +20,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.BaseCapability;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.container.StorageContainer;
@@ -50,28 +48,7 @@ public class SupplyCrateUpgrade extends LargeUpgrade {
         InventoryTagAdapter.load(itemStackHandler, planeEntity.registryAccess(), nbt);
     }
 
-    @Override
-    public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {
-        matrixStack.pushPose();
-        EntityType<?> entityType = planeEntity.getType();
 
-        if (entityType == SimplePlanesEntities.HELICOPTER.get()) {
-            matrixStack.translate(0, -0.1, -1.28);
-        } else {
-            matrixStack.translate(0, 0, 0.1);
-        }
-
-        matrixStack.mulPose(Axis.ZP.rotationDegrees(180));
-        matrixStack.translate(-0.4, -1, 0.3);
-        matrixStack.scale(0.82f, 0.82f, 0.82f);
-        BlockState state = Blocks.BARREL.defaultBlockState();
-        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, null);
-        matrixStack.scale(0.875f, 0.875f, 0.875f);
-        matrixStack.translate(0.0625f, 0.25f, 0.0625f);
-        state = Blocks.WHITE_WOOL.defaultBlockState();
-        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, null);
-        matrixStack.popPose();
-    }
 
     @Override
     public void writePacket(RegistryFriendlyByteBuf buffer) {}

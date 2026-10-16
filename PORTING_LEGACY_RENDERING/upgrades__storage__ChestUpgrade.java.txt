@@ -1,0 +1,19 @@
+    @Override
+    public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {
+        matrixStack.pushPose();
+        EntityType<?> entityType = planeEntity.getType();
+
+        if (entityType == SimplePlanesEntities.HELICOPTER.get()) {
+            matrixStack.translate(0, -0.1, -1.4);
+        }
+
+        matrixStack.mulPose(Axis.YP.rotationDegrees(180));
+
+        matrixStack.mulPose(Axis.ZP.rotationDegrees(180));
+        matrixStack.translate(-0.4, -1, -1.24);
+        matrixStack.scale(0.82f, 0.82f, 0.82f);
+
+        BlockState state = chestType instanceof BlockItem ? ((BlockItem) chestType).getBlock().defaultBlockState() : Blocks.CHEST.defaultBlockState();
+        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, null);
+        matrixStack.popPose();
+    }

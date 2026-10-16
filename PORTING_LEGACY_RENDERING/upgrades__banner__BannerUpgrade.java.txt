@@ -1,0 +1,4 @@
+    @Override
+    public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {
+        BannerModel.renderBanner(this, partialTicks, matrixStack, buffer, banner, packedLight);
+    }

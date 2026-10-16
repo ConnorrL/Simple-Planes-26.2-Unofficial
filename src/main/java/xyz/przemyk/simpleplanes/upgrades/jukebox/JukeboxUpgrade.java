@@ -3,7 +3,6 @@ package xyz.przemyk.simpleplanes.upgrades.jukebox;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -16,7 +15,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import xyz.przemyk.simpleplanes.client.MovingSound;
@@ -64,24 +62,7 @@ public class JukeboxUpgrade extends LargeUpgrade {
         }
     }
 
-    @Override
-    public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {
-        matrixStack.pushPose();
-        EntityType<?> entityType = planeEntity.getType();
 
-        if (entityType == SimplePlanesEntities.HELICOPTER.get()) {
-            matrixStack.translate(0, -0.1, -1.28);
-        } else {
-            matrixStack.translate(0, 0, 0.1);
-        }
-
-        matrixStack.mulPose(Axis.ZP.rotationDegrees(180));
-        matrixStack.translate(-0.4, -1, 0.3);
-        matrixStack.scale(0.82f, 0.82f, 0.82f);
-        BlockState state = Blocks.JUKEBOX.defaultBlockState();
-        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, null);
-        matrixStack.popPose();
-    }
 
     @Override
     public void writePacket(RegistryFriendlyByteBuf buffer) {}

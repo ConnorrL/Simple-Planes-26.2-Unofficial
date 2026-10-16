@@ -18,6 +18,9 @@ import xyz.przemyk.simpleplanes.client.render.state.PlaneRenderState;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
+import xyz.przemyk.simpleplanes.upgrades.Upgrade;
+import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -69,6 +72,10 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T, Plan
         float hitRemaining = plane.getTimeSinceHit() - partialTick;
         state.hitShake = hitRemaining > 0 ? Mth.clamp(hitRemaining / 10.0f, -30.0f, 30.0f) : 0.0f;
         state.hitPhase = plane.tickCount + partialTick;
+        state.mountedUpgrades.clear();
+        for (Upgrade upgrade : plane.upgrades.values()) {
+            state.mountedUpgrades.add(upgrade.getType());
+        }
     }
 
     @Override
@@ -96,8 +103,65 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T, Plan
             state.lightCoords, OverlayTexture.NO_OVERLAY, -1, null, 0, null);
         collector.submitModel(planeMetalModel, state, poseStack, RenderTypes.entityCutout(metalTexture),
             state.lightCoords, OverlayTexture.NO_OVERLAY, -1, null, 0, null);
+        submitUpgradeModels(state, poseStack, collector);
         poseStack.popPose();
-        // TODO: submit seats, equipment, large upgrades and banners from immutable state.
+        // TODO: specialized block attachments (payload, crates, jukebox), folding and banner rendering.
+    }
+
+    /**
+     * Draw upgrade model parts via the queued 26.2 renderer, not the 1.21-era
+     * MultiBufferSource methods. The snapshot carries *identities only*, never
+     * live entities or mutable inventory state into the submit phase.
+     */
+    private static void submitUpgradeModels(PlaneRenderState state, PoseStack poseStack, SubmitNodeCollector collector) {
+        for (UpgradeType type : state.mountedUpgrades) {
+            UpgradesModels.ModelEntry entry = UpgradesModels.MODEL_ENTRIES.get(type);
+            if (entry == null) continue;
+            EntityModel<PlaneRenderState> model;
+            Identifier texture;
+            switch (state.planeVariant) {
+                case 0 -> { model = entry.normal(); texture = entry.normalTexture(); }
+                case 1 -> { model = entry.large(); texture = entry.largeTexture(); }
+                case 2 -> { model = entry.cargo(); texture = entry.cargoTexture(); }
+                default -> { model = entry.heli(); texture = entry.heliTexture(); }
+            }
+            // Not every attachment fits every aircraft (for example solar panels on helicopters).
+            if (model != null && texture != null) {
+                collector.submitModel(model, state, poseStack, RenderTypes.entityCutout(texture),
+                    state.lightCoords, OverlayTexture.NO_OVERLAY, -1, null, 0, null);
+            }
+        }
+        if (state.mountedUpgrades.contains(SimplePlanesUpgrades.SEATS.get())) {
+            switch (state.planeVariant) {
+                case 0 -> {
+                    submitAccessory(UpgradesModels.SEATS, xyz.przemyk.simpleplanes.upgrades.seats.SeatsUpgrade.TEXTURE, state, poseStack, collector);
+                    submitAccessory(UpgradesModels.WOODEN_SEATS, state.materialTexture, state, poseStack, collector);
+                }
+                case 1 -> submitAccessory(UpgradesModels.LARGE_SEATS,
+                    xyz.przemyk.simpleplanes.upgrades.seats.SeatsUpgrade.LARGE_TEXTURE, state, poseStack, collector);
+                case 2 -> submitAccessory(UpgradesModels.CARGO_SEATS,
+                    xyz.przemyk.simpleplanes.upgrades.seats.SeatsUpgrade.CARGO_TEXTURE, state, poseStack, collector);
+                default -> {
+                    submitAccessory(UpgradesModels.HELI_SEATS,
+                        xyz.przemyk.simpleplanes.upgrades.seats.SeatsUpgrade.HELI_TEXTURE, state, poseStack, collector);
+                    submitAccessory(UpgradesModels.WOODEN_HELI_SEATS, state.materialTexture, state, poseStack, collector);
+                }
+            }
+        } else if (state.planeVariant == 2) {
+            // On cargo planes the empty wooden seat structure is visible until seats are installed.
+            submitAccessory(UpgradesModels.WOODEN_CARGO_SEATS, state.materialTexture, state, poseStack, collector);
+        }
+        if (state.planeVariant == 2 && state.mountedUpgrades.contains(SimplePlanesUpgrades.FLOATY_BEDDING.get())) {
+            submitAccessory(UpgradesModels.WOODEN_CARGO_FLOATING, state.materialTexture, state, poseStack, collector);
+        }
+    }
+
+    private static void submitAccessory(EntityModel<PlaneRenderState> model, Identifier texture,
+                                        PlaneRenderState state, PoseStack poseStack, SubmitNodeCollector collector) {
+        if (model != null && texture != null) {
+            collector.submitModel(model, state, poseStack, RenderTypes.entityCutout(texture),
+                state.lightCoords, OverlayTexture.NO_OVERLAY, -1, null, 0, null);
+        }
     }
 
     // Placeholder for 26.2's redesigned block-model sprite API; preserve the legacy

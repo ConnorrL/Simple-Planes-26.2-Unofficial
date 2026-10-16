@@ -5,7 +5,6 @@ import xyz.przemyk.simpleplanes.porting.InventoryTagAdapter;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -28,7 +27,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.BaseCapability;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.compat.ironchest.IronChestsCompat;
@@ -88,25 +86,7 @@ public class ChestUpgrade extends LargeUpgrade {
         return chestType.getDefaultInstance();
     }
 
-    @Override
-    public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {
-        matrixStack.pushPose();
-        EntityType<?> entityType = planeEntity.getType();
 
-        if (entityType == SimplePlanesEntities.HELICOPTER.get()) {
-            matrixStack.translate(0, -0.1, -1.4);
-        }
-
-        matrixStack.mulPose(Axis.YP.rotationDegrees(180));
-
-        matrixStack.mulPose(Axis.ZP.rotationDegrees(180));
-        matrixStack.translate(-0.4, -1, -1.24);
-        matrixStack.scale(0.82f, 0.82f, 0.82f);
-
-        BlockState state = chestType instanceof BlockItem ? ((BlockItem) chestType).getBlock().defaultBlockState() : Blocks.CHEST.defaultBlockState();
-        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, null);
-        matrixStack.popPose();
-    }
 
     @SuppressWarnings("unchecked")
     @Override

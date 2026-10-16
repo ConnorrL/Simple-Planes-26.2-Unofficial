@@ -2,9 +2,6 @@ package xyz.przemyk.simpleplanes.upgrades.solarpanel;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -48,21 +45,7 @@ public class SolarPanelUpgrade extends Upgrade {
         }
     }
 
-    @Override
-    public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {
-        EntityType<?> entityType = planeEntity.getType();
-        UpgradesModels.ModelEntry modelEntry = UpgradesModels.MODEL_ENTRIES.get(getType());
-        if (entityType == SimplePlanesEntities.PLANE.get()) {
-            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.itemEntityTranslucentCull(modelEntry.normalTexture()), false);
-            modelEntry.normal().renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
-        } else if(entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
-            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.itemEntityTranslucentCull(modelEntry.largeTexture()), false);
-            modelEntry.large().renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
-        } else if (entityType == SimplePlanesEntities.CARGO_PLANE.get()) {
-            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(modelEntry.cargoTexture()), false);
-            modelEntry.cargo().renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
-        }
-    }
+
 
     @Override
     public void writePacket(RegistryFriendlyByteBuf buffer) {}

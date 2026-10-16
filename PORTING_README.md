@@ -179,3 +179,12 @@ Based on `logs_105274094375.zip`. Fixed registration API usage for data componen
 - **Incomplete:** Upgrade overlays, cargo barrels, animated equipment and banners are NOT submitted by the new renderer, so they may be invisible even if this branch eventually compiles. Non-plank aircraft material texture lookups currently use oak as fallback. Restore proper dynamic sprite lookup before release.
 - NeoForge item/fluid/energy capabilities, workbench recipes, GUI and tint sources still need migrating. Expect many compile errors. No successful build or playtest has been performed.
 - No live server testing: test with an isolated 26.2 NeoForge client and server first.
+
+
+## Pass 12: upgrade render-state preparation (not compiled)
+
+* Copies attached upgrade IDs in `PlaneRenderer.extractRenderState`, keeping entity access outside `submit`.
+* Uses `SubmitNodeCollector.submitModel` for the existing upgrade models, plus seats and wooden components, with variant-specific textures and null guards.
+* Archives the 12 legacy immediate-render overrides and old BannerModel source in `PORTING_LEGACY_RENDERING/`; their corresponding incompatible 1.21.1 source definitions are removed from compilation. Gameplay methods, inventories, packets and recipes are preserved.
+* Dynamic banners, folding parts, cargo block models, armor-window tint, and other specialized visual features **still require a correct render-state rewrite** and are not currently submitted.
+* No build or runtime verification was possible locally (JDK 21 here; project targets JDK 25). GitHub Actions is needed to validate the compiler result. The 250-error limit may hide other problems.

@@ -1,7 +1,6 @@
 package xyz.przemyk.simpleplanes.upgrades.floating;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -36,14 +35,7 @@ public class FloatingUpgrade extends Upgrade {
         }
     }
 
-    @Override
-    public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {
-        super.render(matrixStack, buffer, packedLight, partialTicks);
 
-        if (planeEntity.getType() == SimplePlanesEntities.CARGO_PLANE.get()) {
-            UpgradesModels.WOODEN_CARGO_FLOATING.renderToBuffer(matrixStack, buffer.getBuffer(UpgradesModels.SEATS.renderType(PlaneRenderer.getMaterialTexture(planeEntity))), packedLight, OverlayTexture.NO_OVERLAY);
-        }
-    }
 
     @Override
     public void writePacket(RegistryFriendlyByteBuf buffer) {}

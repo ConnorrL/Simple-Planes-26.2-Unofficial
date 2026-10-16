@@ -1,7 +1,6 @@
 package xyz.przemyk.simpleplanes.upgrades.banner;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -46,10 +45,7 @@ public class BannerUpgrade extends Upgrade {
         }
     }
 
-    @Override
-    public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {
-        BannerModel.renderBanner(this, partialTicks, matrixStack, buffer, banner, packedLight);
-    }
+
 
     @Override
     public void onApply(ItemStack itemStack) {

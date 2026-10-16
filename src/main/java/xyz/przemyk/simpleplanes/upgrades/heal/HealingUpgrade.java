@@ -1,7 +1,6 @@
 package xyz.przemyk.simpleplanes.upgrades.heal;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
@@ -40,8 +39,7 @@ public class HealingUpgrade extends Upgrade {
         }
     }
 
-    @Override
-    public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {}
+
 
     @Override
     public void onApply(ItemStack itemStack) {

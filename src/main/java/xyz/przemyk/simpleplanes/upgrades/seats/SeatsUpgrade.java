@@ -2,9 +2,6 @@ package xyz.przemyk.simpleplanes.upgrades.seats;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.Identifier;
@@ -30,25 +27,7 @@ public class SeatsUpgrade extends Upgrade {
         super(SimplePlanesUpgrades.SEATS.get(), planeEntity);
     }
 
-    @Override
-    public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {
-        EntityType<?> entityType = planeEntity.getType();
-        if (entityType == SimplePlanesEntities.PLANE.get()) {
-            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(TEXTURE), false);
-            UpgradesModels.SEATS.renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
-            UpgradesModels.WOODEN_SEATS.renderToBuffer(matrixStack, buffer.getBuffer(UpgradesModels.SEATS.renderType(PlaneRenderer.getMaterialTexture(planeEntity))), packedLight, OverlayTexture.NO_OVERLAY);
-        } else if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
-            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(LARGE_TEXTURE), false);
-            UpgradesModels.LARGE_SEATS.renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
-        } else if (entityType == SimplePlanesEntities.CARGO_PLANE.get()) {
-            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(CARGO_TEXTURE), false);
-            UpgradesModels.CARGO_SEATS.renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
-        } else {
-            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(HELI_TEXTURE), false);
-            UpgradesModels.HELI_SEATS.renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
-            UpgradesModels.WOODEN_HELI_SEATS.renderToBuffer(matrixStack, buffer.getBuffer(UpgradesModels.SEATS.renderType(PlaneRenderer.getMaterialTexture(planeEntity))), packedLight, OverlayTexture.NO_OVERLAY);
-        }
-    }
+
 
     @Override
     public void writePacket(RegistryFriendlyByteBuf buffer) {}

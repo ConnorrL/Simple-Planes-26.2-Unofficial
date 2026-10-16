@@ -2,9 +2,6 @@ package xyz.przemyk.simpleplanes.upgrades.armor;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -35,27 +32,7 @@ public class ArmorUpgrade extends Upgrade {
         });
     }
 
-    @Override
-    public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {
-        EntityType<?> entityType = planeEntity.getType();
-        UpgradesModels.ModelEntry modelEntry = UpgradesModels.MODEL_ENTRIES.get(getType());
-        if (entityType == SimplePlanesEntities.PLANE.get()) {
-            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(modelEntry.normalTexture()), protectionLevel > 0);
-            modelEntry.normal().renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
 
-            vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.itemEntityTranslucentCull(modelEntry.normalTexture()), false);
-            UpgradesModels.ARMOR_WINDOW.renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
-        } else if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
-            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(modelEntry.largeTexture()), protectionLevel > 0);
-            modelEntry.large().renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
-        } else if (entityType == SimplePlanesEntities.CARGO_PLANE.get()) {
-            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(modelEntry.cargoTexture()), protectionLevel > 0);
-            modelEntry.cargo().renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
-        } else {
-            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(modelEntry.heliTexture()), protectionLevel > 0);
-            modelEntry.heli().renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
-        }
-    }
 
     @Override
     public void writePacket(RegistryFriendlyByteBuf buffer) {
