@@ -16,6 +16,7 @@ import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.neoforged.neoforge.capabilities.BaseCapability;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import xyz.przemyk.simpleplanes.porting.LegacyInventoryBridge;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import xyz.przemyk.simpleplanes.client.ModBusClientEventHandler;
 import xyz.przemyk.simpleplanes.client.gui.PlaneInventoryScreen;
@@ -97,8 +98,8 @@ public class FurnaceEngineUpgrade extends EngineUpgrade {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getCap(BaseCapability<T, ?> cap) {
-        if (cap == Capabilities.ItemHandler.ENTITY) {
-            return (T) itemStackHandler;
+        if (cap == Capabilities.Item.ENTITY) {
+            return (T) LegacyInventoryBridge.wrap(itemStackHandler);
         }
 
         return super.getCap(cap);

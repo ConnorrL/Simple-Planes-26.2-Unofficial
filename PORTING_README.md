@@ -230,3 +230,8 @@ Build reported 46 errors, 20 warnings. This is a precompilation API pass; change
 ## Port Pass 22
 
 See `COMPILER_TRIAGE_PASS22.md`. Incoming build: 40 errors, 20 warnings. Energy storage, workbench server recipes, and plane landing API migrated; no successful compilation or gameplay testing yet.
+
+
+## Pass 23 (2026-10-16)
+
+Item inventory capability migration starts with a `Container`-backed `ResourceHandler` adapter that preserves existing `ItemStackHandler` save data and menu slots. See `COMPILER_TRIAGE_PASS23.md`. Requires compilation and transaction tests; fluid and rendering work remain.

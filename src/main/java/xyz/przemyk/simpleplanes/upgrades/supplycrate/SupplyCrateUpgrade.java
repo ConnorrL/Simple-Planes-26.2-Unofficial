@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.BaseCapability;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import xyz.przemyk.simpleplanes.porting.LegacyInventoryBridge;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.container.StorageContainer;
@@ -82,8 +83,8 @@ public class SupplyCrateUpgrade extends LargeUpgrade {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getCap(BaseCapability<T, ?> cap) {
-        if (cap == Capabilities.ItemHandler.ENTITY) {
-            return (T) itemStackHandler;
+        if (cap == Capabilities.Item.ENTITY) {
+            return (T) LegacyInventoryBridge.wrap(itemStackHandler);
         }
 
         return super.getCap(cap);

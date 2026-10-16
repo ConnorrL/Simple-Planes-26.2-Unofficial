@@ -10,6 +10,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import xyz.przemyk.simpleplanes.porting.LegacyInventoryBridge;
 import xyz.przemyk.simpleplanes.compat.ironchest.IronChestsCompat;
 import xyz.przemyk.simpleplanes.compat.quark.QuarkCompat;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
@@ -91,9 +92,9 @@ public class SimplePlanesMod {
         );
 
         event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK,
+                Capabilities.Item.BLOCK,
                 SimplePlanesBlocks.PLANE_WORKBENCH_TILE.get(),
-                (blockEntity, side) -> blockEntity.itemStackHandler
+                (blockEntity, side) -> LegacyInventoryBridge.wrap(blockEntity.itemStackHandler)
         );
 
         registerPlaneEntityCaps(event, SimplePlanesEntities.PLANE.get());
@@ -106,8 +107,8 @@ public class SimplePlanesMod {
             RegisterCapabilitiesEvent event,
             EntityType<T> type
     ) {
-        event.registerEntity(Capabilities.ItemHandler.ENTITY, type,
-                (entity, ctx) -> entity.getCap(Capabilities.ItemHandler.ENTITY)
+        event.registerEntity(Capabilities.Item.ENTITY, type,
+                (entity, ctx) -> entity.getCap(Capabilities.Item.ENTITY)
         );
         event.registerEntity(Capabilities.FluidHandler.ENTITY, type,
                 (entity, ctx) -> entity.getCap(Capabilities.FluidHandler.ENTITY)
