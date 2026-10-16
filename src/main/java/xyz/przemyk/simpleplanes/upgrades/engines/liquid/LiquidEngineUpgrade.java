@@ -1,5 +1,7 @@
 package xyz.przemyk.simpleplanes.upgrades.engines.liquid;
 
+import xyz.przemyk.simpleplanes.porting.InventoryTagAdapter;
+
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -91,7 +93,7 @@ public class LiquidEngineUpgrade extends EngineUpgrade {
     @Override
     public Tag serializeNBT() {
         CompoundTag compoundTag = new CompoundTag();
-        compoundTag.put("items", itemStackHandler.serializeNBT(planeEntity.registryAccess()));
+        compoundTag.put("items", InventoryTagAdapter.save(itemStackHandler, planeEntity.registryAccess()));
         compoundTag.put("fluid", fluidTank.writeToNBT(planeEntity.registryAccess(), new CompoundTag()));
         compoundTag.putInt("burnTime", burnTime);
         return compoundTag;
@@ -99,7 +101,7 @@ public class LiquidEngineUpgrade extends EngineUpgrade {
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        itemStackHandler.deserializeNBT(planeEntity.registryAccess(), nbt.getCompoundOrEmpty("items"));
+        InventoryTagAdapter.load(itemStackHandler, planeEntity.registryAccess(), nbt.getCompoundOrEmpty("items"));
         fluidTank.readFromNBT(planeEntity.registryAccess(), nbt.getCompoundOrEmpty("fluid"));
         burnTime = nbt.getIntOr("burnTime", 0);
     }

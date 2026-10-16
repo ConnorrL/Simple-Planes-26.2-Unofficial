@@ -1,5 +1,7 @@
 package xyz.przemyk.simpleplanes.upgrades.engines.furnace;
 
+import xyz.przemyk.simpleplanes.porting.InventoryTagAdapter;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.nbt.CompoundTag;
@@ -40,7 +42,7 @@ public class FurnaceEngineUpgrade extends EngineUpgrade {
             updateClient();
         } else if (planeEntity.getThrottle() > 0) {
             ItemStack itemStack = itemStackHandler.getStackInSlot(0);
-            int itemBurnTime = itemStack.getBurnTime(RecipeType.SMELTING);
+            int itemBurnTime = itemStack.getBurnTime(RecipeType.SMELTING, planeEntity.level().fuelValues());
             if (itemBurnTime > 0) {
                 burnTimeTotal = itemBurnTime;
                 burnTime = itemBurnTime;
@@ -62,7 +64,7 @@ public class FurnaceEngineUpgrade extends EngineUpgrade {
     @Override
     public Tag serializeNBT() {
         CompoundTag compound = new CompoundTag();
-        compound.put("item", itemStackHandler.serializeNBT(planeEntity.registryAccess()));
+        compound.put("item", InventoryTagAdapter.save(itemStackHandler, planeEntity.registryAccess()));
         compound.putInt("burnTime", burnTime);
         compound.putInt("burnTimeTotal", burnTimeTotal);
         return compound;
@@ -70,7 +72,7 @@ public class FurnaceEngineUpgrade extends EngineUpgrade {
 
     @Override
     public void deserializeNBT(CompoundTag compound) {
-        itemStackHandler.deserializeNBT(planeEntity.registryAccess(), compound.getCompoundOrEmpty("item"));
+        InventoryTagAdapter.load(itemStackHandler, planeEntity.registryAccess(), compound.getCompoundOrEmpty("item"));
         burnTime = compound.getIntOr("burnTime", 0);
         burnTimeTotal = compound.getIntOr("burnTimeTotal", 0);
     }
@@ -101,7 +103,9 @@ public class FurnaceEngineUpgrade extends EngineUpgrade {
 
     @Override
     public void onRemoved() {
-        planeEntity.spawnAtLocation(itemStackHandler.getStackInSlot(0));
+        if (planeEntity.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+            planeEntity.spawnAtLocation(serverLevel, itemStackHandler.getStackInSlot(0));
+        }
     }
 
     @Override
@@ -146,7 +150,7 @@ public class FurnaceEngineUpgrade extends EngineUpgrade {
 
     @Override
     public void addContainerData(Function<Slot, Slot> addSlot, Function<DataSlot, DataSlot> addDataSlot) {
-        addSlot.apply(new FuelSlot(itemStackHandler, 0, 152, 62));
+        addSlot.apply(new FuelSlot(itemStackHandler, 0, 152, 62, planeEntity.level()));
     }
 
     @Override

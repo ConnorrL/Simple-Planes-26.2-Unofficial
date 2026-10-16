@@ -31,7 +31,7 @@ public class PlaneWorkbenchScreen extends AbstractContainerScreen<PlaneWorkbench
     }
 
     @Override
-    protected void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
         super.extractBackground(guiGraphics, mouseX, mouseY, partialTicks);
         int i = this.leftPos;
         int j = (this.height - this.imageHeight) / 2;

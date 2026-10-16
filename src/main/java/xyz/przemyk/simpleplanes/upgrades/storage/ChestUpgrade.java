@@ -1,5 +1,7 @@
 package xyz.przemyk.simpleplanes.upgrades.storage;
 
+import xyz.przemyk.simpleplanes.porting.InventoryTagAdapter;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -49,14 +51,14 @@ public class ChestUpgrade extends LargeUpgrade {
 
     @Override
     public Tag serializeNBT() {
-        CompoundTag nbt = itemStackHandler.serializeNBT(planeEntity.registryAccess());
+        CompoundTag nbt = InventoryTagAdapter.save(itemStackHandler, planeEntity.registryAccess());
         nbt.putString("ChestType", BuiltInRegistries.ITEM.getKey(chestType).toString());
         return nbt;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        itemStackHandler.deserializeNBT(planeEntity.registryAccess(), nbt);
+        InventoryTagAdapter.load(itemStackHandler, planeEntity.registryAccess(), nbt);
         Item item = BuiltInRegistries.ITEM.getValue(Identifier.parse(nbt.getStringOr("ChestType", "")));
         chestType = item == null ? Items.CHEST : item;
     }

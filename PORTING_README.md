@@ -121,3 +121,46 @@ This pass begins the documented 26.2 renderer migration while preserving origina
 - Do not install this uncompiled version on the production Youer server.
 
 References: https://docs.neoforged.net/docs/entities/renderer/ and https://docs.neoforged.net/docs/rendering/screens/ .
+
+
+## Port pass 9 (build log `logs_105266693928.zip`)
+
+The build reached `compileJava` but stopped at the compiler's 250-error display cap.
+The 26.2 render-state conversion is NOT complete. This is not a working binary.
+
+Changed in this pass:
+- Fixed `extractBackground` access in four container screens (the 26.2 compiler
+  requires public visibility for these overrides).
+- Replaced two unbound variables in `PlaneInventoryScreen` with `mouseX`/`mouseY`.
+- Migrated parachute and plane-workbench stored `ItemStackHandler` contents to
+  `serialize(ValueOutput.child(...))` / `deserialize(ValueInput.childOrEmpty(...))`.
+  Existing parent keys `items` and `input` remain unchanged.
+- Added `porting.InventoryTagAdapter`, a bridge from the 26.2 `ValueInput` API
+  back to `CompoundTag` for legacy upgrade save methods. Applied it to chest,
+  supply crate, furnace and liquid engine inventory payloads. Their wrapping
+  upgrade tags/keys remain unchanged.
+- Updated furnace fuel checks to pass the `Level.fuelValues()` argument; the
+  fuel slot now retains its `Level` for this purpose.
+- Corrected the furnace engine's item drop to supply a `ServerLevel`.
+
+Remaining major work:
+- Rendering: entity `EntityRenderState` extraction/rendering, `Model` layering,
+  old `MultiBufferSource`, `RenderType`, item foil buffers, GUI aircraft preview.
+- Full migration of the NeoForge item/fluid/energy capabilities, and any final
+  deprecated handler replacements.
+- Custom recipes and recipe manager access (do not drop crafting behavior).
+- Other entity, block and item 26.2 overrides, datapack registrations, HUD
+  blit calls, and network synchronization.
+- World-save roundtrip tests for cargo planes, upgrades, and parachutes.
+
+Validation: static source replacements and ZIP CRC check only. This environment
+has Java 21, not the required Java 25, and lacks the NeoForge build cache, so a
+successful compile has NOT been established. Run the existing GitHub Actions
+workflow and send its logs.
+
+Relevant public API references:
+https://aldak.netlify.app/javadoc/26.2.x/net/neoforged/neoforge/items/itemstackhandler
+https://aldak.netlify.app/javadoc/26.2.x/net/minecraft/world/level/storage/valueoutput
+https://aldak.netlify.app/javadoc/26.2.x/net/minecraft/world/level/storage/tagvalueinput
+https://docs.neoforged.net/docs/rendering/screens/
+https://github.com/neoforged/NeoForge/blob/26.2.x/src/main/java/net/neoforged/neoforge/common/extensions/IItemStackExtension.java

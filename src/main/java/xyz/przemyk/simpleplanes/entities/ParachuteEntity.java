@@ -136,8 +136,7 @@ public class ParachuteEntity extends Entity {
         entityData.set(HAS_STORAGE_CRATE, input.getBooleanOr("has_storage_crate", false));
         if (hasStorageCrate()) {
             itemStackHandler = new ItemStackHandler();
-            itemStackHandler.deserializeNBT(level().registryAccess(),
-                input.read("items", CompoundTag.CODEC).orElseGet(CompoundTag::new));
+            itemStackHandler.deserialize(input.childOrEmpty("items"));
         }
     }
 
@@ -145,8 +144,7 @@ public class ParachuteEntity extends Entity {
     protected void addAdditionalSaveData(ValueOutput output) {
         output.putBoolean("has_storage_crate", hasStorageCrate());
         if (hasStorageCrate()) {
-            output.store("items", CompoundTag.CODEC,
-                itemStackHandler.serializeNBT(level().registryAccess()));
+            itemStackHandler.serialize(output.child("items"));
         }
     }
 }

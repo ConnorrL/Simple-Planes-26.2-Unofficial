@@ -48,13 +48,13 @@ public class PlaneInventoryScreen extends AbstractContainerScreen<PlaneInventory
     }
 
     @Override
-    protected void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
         super.extractBackground(guiGraphics, mouseX, mouseY, partialTicks);
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, GUI, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
 
         if (menu.planeEntity != null) {
             for (Upgrade upgrade : menu.planeEntity.upgrades.values()) {
-                upgrade.renderScreenBg(guiGraphics, x, y, partialTicks, this);
+                upgrade.renderScreenBg(guiGraphics, mouseX, mouseY, partialTicks, this);
             }
         }
     }

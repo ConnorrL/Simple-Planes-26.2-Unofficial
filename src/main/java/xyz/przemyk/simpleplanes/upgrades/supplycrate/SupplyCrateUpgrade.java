@@ -1,5 +1,7 @@
 package xyz.przemyk.simpleplanes.upgrades.supplycrate;
 
+import xyz.przemyk.simpleplanes.porting.InventoryTagAdapter;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -40,12 +42,12 @@ public class SupplyCrateUpgrade extends LargeUpgrade {
 
     @Override
     public Tag serializeNBT() {
-        return itemStackHandler.serializeNBT(planeEntity.registryAccess());
+        return InventoryTagAdapter.save(itemStackHandler, planeEntity.registryAccess());
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        itemStackHandler.deserializeNBT(planeEntity.registryAccess(), nbt);
+        InventoryTagAdapter.load(itemStackHandler, planeEntity.registryAccess(), nbt);
     }
 
     @Override

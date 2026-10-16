@@ -22,15 +22,14 @@ public class PlaneWorkbenchBlockEntity extends BlockEntity {
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
-        output.store("input", CompoundTag.CODEC, itemStackHandler.serializeNBT(level.registryAccess()));
+        itemStackHandler.serialize(output.child("input"));
         output.putInt("selected_recipe", selectedRecipe.get());
     }
 
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
-        itemStackHandler.deserializeNBT(level.registryAccess(),
-            input.read("input", CompoundTag.CODEC).orElseGet(CompoundTag::new));
+        itemStackHandler.deserialize(input.childOrEmpty("input"));
         selectedRecipe.set(input.getIntOr("selected_recipe", 0));
     }
 }

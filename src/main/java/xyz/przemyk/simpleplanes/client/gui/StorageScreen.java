@@ -35,7 +35,7 @@ public class StorageScreen extends AbstractContainerScreen<StorageContainer> {
     }
 
     @Override
-    protected void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
         super.extractBackground(guiGraphics, mouseX, mouseY, partialTicks);
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
