@@ -200,3 +200,7 @@ See `COMPILER_TRIAGE_PASS14.md` for the latest log summary and changes.
 ## Port Pass 15 (2026-10-16)
 
 See `COMPILER_TRIAGE_PASS15.md`. This is a source-only migration pass, not a successfully built JAR.
+
+
+## Pass 16 — 80-error build, 2026-10-16
+See `COMPILER_TRIAGE_PASS16.md`. The four targeted changes address item save typing, armor item enchantability, and the workbench block-entity removal lifecycle. Compilation and gameplay are not yet verified. Do not use on a live server.

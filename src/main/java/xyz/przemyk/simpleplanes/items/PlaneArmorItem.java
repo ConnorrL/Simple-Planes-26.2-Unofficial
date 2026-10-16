@@ -12,19 +12,8 @@ public class PlaneArmorItem extends Item {
     }
 
     @Override
-    public boolean isEnchantable(ItemStack p_41456_) {
-        return true;
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public int getEnchantmentValue() {
-        return 9;
-    }
-
-    @Override
     public boolean supportsEnchantment(ItemStack stack, Holder<Enchantment> enchantment) {
-        if (enchantment == Enchantments.PROTECTION) {
+        if (enchantment.is(Enchantments.PROTECTION)) {
             return true;
         }
         return super.supportsEnchantment(stack, enchantment);

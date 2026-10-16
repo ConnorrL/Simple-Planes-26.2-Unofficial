@@ -2,7 +2,6 @@ package xyz.przemyk.simpleplanes.blocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
@@ -46,15 +45,5 @@ public class PlaneWorkbenchBlock extends Block implements EntityBlock {
         return new PlaneWorkbenchBlockEntity(blockPos, blockState);
     }
 
-    @Override
-    public void onRemove(BlockState state, Level level, BlockPos blockPos, BlockState newState, boolean isMoving) {
-        if (!state.is(newState.getBlock())) {
-            PlaneWorkbenchBlockEntity blockEntity = (PlaneWorkbenchBlockEntity) level.getBlockEntity(blockPos);
-            if (blockEntity != null) {
-                Containers.dropItemStack(level, blockPos.getX(), blockPos.getY(), blockPos.getZ(), blockEntity.itemStackHandler.getStackInSlot(0));
-                Containers.dropItemStack(level, blockPos.getX(), blockPos.getY(), blockPos.getZ(), blockEntity.itemStackHandler.getStackInSlot(1));
-            }
-        }
-        super.onRemove(state, level, blockPos, newState, isMoving);
-    }
+
 }

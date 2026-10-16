@@ -5,6 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.TagValueOutput;
 
 /**
@@ -25,7 +26,7 @@ public final class ItemStackTagAdapter {
     }
 
     public static ItemStack load(CompoundTag nbt, HolderLookup.Provider registries) {
-        TagValueInput input = TagValueInput.create(ProblemReporter.DISCARDING, registries, nbt);
+        ValueInput input = TagValueInput.create(ProblemReporter.DISCARDING, registries, nbt);
         return input.read(KEY, ItemStack.CODEC).orElse(ItemStack.EMPTY);
     }
 }

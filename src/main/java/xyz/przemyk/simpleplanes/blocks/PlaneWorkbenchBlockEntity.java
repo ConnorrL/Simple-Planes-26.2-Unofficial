@@ -1,6 +1,8 @@
 package xyz.przemyk.simpleplanes.blocks;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Containers;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.nbt.CompoundTag;
@@ -17,6 +19,17 @@ public class PlaneWorkbenchBlockEntity extends BlockEntity {
 
     public PlaneWorkbenchBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(SimplePlanesBlocks.PLANE_WORKBENCH_TILE.get(), blockPos, blockState);
+    }
+
+    // On 26.2, inventory exports must happen before the block entity is removed.
+    // The former BlockBehaviour#onRemove callback no longer provides that guarantee.
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+        super.preRemoveSideEffects(pos, state);
+        if (this.level instanceof ServerLevel serverLevel) {
+            Containers.dropItemStack(serverLevel, pos.getX(), pos.getY(), pos.getZ(), itemStackHandler.getStackInSlot(0));
+            Containers.dropItemStack(serverLevel, pos.getX(), pos.getY(), pos.getZ(), itemStackHandler.getStackInSlot(1));
+        }
     }
 
     @Override

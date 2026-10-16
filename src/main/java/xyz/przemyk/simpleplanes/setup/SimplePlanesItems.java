@@ -46,7 +46,7 @@ public class SimplePlanesItems {
     public static final Supplier<Item> FLOATY_BEDDING = ITEMS.register("floaty_bedding", () -> new Item(new Item.Properties()));
     public static final Supplier<Item> BOOSTER = ITEMS.register("booster", () -> new Item(new Item.Properties()));
     public static final Supplier<Item> HEALING = ITEMS.register("healing", () -> new Item(new Item.Properties()));
-    public static final Supplier<Item> ARMOR = ITEMS.register("armor", () -> new PlaneArmorItem(new Item.Properties().stacksTo(1)));
+    public static final Supplier<Item> ARMOR = ITEMS.register("armor", () -> new PlaneArmorItem(new Item.Properties().stacksTo(1).enchantable(9)));
     public static final Supplier<Item> SOLAR_PANEL = ITEMS.register("solar_panel", () -> new Item(new Item.Properties().stacksTo(1)));
     public static final Supplier<Item> FOLDING = ITEMS.register("folding", () -> new Item(new Item.Properties()));
     public static final Supplier<Item> SUPPLY_CRATE = ITEMS.register("supply_crate", () -> new Item(new Item.Properties()));
