@@ -1,6 +1,7 @@
 package xyz.przemyk.simpleplanes.client.gui;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -17,9 +18,7 @@ public class StorageScreen extends AbstractContainerScreen<StorageContainer> {
     public final int textureYSize;
 
     public StorageScreen(StorageContainer screenContainer, Inventory inv, Component titleIn) {
-        super(screenContainer, inv, titleIn);
-        imageHeight = IronChestsCompat.getYSize(screenContainer.chestType);
-        imageWidth = IronChestsCompat.getXSize(screenContainer.chestType);
+        super(screenContainer, inv, titleIn, IronChestsCompat.getXSize(screenContainer.chestType), IronChestsCompat.getYSize(screenContainer.chestType));
         inventoryLabelY = imageHeight - 94;
         texture = IronChestsCompat.getGuiTexture(screenContainer.chestType);
         textureYSize = IronChestsCompat.getTextureYSize(screenContainer.chestType);
@@ -36,15 +35,10 @@ public class StorageScreen extends AbstractContainerScreen<StorageContainer> {
     }
 
     @Override
-    public void render(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        super.render(guiGraphics, mouseX, mouseY, partialTicks);
-        renderTooltip(guiGraphics, mouseX, mouseY);
-    }
-
-    @Override
-    protected void renderBg(GuiGraphicsExtractor guiGraphics, float partialTicks, int mouseX, int mouseY) {
+    protected void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractBackground(guiGraphics, mouseX, mouseY, partialTicks);
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
-        guiGraphics.blit(texture, x, y, 0.0F, 0.0F, imageWidth, imageHeight, 256, textureYSize);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, 0, 0, imageWidth, imageHeight, 256, textureYSize);
     }
 }

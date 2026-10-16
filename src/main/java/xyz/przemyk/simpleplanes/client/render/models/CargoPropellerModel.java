@@ -1,16 +1,15 @@
 package xyz.przemyk.simpleplanes.client.render.models;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
+import xyz.przemyk.simpleplanes.client.render.state.PlaneRenderState;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
-import static xyz.przemyk.simpleplanes.client.render.PlaneRenderer.getPropellerRotation;
 
-public class CargoPropellerModel extends EntityModel<PlaneEntity> {
+
+public class CargoPropellerModel extends EntityModel<PlaneRenderState> {
 
 	private final ModelPart IronPropeller2;
 	private final ModelPart IronPropeller3;
@@ -18,6 +17,7 @@ public class CargoPropellerModel extends EntityModel<PlaneEntity> {
 	private final ModelPart IronPropeller5;
 
 	public CargoPropellerModel(ModelPart root) {
+        super(root);
 		this.IronPropeller2 = root.getChild("IronPropeller2");
 		this.IronPropeller3 = root.getChild("IronPropeller3");
 		this.IronPropeller4 = root.getChild("IronPropeller4");
@@ -131,15 +131,9 @@ public class CargoPropellerModel extends EntityModel<PlaneEntity> {
 	}
 
 	@Override
-	public void setupAnim(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-		IronPropeller2.zRot = IronPropeller3.zRot = IronPropeller4.zRot = IronPropeller5.zRot = getPropellerRotation(entity, limbSwing);
-	}
-
-	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
-		IronPropeller2.render(poseStack, vertexConsumer, packedLight, packedOverlay);
-		IronPropeller3.render(poseStack, vertexConsumer, packedLight, packedOverlay);
-		IronPropeller4.render(poseStack, vertexConsumer, packedLight, packedOverlay);
-		IronPropeller5.render(poseStack, vertexConsumer, packedLight, packedOverlay);
-	}
+    public void setupAnim(PlaneRenderState state) {
+        super.setupAnim(state);
+		IronPropeller2.zRot = IronPropeller3.zRot = IronPropeller4.zRot = IronPropeller5.zRot = state.propellerRotation;
+	
+    }
 }

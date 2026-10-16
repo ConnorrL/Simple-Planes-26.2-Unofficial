@@ -99,3 +99,25 @@ Targeted, documented changes (not compiled in this environment):
 - Validate gameplay on standard NeoForge client + server **before** testing Youer. Do not add this uncompiled code to the production server.
 
 This pass only makes specific verified API replacements; it is **not** a build-tested or functioning port.
+
+
+## Port pass 8 — GUI extraction and base aircraft models
+
+Source: `logs_105264392878.zip`; `compileJava` failed at the `-Xmaxerrs 250` compiler limit.
+
+This pass begins the documented 26.2 renderer migration while preserving original assets:
+
+- Updated **13 core aircraft/parachute model classes** from `EntityModel<Entity>` to `EntityModel<EntityRenderState>` subclasses, passing baked roots to constructors. Removed overrides of the now-final `renderToBuffer`; base models render all baked root parts.
+- Added `client/render/state/PlaneRenderState` and `ParachuteRenderState` as basic rendering snapshots. Plane state provides a field for future propeller animation extraction.
+- Updated the four primary inventory/workbench/upgrade/chest screen classes for `extractBackground` and rendering pipelines; migrated most old `render`/`renderBg` and HUD-screen tooltip calls to 26.2 API.
+- Kept all plane geometry, texture assets, inventory backend and game logic.
+
+**Not complete:**
+
+- `PlaneRenderer` and `ParachuteRenderer` still use the old direct rendering API. Their old generics will not accept the new model state classes until renderer submission is rewritten; `PlaneRenderState.propellerRotation` has not yet been populated. Models cannot display correctly yet.
+- `ModifyUpgradesScreen.renderEntityInInventory` uses a removed direct entity dispatcher path. It needs a `GuiGraphicsExtractor#entity` render-state-based implementation. The method is intentionally preserved for this next stage, not silently disabled.
+- Upgrade model classes, tint source registration, capability APIs, fuel logic, workbench and other entity methods still need migration.
+- Compilation **not verified**; the working environment only provides Java 21, while the 26.2 Gradle build needs Java 25. Rerun GitHub Actions with this source and upload the result.
+- Do not install this uncompiled version on the production Youer server.
+
+References: https://docs.neoforged.net/docs/entities/renderer/ and https://docs.neoforged.net/docs/rendering/screens/ .

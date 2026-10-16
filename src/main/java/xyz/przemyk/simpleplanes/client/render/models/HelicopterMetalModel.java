@@ -1,17 +1,17 @@
 package xyz.przemyk.simpleplanes.client.render.models;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
+import xyz.przemyk.simpleplanes.client.render.state.PlaneRenderState;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
-public class HelicopterMetalModel extends EntityModel<PlaneEntity> {
+public class HelicopterMetalModel extends EntityModel<PlaneRenderState> {
 	private final ModelPart Parts;
 
 	public HelicopterMetalModel(ModelPart root) {
+        super(root);
 		this.Parts = root.getChild("Parts");
 	}
 
@@ -59,10 +59,7 @@ public class HelicopterMetalModel extends EntityModel<PlaneEntity> {
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
-		Parts.render(poseStack, vertexConsumer, packedLight, packedOverlay);
-	}
-
-	@Override
-	public void setupAnim(PlaneEntity p_102618_, float p_102619_, float p_102620_, float p_102621_, float p_102622_, float p_102623_) {}
+    public void setupAnim(PlaneRenderState state) {
+        super.setupAnim(state);
+    }
 }

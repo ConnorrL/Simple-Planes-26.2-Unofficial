@@ -1,18 +1,18 @@
 package xyz.przemyk.simpleplanes.client.render.models;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
+import xyz.przemyk.simpleplanes.client.render.state.PlaneRenderState;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
-public class PlaneMetalModel extends EntityModel<PlaneEntity> {
+public class PlaneMetalModel extends EntityModel<PlaneRenderState> {
 	private final ModelPart Parts;
 	private final ModelPart bb_main;
 
 	public PlaneMetalModel(ModelPart root) {
+        super(root);
 		this.Parts = root.getChild("Parts");
 		this.bb_main = root.getChild("bb_main");
 	}
@@ -50,11 +50,7 @@ public class PlaneMetalModel extends EntityModel<PlaneEntity> {
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
-		Parts.render(poseStack, vertexConsumer, packedLight, packedOverlay);
-		bb_main.render(poseStack, vertexConsumer, packedLight, packedOverlay);
-	}
-
-	@Override
-	public void setupAnim(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {}
+    public void setupAnim(PlaneRenderState state) {
+        super.setupAnim(state);
+    }
 }

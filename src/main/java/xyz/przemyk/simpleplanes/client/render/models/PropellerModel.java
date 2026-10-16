@@ -1,19 +1,19 @@
 package xyz.przemyk.simpleplanes.client.render.models;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
+import xyz.przemyk.simpleplanes.client.render.state.PlaneRenderState;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
-import static xyz.przemyk.simpleplanes.client.render.PlaneRenderer.getPropellerRotation;
 
-public class PropellerModel extends EntityModel<PlaneEntity> {
+
+public class PropellerModel extends EntityModel<PlaneRenderState> {
     private final ModelPart IronPropeller;
 
     public PropellerModel(ModelPart root) {
+        super(root);
         this.IronPropeller = root.getChild("IronPropeller");
     }
 
@@ -32,12 +32,9 @@ public class PropellerModel extends EntityModel<PlaneEntity> {
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
-        IronPropeller.render(poseStack, vertexConsumer, packedLight, packedOverlay);
-    }
-
-    @Override
-    public void setupAnim(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        IronPropeller.zRot = getPropellerRotation(entity, limbSwing);
+    public void setupAnim(PlaneRenderState state) {
+        super.setupAnim(state);
+        IronPropeller.zRot = state.propellerRotation;
+    
     }
 }

@@ -1,19 +1,19 @@
 package xyz.przemyk.simpleplanes.client.render.models;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
+import xyz.przemyk.simpleplanes.client.render.state.ParachuteRenderState;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import xyz.przemyk.simpleplanes.entities.ParachuteEntity;
 
-public class ParachuteModel extends EntityModel<ParachuteEntity> {
+public class ParachuteModel extends EntityModel<ParachuteRenderState> {
 
 	private final ModelPart material;
 	private final ModelPart bb_main;
 
 	public ParachuteModel(ModelPart root) {
+        super(root);
 		this.material = root.getChild("material");
 		this.bb_main = root.getChild("bb_main");
 	}
@@ -42,11 +42,7 @@ public class ParachuteModel extends EntityModel<ParachuteEntity> {
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
-		material.render(poseStack, vertexConsumer, packedLight, packedOverlay);
-		bb_main.render(poseStack, vertexConsumer, packedLight, packedOverlay);
-	}
-
-	@Override
-	public void setupAnim(ParachuteEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {}
+    public void setupAnim(ParachuteRenderState state) {
+        super.setupAnim(state);
+    }
 }
