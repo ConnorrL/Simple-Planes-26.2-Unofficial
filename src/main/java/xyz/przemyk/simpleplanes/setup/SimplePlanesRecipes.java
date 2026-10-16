@@ -22,6 +22,6 @@ public class SimplePlanesRecipes {
         RECIPE_TYPES.register(bus);
     }
 
-    public static final Supplier<RecipeSerializer<?>> PLANE_WORKBENCH_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("plane_workbench", PlaneWorkbenchRecipeSerializer::new);
+    public static final Supplier<RecipeSerializer<PlaneWorkbenchRecipe>> PLANE_WORKBENCH_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("plane_workbench", PlaneWorkbenchRecipeSerializer::new);
     public static final Supplier<RecipeType<PlaneWorkbenchRecipe>> PLANE_WORKBENCH_RECIPE_TYPE = RECIPE_TYPES.register("plane_workbench", () -> RecipeType.simple(Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "plane_workbench")));
 }

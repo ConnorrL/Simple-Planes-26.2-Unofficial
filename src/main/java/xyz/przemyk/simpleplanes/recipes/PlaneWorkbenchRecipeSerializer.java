@@ -16,7 +16,7 @@ public class PlaneWorkbenchRecipeSerializer implements RecipeSerializer<PlaneWor
                 Ingredient.CODEC.fieldOf("ingredient").forGetter(PlaneWorkbenchRecipe::ingredient),
                 Codec.INT.fieldOf("ingredient_amount").forGetter(PlaneWorkbenchRecipe::ingredientAmount),
                 Codec.INT.fieldOf("material_amount").forGetter(PlaneWorkbenchRecipe::materialAmount),
-                ItemStack.STRICT_CODEC.fieldOf("result").forGetter(recipe -> recipe.getResultItem(null))
+                ItemStack.STRICT_CODEC.fieldOf("result").forGetter(PlaneWorkbenchRecipe::result)
             ).apply(kind, PlaneWorkbenchRecipe::new)
     );
 

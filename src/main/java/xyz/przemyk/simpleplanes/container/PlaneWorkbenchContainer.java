@@ -141,8 +141,8 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
     }
 
     @Override
-    public void clicked(int slotId, int dragType, ClickType clickTypeIn, Player player) {
-        super.clicked(slotId, dragType, clickTypeIn, player);
+    public void clicked(int slotId, int dragType, ContainerInput containerInput, Player player) {
+        super.clicked(slotId, dragType, containerInput, player);
         updateCraftingResult();
     }
 
@@ -155,7 +155,7 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
             originalItemStack = inputItemStack.copy();
 
             if (index == 2) { // test for result slot
-                inputItemStack.getItem().onCraftedBy(inputItemStack, playerIn.level(), playerIn);
+                inputItemStack.getItem().onCraftedBy(inputItemStack, playerIn);
 
                 // move result to the player inventory
                 if (!moveItemStackTo(inputItemStack, 3, 39, true)) {

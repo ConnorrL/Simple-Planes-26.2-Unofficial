@@ -1,6 +1,5 @@
 package xyz.przemyk.simpleplanes.recipes;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
@@ -15,12 +14,12 @@ public record PlaneWorkbenchRecipe(Ingredient ingredient, int ingredientAmount,
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<PlaneWorkbenchRecipe> getSerializer() {
         return SimplePlanesRecipes.PLANE_WORKBENCH_RECIPE_SERIALIZER.get();
     }
 
     @Override
-    public RecipeType<?> getType() {
+    public RecipeType<PlaneWorkbenchRecipe> getType() {
         return SimplePlanesRecipes.PLANE_WORKBENCH_RECIPE_TYPE.get();
     }
 
@@ -30,17 +29,28 @@ public record PlaneWorkbenchRecipe(Ingredient ingredient, int ingredientAmount,
     }
 
     @Override
-    public ItemStack assemble(RecipeInput container, HolderLookup.Provider provider) {
+    public ItemStack assemble(RecipeInput container) {
         return ItemStack.EMPTY;
     }
 
+    // The plane workbench handles crafting using its own two-slot UI, not the vanilla recipe book.
     @Override
-    public boolean canCraftInDimensions(int p_194133_1_, int p_194133_2_) {
+    public PlacementInfo placementInfo() {
+        return PlacementInfo.NOT_PLACEABLE;
+    }
+
+    @Override
+    public RecipeBookCategory recipeBookCategory() {
+        return RecipeBookCategories.CRAFTING_MISC;
+    }
+
+    @Override
+    public String group() {
+        return "";
+    }
+
+    @Override
+    public boolean showNotification() {
         return false;
-    }
-
-    @Override
-    public ItemStack getResultItem(HolderLookup.Provider provider) {
-        return ItemStack.EMPTY;
     }
 }

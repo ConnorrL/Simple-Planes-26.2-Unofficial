@@ -7,7 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
@@ -15,6 +15,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -40,14 +42,14 @@ public class PlaneItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, TooltipContext pContext, List<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {
+    public void appendHoverText(ItemStack pStack, TooltipContext pContext, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag pTooltipFlag) {
         CompoundTag entityTag = pStack.get(SimplePlanesComponents.ENTITY_TAG);
 
         if (entityTag != null) {
             if (entityTag.keySet().contains("material")) {
                 Block block = BuiltInRegistries.BLOCK.getValue(Identifier.parse(entityTag.getStringOr("material", "")));
                 if (block != null) {
-                    pTooltipComponents.add(Component.translatable(SimplePlanesMod.MODID + ".material").append(block.getName()));
+                    tooltip.accept(Component.translatable(SimplePlanesMod.MODID + ".material").append(block.getName()));
                 }
             }
             if (entityTag.keySet().contains("upgrades")) {
@@ -56,9 +58,9 @@ public class PlaneItem extends Item {
                     CompoundTag upgradeNbt = upgradesNBT.getCompoundOrEmpty(key);
                     Identifier resourceLocation = Identifier.parse(key);
                     if (upgradeNbt.keySet().contains("desc")) {
-                        pTooltipComponents.add(Component.literal(upgradeNbt.getStringOr("desc", "")));
+                        tooltip.accept(Component.literal(upgradeNbt.getStringOr("desc", "")));
                     } else {
-                        pTooltipComponents.add(Component.translatable("name." + resourceLocation.toString().replace(":", ".")));
+                        tooltip.accept(Component.translatable("name." + resourceLocation.toString().replace(":", ".")));
                     }
                 }
             }
@@ -66,11 +68,11 @@ public class PlaneItem extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+    public InteractionResult use(Level worldIn, Player playerIn, InteractionHand handIn) {
         ItemStack itemstack = playerIn.getItemInHand(handIn);
         HitResult hitResult = getPlayerPOVHitResult(worldIn, playerIn, ClipContext.Fluid.ANY);
         if (hitResult.getType() == HitResult.Type.MISS) {
-            return InteractionResultHolder.pass(itemstack);
+            return InteractionResult.PASS;
         } else {
             Vec3 vec3d = playerIn.getViewVector(1.0F);
             List<Entity> list = worldIn.getEntities(playerIn, playerIn.getBoundingBox().expandTowards(vec3d.scale(5.0D)).inflate(1.0D), ENTITY_PREDICATE);
@@ -80,7 +82,7 @@ public class PlaneItem extends Item {
                 for (Entity entity : list) {
                     AABB aabb = entity.getBoundingBox().inflate(entity.getPickRadius());
                     if (aabb.contains(vec3d1)) {
-                        return InteractionResultHolder.pass(itemstack);
+                        return InteractionResult.PASS;
                     }
                 }
             }
@@ -100,7 +102,7 @@ public class PlaneItem extends Item {
                     planeEntity.readPlaneItemData(entityTag);
                 }
                 if (!worldIn.noCollision(planeEntity, planeEntity.getBoundingBox().inflate(-0.1D))) {
-                    return InteractionResultHolder.fail(itemstack);
+                    return InteractionResult.FAIL;
                 } else {
                     if (!worldIn.isClientSide()) {
                         worldIn.addFreshEntity(planeEntity);
@@ -109,10 +111,10 @@ public class PlaneItem extends Item {
                         }
                     }
                     playerIn.awardStat(Stats.ITEM_USED.get(this));
-                    return InteractionResultHolder.success(itemstack);
+                    return InteractionResult.SUCCESS;
                 }
             } else {
-                return InteractionResultHolder.pass(itemstack);
+                return InteractionResult.PASS;
             }
         }
     }

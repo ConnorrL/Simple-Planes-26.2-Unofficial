@@ -1,29 +1,23 @@
-# Simple Planes 26.2: Port Pass 2 (uncompiled / not playable yet)
+# Simple Planes 26.2: Port Pass 3 — not compiled, not playable yet
 
-Starting point: Port Pass 1 source and the third GitHub Actions compile log.
-Target: Minecraft 26.2 / NeoForge 26.2.0.88 / Java 25.
+Target: Minecraft 26.2 / NeoForge 26.2.0.88 / Java 25 / eventual Youer.
 
-## Included this pass
-- Fix `Level.isClientSide` private field access by using `isClientSide()`.
-- Migrate direct vanilla and custom registry value lookups to `getValue(Identifier)`.
-- Migrate common `CompoundTag` primitive/compound reads to optional-safe getters.
-- Migrate saving/loading for planes, cargo planes, parachutes, workbench, and charging station to `ValueInput`/`ValueOutput`.
-- Preserve the existing inventory/upgrade NBT keys, and explicitly retain cargo plane large upgrades in the aircraft's item component.
+Changes against Port Pass 2:
+- Migrate plane/parachute item use() from InteractionResultHolder to InteractionResult.
+- Migrate plane and description item tooltip signatures to TooltipDisplay/Consumer.
+- Update PlaneWorkbenchContainer.clicked to ContainerInput and onCraftedBy signatures.
+- Update plane-workbench custom Recipe interface signatures and codec result accessor.
+- Temporarily exclude the optional JEI integration classes from Java compilation (their source remains in the archive). JEI recipe browsing is unavailable until that integration is ported.
 
-## Still unresolved
-- This is a **source migration pass**, not an independently compiled release.
-- The GitHub build still has many more issues, especially rendering, model layers,
-  networking, recipes, and optional JEI integration.
-- No actual client or server gameplay tests have been performed. No claim that
-  the resulting project builds successfully.
-- Protect your real game worlds with backups. After a successful build, test on
-  a separate NeoForge test server before trying the Youer hybrid server.
+IMPORTANT:
+- This archive was edited and syntax/ZIP-inspected, but has NOT passed a Java 25 NeoForge 26.2 compile or runtime test.
+- Major remaining work: plane and parachute renderers (the old buffer API was removed), entity saving/interaction, recipe synchronization between server/client, NeoForge capability migration, networking and datapack reloads.
+- The workbench still calls the removed level.getRecipeManager() method and needs a proper modern server/client recipe-sync design; avoid replacing it with a server-only call that leaves the client without recipes.
+- Use a separate test world after the build eventually succeeds; do not install into the production Youer server yet.
 
-## How to continue
-Upload the contents of this ZIP into your GitHub repository (replace matching
-files) and run Actions > Build Simple Planes 26.2 Port. Upload the new logs ZIP.
+Next: commit the contents to GitHub, run Actions, upload the latest logs ZIP.
 
-References:
-https://docs.neoforged.net/primer/docs/1.21.5/
-https://docs.neoforged.net/primer/docs/1.21.6/
-https://docs.neoforged.net/docs/1.21.8/datastorage/valueio/
+API references:
+https://docs.neoforged.net/docs/items/interactions/
+https://docs.neoforged.net/docs/resources/server/recipes/custom/
+https://aldak.netlify.app/javadoc/26.2.x/net/minecraft/world/item/crafting/recipe

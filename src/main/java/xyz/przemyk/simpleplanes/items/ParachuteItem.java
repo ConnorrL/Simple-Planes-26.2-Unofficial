@@ -3,7 +3,7 @@ package xyz.przemyk.simpleplanes.items;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -17,14 +17,14 @@ public class ParachuteItem extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
+    public InteractionResult use(Level level, Player player, InteractionHand interactionHand) {
         ItemStack itemStack = player.getItemInHand(interactionHand);
         if (!player.isPassenger()) {
             if (!level.isClientSide()) {
                 ParachuteEntity parachuteEntity = new ParachuteEntity(level);
                 parachuteEntity.setPos(player.position());
                 parachuteEntity.setDeltaMovement(player.getDeltaMovement());
-                player.startRiding(parachuteEntity, true);
+                player.startRiding(parachuteEntity);
                 level.addFreshEntity(parachuteEntity);
             }
             player.playSound(SoundEvents.ARMOR_EQUIP_LEATHER.value(), 1.0f, 1.0f);
@@ -33,8 +33,8 @@ public class ParachuteItem extends Item {
                 itemStack.shrink(1);
             }
 
-            return InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide());
+            return InteractionResult.SUCCESS;
         }
-        return InteractionResultHolder.pass(itemStack);
+        return InteractionResult.PASS;
     }
 }
