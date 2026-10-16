@@ -27,7 +27,7 @@ public class ArmorUpgrade extends Upgrade {
 
     @Override
     public void onApply(ItemStack itemStack) {
-        planeEntity.level().registryAccess().registry(Registries.ENCHANTMENT).flatMap(registry -> registry.getHolder(Enchantments.PROTECTION)).ifPresent(enchant -> {
+        planeEntity.level().registryAccess().lookup(Registries.ENCHANTMENT).flatMap(registry -> registry.get(Enchantments.PROTECTION)).ifPresent(enchant -> {
             protectionLevel = itemStack.getEnchantmentLevel(enchant);
         });
     }
@@ -48,7 +48,7 @@ public class ArmorUpgrade extends Upgrade {
     public ItemStack getItemStack() {
         ItemStack itemStack = SimplePlanesItems.ARMOR.get().getDefaultInstance();
         if (protectionLevel > 0) {
-            planeEntity.level().registryAccess().registry(Registries.ENCHANTMENT).flatMap(registry -> registry.getHolder(Enchantments.PROTECTION)).ifPresent(enchant -> {
+            planeEntity.level().registryAccess().lookup(Registries.ENCHANTMENT).flatMap(registry -> registry.get(Enchantments.PROTECTION)).ifPresent(enchant -> {
                 itemStack.enchant(enchant, protectionLevel);
             });
         }
@@ -72,6 +72,6 @@ public class ArmorUpgrade extends Upgrade {
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        protectionLevel = nbt.getByte("protection");
+        protectionLevel = nbt.getByte("protection").orElse((byte) 0);
     }
 }

@@ -193,3 +193,6 @@ Based on `logs_105274094375.zip`. Fixed registration API usage for data componen
 ## Pass 13 — HUD and engine model compatibility
 
 The 2026-10-16 uploaded GitHub Actions log reports 135 Java compilation errors and 20 warnings, rather than 250. This pass migrates 19 legacy HUD and inventory texture draws to `RenderPipelines.GUI_TEXTURED` and fixes seven legacy engine/booster `setupAnim` declarations. The aircraft health overlay no longer uses the removed `Gui.rightHeight` field. Original 256x256 textures and model geometry are retained. This source remains uncompiled and is not a gameplay release. See `COMPILER_TRIAGE_PASS13.md`.
+
+
+See `COMPILER_TRIAGE_PASS14.md` for the latest log summary and changes.

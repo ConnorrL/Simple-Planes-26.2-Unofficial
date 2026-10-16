@@ -106,7 +106,7 @@ public class ElectricEngineUpgrade extends EngineUpgrade {
     @Override
     public void renderScreen(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks, PlaneInventoryScreen planeInventoryScreen) {
         if (planeInventoryScreen.isHovering(152, 7, 16, 72, mouseX, mouseY)) {
-            guiGraphics.renderTooltip(planeInventoryScreen.getMinecraft().font, Component.translatable(SimplePlanesMod.MODID + ".gui.energy", energyStorage.getEnergyStored()), mouseX, mouseY);
+            guiGraphics.setTooltipForNextFrame(planeInventoryScreen.getMinecraft().font, Component.translatable(SimplePlanesMod.MODID + ".gui.energy", energyStorage.getEnergyStored()), mouseX, mouseY);
         }
     }
 

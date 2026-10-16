@@ -140,11 +140,11 @@ public class FurnaceEngineUpgrade extends EngineUpgrade {
         if (!fuelStack.isEmpty()) {
             int i2 = scaledHeight - 16 - 3;
             if (side == HumanoidArm.LEFT) {
-                guiGraphics.renderItem(fuelStack, i - 91 - 26, i2);
-                guiGraphics.renderItemDecorations(mc.font, fuelStack, i - 91 - 26, i2);
+                guiGraphics.item(fuelStack, i - 91 - 26, i2);
+                guiGraphics.itemDecorations(mc.font, fuelStack, i - 91 - 26, i2);
             } else {
-                guiGraphics.renderItem(fuelStack, i + 91 + 3, i2);
-                guiGraphics.renderItemDecorations(mc.font, fuelStack, i + 91 + 3, i2);
+                guiGraphics.item(fuelStack, i + 91 + 3, i2);
+                guiGraphics.itemDecorations(mc.font, fuelStack, i + 91 + 3, i2);
             }
         }
     }

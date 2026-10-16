@@ -4,6 +4,7 @@ import xyz.przemyk.simpleplanes.porting.InventoryTagAdapter;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -61,7 +62,9 @@ public class SupplyCrateUpgrade extends LargeUpgrade {
         for (int i = 0; i < itemStackHandler.getSlots(); i++) {
             ItemStack itemStack = itemStackHandler.getStackInSlot(i);
             if (!itemStack.isEmpty()) {
-                planeEntity.spawnAtLocation(itemStack);
+                if (planeEntity.level() instanceof ServerLevel serverLevel) {
+                    planeEntity.spawnAtLocation(serverLevel, itemStack);
+                }
             }
         }
     }

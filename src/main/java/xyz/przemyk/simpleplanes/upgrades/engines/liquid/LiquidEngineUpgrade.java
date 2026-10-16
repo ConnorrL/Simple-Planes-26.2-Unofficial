@@ -2,6 +2,7 @@ package xyz.przemyk.simpleplanes.upgrades.engines.liquid;
 
 import xyz.przemyk.simpleplanes.porting.InventoryTagAdapter;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.nbt.CompoundTag;
@@ -77,8 +78,10 @@ public class LiquidEngineUpgrade extends EngineUpgrade {
 
     @Override
     public void onRemoved() {
-        planeEntity.spawnAtLocation(itemStackHandler.getStackInSlot(0));
-        planeEntity.spawnAtLocation(itemStackHandler.getStackInSlot(1));
+        if (planeEntity.level() instanceof ServerLevel serverLevel) {
+            planeEntity.spawnAtLocation(serverLevel, itemStackHandler.getStackInSlot(0));
+            planeEntity.spawnAtLocation(serverLevel, itemStackHandler.getStackInSlot(1));
+        }
     }
 
     @Override
@@ -144,7 +147,7 @@ public class LiquidEngineUpgrade extends EngineUpgrade {
     public void renderScreen(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks, PlaneInventoryScreen planeInventoryScreen) {
         if (planeInventoryScreen.isHovering(153, 7 + 18 + 2, 16, 32, mouseX, mouseY)) {
             FluidStack fluidStack = fluidTank.getFluid();
-            guiGraphics.renderTooltip(planeInventoryScreen.getMinecraft().font, Component.translatable(SimplePlanesMod.MODID + ".gui.fluid", fluidStack.getHoverName(), fluidStack.getAmount()), mouseX, mouseY);
+            guiGraphics.setTooltipForNextFrame(planeInventoryScreen.getMinecraft().font, Component.translatable(SimplePlanesMod.MODID + ".gui.fluid", fluidStack.getHoverName(), fluidStack.getAmount()), mouseX, mouseY);
         }
     }
 

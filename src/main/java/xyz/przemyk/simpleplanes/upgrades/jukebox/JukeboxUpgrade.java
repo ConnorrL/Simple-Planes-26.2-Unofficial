@@ -2,6 +2,7 @@ package xyz.przemyk.simpleplanes.upgrades.jukebox;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -72,7 +73,9 @@ public class JukeboxUpgrade extends LargeUpgrade {
 
     @Override
     public void onRemoved() {
-        planeEntity.spawnAtLocation(record);
+        if (planeEntity.level() instanceof ServerLevel serverLevel) {
+            planeEntity.spawnAtLocation(serverLevel, record);
+        }
         if (planeEntity.level().isClientSide()) {
             MovingSound.remove(planeEntity);
         }

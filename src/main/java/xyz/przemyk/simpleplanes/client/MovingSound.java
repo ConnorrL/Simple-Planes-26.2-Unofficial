@@ -38,7 +38,7 @@ public class MovingSound extends AbstractTickableSoundInstance {
     public static void playRecord(JukeboxPacket jukeboxPacket) {
         Minecraft minecraft = Minecraft.getInstance();
         Entity entity = minecraft.level.getEntity(jukeboxPacket.planeEntityID());
-        JukeboxSong.fromStack(minecraft.level.registryAccess(), BuiltInRegistries.ITEM.getValue(jukeboxPacket.record()).getDefaultInstance()).ifPresent(h -> {
+        JukeboxSong.fromStack(BuiltInRegistries.ITEM.getValue(jukeboxPacket.record()).getDefaultInstance()).ifPresent(h -> {
             JukeboxSong jukeboxSong = h.value();
             SoundInstance soundInstance = playingRecords.get(entity);
             if (soundInstance != null) {
@@ -46,7 +46,7 @@ public class MovingSound extends AbstractTickableSoundInstance {
                 playingRecords.remove(entity);
             }
 
-            minecraft.gui.setNowPlaying(jukeboxSong.description());
+            minecraft.gui.setOverlayMessage(jukeboxSong.description(), true);
             MovingSound movingSound = new MovingSound(jukeboxSong.soundEvent().value(), entity);
             playingRecords.put(entity, movingSound);
             minecraft.getSoundManager().play(movingSound);
