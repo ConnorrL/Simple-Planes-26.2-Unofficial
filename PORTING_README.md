@@ -243,3 +243,7 @@ See `COMPILER_TRIAGE_PASS24.md`. Fixed the client fluid texture call and 26.2 pa
 
 ## Pass 25
 See `COMPILER_TRIAGE_PASS25.md`. This port remains experimental and **does not compile yet**; the incoming build had 25 errors.
+
+
+## Pass 26 (2026-10-16)
+See `COMPILER_TRIAGE_PASS26.md`: shooter API migration, shooter entity-model signatures, and render-state passenger transforms. Uncompiled experimental changes, next GitHub Actions run required.

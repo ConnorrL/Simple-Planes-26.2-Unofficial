@@ -8,7 +8,6 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
@@ -16,6 +15,8 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.CalculateDetachedCameraDistanceEvent;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
+import net.minecraft.util.context.ContextKey;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.client.event.ViewportEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
@@ -37,46 +38,29 @@ public class ClientEventHandler {
     public static KeyMapping yawRight;
     public static KeyMapping yawLeft;
 
+    /** Snapshot written by the render-state modifier, avoiding mutable Entity access during submission. */
+    public static final ContextKey<PassengerPlaneTransform> PLANE_PASSENGER_TRANSFORM =
+            new ContextKey<>(Identifier.fromNamespaceAndPath("simpleplanes", "passenger_plane_transform"));
+
+    public record PassengerPlaneTransform(Quaternionf rotation, float vehicleYaw) {}
+
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onRenderPre(RenderLivingEvent.Pre<LivingEntity, ?> event) {
-        LivingEntity livingEntity = event.getEntity();
-        Entity entity = livingEntity.getRootVehicle();
-        if (entity instanceof PlaneEntity planeEntity) {
-            PoseStack matrixStack = event.getPoseStack();
-            matrixStack.pushPose();
+    public static void onRenderPre(RenderLivingEvent.Pre<?, ?, ?> event) {
+        PassengerPlaneTransform transform = event.getRenderState().getRenderData(PLANE_PASSENGER_TRANSFORM);
+        if (transform == null) return;
 
-            matrixStack.translate(0, 0.375, 0);
-            Quaternionf quaternion = MathUtil.lerpQ(event.getPartialTick(), planeEntity.getQ_Prev(), planeEntity.getQ_Client());
-            quaternion.set(quaternion.x(), -quaternion.y(), -quaternion.z(), quaternion.w());
-            matrixStack.mulPose(quaternion);
-            float rotationYaw = MathUtil.lerpAngle(event.getPartialTick(), entity.yRotO, entity.getYRot());
-
-            matrixStack.mulPose(Axis.YP.rotationDegrees(rotationYaw));
-            matrixStack.translate(0, -0.375, 0);
-
-            if (MathUtil.degreesDifferenceAbs(planeEntity.rotationRoll, 0) > 90) { //TODO: Do I actually need this?
-                livingEntity.yHeadRot = planeEntity.getYRot() * 2 - livingEntity.yHeadRot;
-            }
-            if (MathUtil.degreesDifferenceAbs(planeEntity.prevRotationRoll, 0) > 90) {
-                livingEntity.yHeadRotO = planeEntity.yRotO * 2 - livingEntity.yHeadRotO;
-            }
-        }
+        PoseStack matrixStack = event.getPoseStack();
+        matrixStack.pushPose();
+        matrixStack.translate(0, 0.375, 0);
+        matrixStack.mulPose(new Quaternionf(transform.rotation()));
+        matrixStack.mulPose(Axis.YP.rotationDegrees(transform.vehicleYaw()));
+        matrixStack.translate(0, -0.375, 0);
     }
 
-    @SuppressWarnings("rawtypes")
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onRenderPost(RenderLivingEvent.Post event) {
-        LivingEntity livingEntity = event.getEntity();
-        Entity entity = livingEntity.getRootVehicle();
-        if (entity instanceof PlaneEntity planeEntity) {
+    public static void onRenderPost(RenderLivingEvent.Post<?, ?, ?> event) {
+        if (event.getRenderState().getRenderData(PLANE_PASSENGER_TRANSFORM) != null) {
             event.getPoseStack().popPose();
-
-            if (MathUtil.degreesDifferenceAbs(planeEntity.rotationRoll, 0) > 90) {
-                livingEntity.yHeadRot = planeEntity.getYRot() * 2 - event.getEntity().yHeadRot;
-            }
-            if (MathUtil.degreesDifferenceAbs(planeEntity.prevRotationRoll, 0) > 90) {
-                livingEntity.yHeadRotO = planeEntity.yRotO * 2 - event.getEntity().yHeadRotO;
-            }
         }
     }
 

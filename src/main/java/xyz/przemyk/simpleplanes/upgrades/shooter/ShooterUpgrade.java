@@ -1,6 +1,11 @@
 package xyz.przemyk.simpleplanes.upgrades.shooter;
 
-import net.minecraft.Util;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
+import net.minecraft.world.entity.projectile.hurtingprojectile.Fireball;
+import net.minecraft.world.entity.projectile.hurtingprojectile.SmallFireball;
+import xyz.przemyk.simpleplanes.porting.InventoryTagAdapter;
+import xyz.przemyk.simpleplanes.porting.LegacyInventoryBridge;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -46,7 +51,7 @@ public class ShooterUpgrade extends Upgrade {
         Vector3f motion1 = planeEntity.transformPos(new Vector3f(0, -0.25f, (float) (1 + planeEntity.getDeltaMovement().length())));
         Vec3 motion = new Vec3(motion1);
         Level level = player.level();
-        RandomSource random = level.random;
+        RandomSource random = level.getRandom();
 
         Vector3f pos = planeEntity.transformPos(new Vector3f(0.0f, 1.8f, 2.0f));
         updateClient();
@@ -69,8 +74,8 @@ public class ShooterUpgrade extends Upgrade {
             double d3 = random.nextGaussian() * 0.05D + 2 * motion.x;
             double d4 = random.nextGaussian() * 0.05D;
             double d5 = random.nextGaussian() * 0.05D + 2 * motion.z;
-            Fireball fireBallEntity = Util
-                .make(new SmallFireball(level, player, new Vec3(d3, d4, d5)), (p_229425_1_) -> p_229425_1_.setItem(itemStack));
+            Fireball fireBallEntity = new SmallFireball(level, player, new Vec3(d3, d4, d5));
+            fireBallEntity.setItem(itemStack);
             fireBallEntity.setPos(x, y, z);
             fireBallEntity.setDeltaMovement(motion.scale(2));
             level.addFreshEntity(fireBallEntity);
@@ -93,7 +98,7 @@ public class ShooterUpgrade extends Upgrade {
             if (blockpos != null) {
                 EyeOfEnder eyeOfEnder = new EyeOfEnder(level, x, y, z);
                 eyeOfEnder.setItem(itemStack);
-                eyeOfEnder.signalTo(blockpos);
+                eyeOfEnder.signalTo(Vec3.atCenterOf(blockpos));
                 level.addFreshEntity(eyeOfEnder);
                 level.playSound(null, x, y, z, SoundEvents.ENDER_EYE_LAUNCH, SoundSource.NEUTRAL, 0.5f, 0.4f / random.nextFloat() * 0.4f + 0.8f);
                 if (!player.isCreative()) {
@@ -108,13 +113,13 @@ public class ShooterUpgrade extends Upgrade {
     @Override
     public Tag serializeNBT() {
         CompoundTag compoundTag = new CompoundTag();
-        compoundTag.put("item", itemStackHandler.serializeNBT(planeEntity.registryAccess()));
+        compoundTag.put("item", InventoryTagAdapter.save(itemStackHandler, planeEntity.registryAccess()));
         return compoundTag;
     }
 
     @Override
     public void deserializeNBT(CompoundTag compoundTag) {
-        itemStackHandler.deserializeNBT(planeEntity.registryAccess(), compoundTag.getCompoundOrEmpty("item"));
+        InventoryTagAdapter.load(itemStackHandler, planeEntity.registryAccess(), compoundTag.getCompoundOrEmpty("item"));
     }
 
     @Override
@@ -130,8 +135,8 @@ public class ShooterUpgrade extends Upgrade {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getCap(BaseCapability<T, ?> cap) {
-        if (cap == Capabilities.ItemHandler.ENTITY) {
-            return (T) itemStackHandler;
+        if (cap == Capabilities.Item.ENTITY) {
+            return (T) LegacyInventoryBridge.wrap(itemStackHandler);
         }
 
         return super.getCap(cap);
@@ -139,7 +144,9 @@ public class ShooterUpgrade extends Upgrade {
 
     @Override
     public void onRemoved() {
-        planeEntity.spawnAtLocation(itemStackHandler.getStackInSlot(0));
+        if (planeEntity.level() instanceof ServerLevel serverLevel) {
+            planeEntity.spawnAtLocation(serverLevel, itemStackHandler.getStackInSlot(0));
+        }
     }
 
     @Override
@@ -154,6 +161,6 @@ public class ShooterUpgrade extends Upgrade {
 
     @Override
     public void renderScreenBg(GuiGraphicsExtractor guiGraphics, int x, int y, float partialTicks, PlaneInventoryScreen screen) {
-        guiGraphics.blit(PlaneInventoryScreen.GUI, screen.getGuiLeft() + 133, screen.getGuiTop() + 61, 226, 0, 18, 18);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, PlaneInventoryScreen.GUI, screen.getGuiLeft() + 133, screen.getGuiTop() + 61, 226, 0, 18, 18, 256, 256);
     }
 }

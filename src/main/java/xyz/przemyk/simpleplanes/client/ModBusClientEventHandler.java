@@ -1,6 +1,15 @@
 package xyz.przemyk.simpleplanes.client;
 
+import com.google.common.reflect.TypeToken;
+import com.mojang.math.Axis;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Entity;
+import net.neoforged.neoforge.client.renderstate.RegisterRenderStateModifiersEvent;
+import org.joml.Quaternionf;
+import xyz.przemyk.simpleplanes.misc.MathUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
@@ -28,6 +37,30 @@ public class ModBusClientEventHandler {
             new KeyMapping.Category(Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "planes"));
 
     public static final Identifier HUD_TEXTURE = Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "textures/gui/plane_hud.png");
+
+    /** Capture the vehicle before rendering begins; RenderLivingEvent now exposes a state, not the entity. */
+    @SubscribeEvent
+    public static void registerPassengerPlaneRenderState(RegisterRenderStateModifiersEvent event) {
+        event.registerEntityModifier(
+                new TypeToken<LivingEntityRenderer<LivingEntity, LivingEntityRenderState, ?>>() {},
+                (livingEntity, state) -> {
+                    Entity vehicle = livingEntity.getRootVehicle();
+                    if (!(vehicle instanceof PlaneEntity plane)) {
+                        state.setRenderData(ClientEventHandler.PLANE_PASSENGER_TRANSFORM, null);
+                        return;
+                    }
+                    float partialTicks = state.partialTick;
+                    Quaternionf rotation = MathUtil.lerpQ(partialTicks, plane.getQ_Prev(), plane.getQ_Client());
+                    rotation.set(rotation.x(), -rotation.y(), -rotation.z(), rotation.w());
+                    float vehicleYaw = MathUtil.lerpAngle(partialTicks, vehicle.yRotO, vehicle.getYRot());
+                    state.setRenderData(ClientEventHandler.PLANE_PASSENGER_TRANSFORM,
+                            new ClientEventHandler.PassengerPlaneTransform(rotation, vehicleYaw));
+                    // Mirror the head direction for an inverted plane, using render-state data only.
+                    if (MathUtil.degreesDifferenceAbs(plane.rotationRoll, 0) > 90) {
+                        state.yRot = plane.getYRot() * 2 - state.yRot;
+                    }
+                });
+    }
 
     @SubscribeEvent
     public static void registerMenuScreens(RegisterMenuScreensEvent event) {
