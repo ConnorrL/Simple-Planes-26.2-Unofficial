@@ -15,6 +15,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.CalculateDetachedCameraDistanceEvent;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
+import net.neoforged.neoforge.client.event.RenderPlayerEvent;
 import net.minecraft.util.context.ContextKey;
 import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.client.event.ViewportEvent;
@@ -44,12 +45,37 @@ public class ClientEventHandler {
 
     public record PassengerPlaneTransform(Quaternionf rotation, float vehicleYaw) {}
 
+    /**
+     * Ordinary living-entity render hooks. Player render hooks are separate event
+     * classes in 26.2; handling RenderLivingEvent.Pre alone does NOT rotate avatars.
+     */
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onRenderPre(RenderLivingEvent.Pre<?, ?, ?> event) {
-        PassengerPlaneTransform transform = event.getRenderState().getRenderData(PLANE_PASSENGER_TRANSFORM);
-        if (transform == null) return;
+        pushPassengerTransform(event.getPoseStack(),
+                event.getRenderState().getRenderData(PLANE_PASSENGER_TRANSFORM));
+    }
 
-        PoseStack matrixStack = event.getPoseStack();
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onRenderPost(RenderLivingEvent.Post<?, ?, ?> event) {
+        popPassengerTransform(event.getPoseStack(),
+                event.getRenderState().getRenderData(PLANE_PASSENGER_TRANSFORM));
+    }
+
+    /** Player/avatar render events do not extend RenderLivingEvent.Pre/Post. */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onPlayerRenderPre(RenderPlayerEvent.Pre<?> event) {
+        pushPassengerTransform(event.getPoseStack(),
+                event.getRenderState().getRenderData(PLANE_PASSENGER_TRANSFORM));
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onPlayerRenderPost(RenderPlayerEvent.Post<?> event) {
+        popPassengerTransform(event.getPoseStack(),
+                event.getRenderState().getRenderData(PLANE_PASSENGER_TRANSFORM));
+    }
+
+    private static void pushPassengerTransform(PoseStack matrixStack, PassengerPlaneTransform transform) {
+        if (transform == null) return;
         matrixStack.pushPose();
         matrixStack.translate(0, 0.375, 0);
         matrixStack.mulPose(new Quaternionf(transform.rotation()));
@@ -57,11 +83,8 @@ public class ClientEventHandler {
         matrixStack.translate(0, -0.375, 0);
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onRenderPost(RenderLivingEvent.Post<?, ?, ?> event) {
-        if (event.getRenderState().getRenderData(PLANE_PASSENGER_TRANSFORM) != null) {
-            event.getPoseStack().popPose();
-        }
+    private static void popPassengerTransform(PoseStack matrixStack, PassengerPlaneTransform transform) {
+        if (transform != null) matrixStack.popPose();
     }
 
     private static boolean oldMoveHeliUpState = false;

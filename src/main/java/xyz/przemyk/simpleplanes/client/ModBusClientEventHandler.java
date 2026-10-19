@@ -5,6 +5,10 @@ import com.mojang.math.Axis;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.client.entity.ClientAvatarEntity;
+import net.minecraft.world.entity.Avatar;
+import net.neoforged.neoforge.client.renderstate.AvatarRenderStateModifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.client.renderstate.RegisterRenderStateModifiersEvent;
@@ -38,28 +42,44 @@ public class ModBusClientEventHandler {
 
     public static final Identifier HUD_TEXTURE = Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, "textures/gui/plane_hud.png");
 
-    /** Capture the vehicle before rendering begins; RenderLivingEvent now exposes a state, not the entity. */
+    /** Capture the vehicle during extraction, before the frame is submitted. */
     @SubscribeEvent
     public static void registerPassengerPlaneRenderState(RegisterRenderStateModifiersEvent event) {
+        // Ordinary living riders (mobs) use the standard living-entity renderer.
         event.registerEntityModifier(
                 new TypeToken<LivingEntityRenderer<LivingEntity, LivingEntityRenderState, ?>>() {},
                 (livingEntity, state) -> {
-                    Entity vehicle = livingEntity.getRootVehicle();
-                    if (!(vehicle instanceof PlaneEntity plane)) {
-                        state.setRenderData(ClientEventHandler.PLANE_PASSENGER_TRANSFORM, null);
-                        return;
-                    }
-                    float partialTicks = state.partialTick;
-                    Quaternionf rotation = MathUtil.lerpQ(partialTicks, plane.getQ_Prev(), plane.getQ_Client());
-                    rotation.set(rotation.x(), -rotation.y(), -rotation.z(), rotation.w());
-                    float vehicleYaw = MathUtil.lerpAngle(partialTicks, vehicle.yRotO, vehicle.getYRot());
-                    state.setRenderData(ClientEventHandler.PLANE_PASSENGER_TRANSFORM,
-                            new ClientEventHandler.PassengerPlaneTransform(rotation, vehicleYaw));
-                    // Mirror the head direction for an inverted plane, using render-state data only.
-                    if (MathUtil.degreesDifferenceAbs(plane.rotationRoll, 0) > 90) {
-                        state.yRot = plane.getYRot() * 2 - state.yRot;
+                    if (!(livingEntity instanceof Avatar)) {
+                        snapshotPassengerRotation(livingEntity, state);
                     }
                 });
+
+        // In 26.2, players are rendered as avatars and need this specialized
+        // modifier. The generic living-entity modifier is not enough on its own.
+        event.registerAvatarEntityModifier(new AvatarRenderStateModifier() {
+            @Override
+            public <T extends Avatar & ClientAvatarEntity> void accept(T avatar, AvatarRenderState state) {
+                snapshotPassengerRotation(avatar, state);
+            }
+        });
+    }
+
+    private static void snapshotPassengerRotation(LivingEntity livingEntity, LivingEntityRenderState state) {
+        Entity vehicle = livingEntity.getRootVehicle();
+        if (!(vehicle instanceof PlaneEntity plane)) {
+            // Render states may be reused after dismounting. Never retain an old transform.
+            state.setRenderData(ClientEventHandler.PLANE_PASSENGER_TRANSFORM, null);
+            return;
+        }
+        float partialTicks = state.partialTick;
+        Quaternionf rotation = MathUtil.lerpQ(partialTicks, plane.getQ_Prev(), plane.getQ_Client());
+        rotation.set(rotation.x(), -rotation.y(), -rotation.z(), rotation.w());
+        float vehicleYaw = MathUtil.lerpAngle(partialTicks, vehicle.yRotO, vehicle.getYRot());
+        state.setRenderData(ClientEventHandler.PLANE_PASSENGER_TRANSFORM,
+                new ClientEventHandler.PassengerPlaneTransform(rotation, vehicleYaw));
+        if (MathUtil.degreesDifferenceAbs(plane.rotationRoll, 0) > 90) {
+            state.yRot = plane.getYRot() * 2 - state.yRot;
+        }
     }
 
     @SubscribeEvent
