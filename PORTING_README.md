@@ -255,3 +255,7 @@ Fixed launch-time crashes (`Block id not set`, `Item id not set`, and `plane_wor
 
 ## Pass 28 — CameraMixin startup fix
 Removed private-field shadows that trigger an InvalidMixinException on Camera.partialTickTime in Minecraft 26.2. See RUNTIME_FIX_PASS28.md. Not yet compiled or runtime-tested.
+
+
+## Pass 29: resource reload fix
+Entity renderer factories now use `context.bakeLayer(...)` instead of capturing `Minecraft.getInstance().getEntityModels()` ahead of resource reload. See `RUNTIME_FIX_PASS29.md`.
