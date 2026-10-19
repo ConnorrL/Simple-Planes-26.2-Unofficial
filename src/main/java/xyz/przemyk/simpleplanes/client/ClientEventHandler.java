@@ -151,29 +151,28 @@ public class ClientEventHandler {
         }
     }
 
-    //TODO: make it so player rotation variables correspond to what he is actually looking at, so that guns etc. shoot in the right direction
+    //TODO: make player rotation variables match the actual viewing direction,
+    // so that vanilla game interactions use the plane-rotated camera orientation.
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onCameraSetup(ViewportEvent.ComputeCameraAngles event) {
         Camera camera = event.getCamera();
         Entity player = Minecraft.getInstance().getCameraEntity();
         if (player != null && player.getVehicle() instanceof PlaneEntity planeEntity) {
             if (!camera.isDetached()) {
-                double partialTicks = event.getPartialTick();
+                float partialTicks = (float) event.getPartialTick();
 
-                Quaternionf qPrev = planeEntity.getQ_Prev();
-                Quaternionf qNow = planeEntity.getQ_Client();
+                // Test 2: slerp the plane rotation once before composing it
+                // with the player's camera yaw and pitch. Interpolating three
+                // Euler angles separately makes the avatar/camera lag in turns.
+                Quaternionf q = MathUtil.lerpQ(partialTicks,
+                    planeEntity.getQ_Prev(), planeEntity.getQ_Client());
+                q.mul(Axis.YP.rotationDegrees(event.getYaw()));
+                q.mul(Axis.XP.rotationDegrees(event.getPitch()));
+                MathUtil.EulerAngles angles = MathUtil.toEulerAngles(q);
 
-                qPrev.mul(Axis.YP.rotationDegrees(player.yRotO));
-                qPrev.mul(Axis.XP.rotationDegrees(event.getPitch()));
-                MathUtil.EulerAngles eulerAnglesPrev = MathUtil.toEulerAngles(qPrev);
-
-                qNow.mul(Axis.YP.rotationDegrees(player.getYRot()));
-                qNow.mul(Axis.XP.rotationDegrees(event.getPitch()));
-                MathUtil.EulerAngles eulerAnglesNow = MathUtil.toEulerAngles(qNow);
-
-                event.setPitch(-(float) MathUtil.lerpAngle(partialTicks, eulerAnglesPrev.pitch, eulerAnglesNow.pitch));
-                event.setYaw((float) MathUtil.lerpAngle(partialTicks, eulerAnglesPrev.yaw, eulerAnglesNow.yaw));
-                event.setRoll(-(float) MathUtil.lerpAngle(partialTicks, eulerAnglesPrev.roll, eulerAnglesNow.roll));
+                event.setPitch(-(float) angles.pitch);
+                event.setYaw((float) angles.yaw);
+                event.setRoll(-(float) angles.roll);
             }
         }
     }
