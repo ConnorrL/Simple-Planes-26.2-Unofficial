@@ -251,3 +251,7 @@ See `COMPILER_TRIAGE_PASS26.md`: shooter API migration, shooter entity-model sig
 ## Pass 27 — registration keys on blocks and items
 
 Fixed launch-time crashes (`Block id not set`, `Item id not set`, and `plane_workbench` unbound) by setting the `ResourceKey` for each registered block and item in their properties **before** calling each constructor. See `COMPILER_TRIAGE_PASS27.md`. Compilation and runtime re-test are still pending.
+
+
+## Pass 28 — CameraMixin startup fix
+Removed private-field shadows that trigger an InvalidMixinException on Camera.partialTickTime in Minecraft 26.2. See RUNTIME_FIX_PASS28.md. Not yet compiled or runtime-tested.
