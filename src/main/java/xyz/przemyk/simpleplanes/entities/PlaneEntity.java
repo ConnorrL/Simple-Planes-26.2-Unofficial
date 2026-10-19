@@ -1041,17 +1041,42 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
     protected void positionRider(Entity passenger, MoveFunction moveFunction) {
         positionRiderGeneric(passenger);
 
-        int index = getPassengers().indexOf(passenger);
-        if (index == 0) {
-            Vector3f pos = transformPos(new Vector3f(0, (float) (getPassengersRidingOffset()), 0));
-            moveFunction.accept(passenger, getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
-        } else if (index == 1) {
-            Vector3f pos = transformPos(new Vector3f(-1, (float) (getPassengersRidingOffset()), -1.3f));
-            moveFunction.accept(passenger, getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
-        } else if (index == 2) {
-            Vector3f pos = transformPos(new Vector3f(1, (float) (getPassengersRidingOffset()), -1.3f));
+        Vector3f localSeat = getLocalSeatOffset(getPassengers().indexOf(passenger));
+        if (localSeat != null) {
+            Vector3f pos = transformPos(localSeat);
             moveFunction.accept(passenger, getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
         }
+    }
+
+    /** Local offsets shared by tick-time rider placement and client rendering. */
+    @Nullable
+    private Vector3f getLocalSeatOffset(int index) {
+        float height = (float) getPassengersRidingOffset();
+        return switch (index) {
+            case 0 -> new Vector3f(0, height, 0);
+            case 1 -> new Vector3f(-1, height, -1.3f);
+            case 2 -> new Vector3f(1, height, -1.3f);
+            default -> null;
+        };
+    }
+
+    /**
+     * Returns a passenger's render-time seat anchor in world coordinates.
+     * Uses the *same* slerped aircraft orientation as PlaneRenderer, so riders
+     * don't slide away when their world positions interpolate along a chord.
+     * Only affects visual positioning; no server movement or storage changes.
+     */
+    @Nullable
+    public Vec3 getInterpolatedSeatPosition(Entity passenger, float partialTick) {
+        Vector3f localSeat = getLocalSeatOffset(getPassengers().indexOf(passenger));
+        if (localSeat == null) return null;
+        Quaternionf renderedRotation = MathUtil.lerpQ(partialTick, getQ_Prev(), getQ_Client());
+        EulerAngles angles = MathUtil.toEulerAngles(renderedRotation);
+        localSeat.rotate(MathUtil.toQuaternionf(-angles.yaw, angles.pitch, -angles.roll));
+        return new Vec3(
+                Mth.lerp(partialTick, xOld, getX()) + localSeat.x(),
+                Mth.lerp(partialTick, yOld, getY()) + localSeat.y(),
+                Mth.lerp(partialTick, zOld, getZ()) + localSeat.z());
     }
 
     protected void positionRiderGeneric(Entity passenger) {

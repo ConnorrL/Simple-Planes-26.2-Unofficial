@@ -11,6 +11,8 @@ import net.minecraft.world.entity.Avatar;
 import net.neoforged.neoforge.client.renderstate.AvatarRenderStateModifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.Mth;
 import net.neoforged.neoforge.client.renderstate.RegisterRenderStateModifiersEvent;
 import org.joml.Quaternionf;
 import xyz.przemyk.simpleplanes.misc.MathUtil;
@@ -74,9 +76,25 @@ public class ModBusClientEventHandler {
         float partialTicks = state.partialTick;
         Quaternionf rotation = MathUtil.lerpQ(partialTicks, plane.getQ_Prev(), plane.getQ_Client());
         rotation.set(rotation.x(), -rotation.y(), -rotation.z(), rotation.w());
-        float vehicleYaw = MathUtil.lerpAngle(partialTicks, vehicle.yRotO, vehicle.getYRot());
+        // Vanilla's LivingEntityRenderer applies bodyRot, not yRot (the head yaw).
+        // Matching its actual body yaw prevents an out-of-phase second yaw.
         state.setRenderData(ClientEventHandler.PLANE_PASSENGER_TRANSFORM,
-                new ClientEventHandler.PassengerPlaneTransform(rotation, vehicleYaw));
+                new ClientEventHandler.PassengerPlaneTransform(rotation, state.bodyRot));
+
+        // A rider's tick positions are interpolated linearly in world space.
+        // The plane's seat, however, follows a *rotating* offset. Those two
+        // curves differ during turns and loops, producing visible seat drift.
+        // Use EntityRenderState.passengerOffset (as the vanilla renderer does
+        // for specialized mounts) so the rider appears at the same interpolated
+        // seat position as the aircraft, without teleporting the actual entity.
+        Vec3 seatPosition = plane.getInterpolatedSeatPosition(livingEntity, partialTicks);
+        if (seatPosition != null) {
+            Vec3 ordinaryRenderPosition = new Vec3(
+                    Mth.lerp(partialTicks, livingEntity.xOld, livingEntity.getX()),
+                    Mth.lerp(partialTicks, livingEntity.yOld, livingEntity.getY()),
+                    Mth.lerp(partialTicks, livingEntity.zOld, livingEntity.getZ()));
+            state.passengerOffset = seatPosition.subtract(ordinaryRenderPosition);
+        }
         if (MathUtil.degreesDifferenceAbs(plane.rotationRoll, 0) > 90) {
             state.yRot = plane.getYRot() * 2 - state.yRot;
         }

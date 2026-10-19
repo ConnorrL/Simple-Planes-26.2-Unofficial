@@ -43,7 +43,7 @@ public class ClientEventHandler {
     public static final ContextKey<PassengerPlaneTransform> PLANE_PASSENGER_TRANSFORM =
             new ContextKey<>(Identifier.fromNamespaceAndPath("simpleplanes", "passenger_plane_transform"));
 
-    public record PassengerPlaneTransform(Quaternionf rotation, float vehicleYaw) {}
+    public record PassengerPlaneTransform(Quaternionf rotation, float bodyYaw) {}
 
     /**
      * Ordinary living-entity render hooks. Player render hooks are separate event
@@ -77,10 +77,13 @@ public class ClientEventHandler {
     private static void pushPassengerTransform(PoseStack matrixStack, PassengerPlaneTransform transform) {
         if (transform == null) return;
         matrixStack.pushPose();
-        matrixStack.translate(0, 0.375, 0);
+        // The rider's render origin is the seat/feet. Rotating around the old
+        // +0.375 pivot moves the whole avatar sideways while banking/pitching.
+        // Use the same interpolated plane quaternion as PlaneRenderer; cancel
+        // vanilla's body yaw with the yaw *it actually renders*, not a second
+        // interpolated yaw from the aircraft.
         matrixStack.mulPose(new Quaternionf(transform.rotation()));
-        matrixStack.mulPose(Axis.YP.rotationDegrees(transform.vehicleYaw()));
-        matrixStack.translate(0, -0.375, 0);
+        matrixStack.mulPose(Axis.YP.rotationDegrees(transform.bodyYaw()));
     }
 
     private static void popPassengerTransform(PoseStack matrixStack, PassengerPlaneTransform transform) {

@@ -263,3 +263,7 @@ Entity renderer factories now use `context.bakeLayer(...)` instead of capturing 
 ## Pass 30: Player pitch/roll follows plane
 
 Explicit `RenderPlayerEvent.Pre/Post` and `AvatarRenderStateModifier` hooks restore passenger body rotation when the aircraft pitches or rolls. See `RUNTIME_FIX_PASS30.md`. Compilation and gameplay verification pending.
+
+
+## Pass 31 passenger synchronization
+See `RUNTIME_FIX_PASS31.md` for the seat origin, body yaw, and interpolated passenger offset changes. Uncompiled; requires Minecraft testing.
