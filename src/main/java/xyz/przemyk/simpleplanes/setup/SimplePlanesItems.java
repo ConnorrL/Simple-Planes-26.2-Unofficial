@@ -2,6 +2,8 @@ package xyz.przemyk.simpleplanes.setup;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
@@ -41,32 +43,39 @@ public class SimplePlanesItems {
         return planeItems;
     }
 
-    public static final Supplier<Item> PROPELLER = ITEMS.register("propeller", () -> new Item(new Item.Properties()));
+    // Minecraft 26.2 requires an Item registry key before the Item constructor runs.
+    // Use this for every simple item, upgrade, plane item and BlockItem.
+    private static Item.Properties itemProperties(String name) {
+        return new Item.Properties().setId(
+                ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(SimplePlanesMod.MODID, name)));
+    }
 
-    public static final Supplier<Item> FLOATY_BEDDING = ITEMS.register("floaty_bedding", () -> new Item(new Item.Properties()));
-    public static final Supplier<Item> BOOSTER = ITEMS.register("booster", () -> new Item(new Item.Properties()));
-    public static final Supplier<Item> HEALING = ITEMS.register("healing", () -> new Item(new Item.Properties()));
-    public static final Supplier<Item> ARMOR = ITEMS.register("armor", () -> new PlaneArmorItem(new Item.Properties().stacksTo(1).enchantable(9)));
-    public static final Supplier<Item> SOLAR_PANEL = ITEMS.register("solar_panel", () -> new Item(new Item.Properties().stacksTo(1)));
-    public static final Supplier<Item> FOLDING = ITEMS.register("folding", () -> new Item(new Item.Properties()));
-    public static final Supplier<Item> SUPPLY_CRATE = ITEMS.register("supply_crate", () -> new Item(new Item.Properties()));
-    public static final Supplier<Item> SEATS = ITEMS.register("seats", () -> new Item(new Item.Properties()));
-    public static final Supplier<Item> SHOOTER = ITEMS.register("shooter", () -> new DescriptionItem(new Item.Properties(), Component.translatable(SimplePlanesMod.MODID + ".shooter_desc", Component.keybind("key.plane_inventory_open.desc"), Component.keybind("key.attack"))));
+    public static final Supplier<Item> PROPELLER = ITEMS.register("propeller", () -> new Item(itemProperties("propeller")));
 
-    public static final Supplier<Item> ELECTRIC_ENGINE = ITEMS.register("electric_engine", () -> new DescriptionItem(new Item.Properties(), Component.translatable(SimplePlanesMod.MODID + ".press_key", Component.keybind("key.plane_inventory_open.desc"))));
-    public static final Supplier<Item> FURNACE_ENGINE = ITEMS.register("furnace_engine", () -> new DescriptionItem(new Item.Properties(), Component.translatable(SimplePlanesMod.MODID + ".press_key", Component.keybind("key.plane_inventory_open.desc"))));
-    public static final Supplier<Item> LIQUID_ENGINE = ITEMS.register("liquid_engine", () -> new DescriptionItem(new Item.Properties(), Component.translatable(SimplePlanesMod.MODID + ".press_key", Component.keybind("key.plane_inventory_open.desc"))));
+    public static final Supplier<Item> FLOATY_BEDDING = ITEMS.register("floaty_bedding", () -> new Item(itemProperties("floaty_bedding")));
+    public static final Supplier<Item> BOOSTER = ITEMS.register("booster", () -> new Item(itemProperties("booster")));
+    public static final Supplier<Item> HEALING = ITEMS.register("healing", () -> new Item(itemProperties("healing")));
+    public static final Supplier<Item> ARMOR = ITEMS.register("armor", () -> new PlaneArmorItem(itemProperties("armor").stacksTo(1).enchantable(9)));
+    public static final Supplier<Item> SOLAR_PANEL = ITEMS.register("solar_panel", () -> new Item(itemProperties("solar_panel").stacksTo(1)));
+    public static final Supplier<Item> FOLDING = ITEMS.register("folding", () -> new Item(itemProperties("folding")));
+    public static final Supplier<Item> SUPPLY_CRATE = ITEMS.register("supply_crate", () -> new Item(itemProperties("supply_crate")));
+    public static final Supplier<Item> SEATS = ITEMS.register("seats", () -> new Item(itemProperties("seats")));
+    public static final Supplier<Item> SHOOTER = ITEMS.register("shooter", () -> new DescriptionItem(itemProperties("shooter"), Component.translatable(SimplePlanesMod.MODID + ".shooter_desc", Component.keybind("key.plane_inventory_open.desc"), Component.keybind("key.attack"))));
 
-    public static final Supplier<Item> WRENCH = ITEMS.register("wrench", () -> new Item(new Item.Properties()));
-    public static final Supplier<BlockItem> PLANE_WORKBENCH = ITEMS.register("plane_workbench", () -> new BlockItem(SimplePlanesBlocks.PLANE_WORKBENCH_BLOCK.get(), new Item.Properties()));
-    public static final Supplier<BlockItem> CHARGING_STATION = ITEMS.register("charging_station", () -> new BlockItem(SimplePlanesBlocks.CHARGING_STATION_BLOCK.get(), new Item.Properties()));
+    public static final Supplier<Item> ELECTRIC_ENGINE = ITEMS.register("electric_engine", () -> new DescriptionItem(itemProperties("electric_engine"), Component.translatable(SimplePlanesMod.MODID + ".press_key", Component.keybind("key.plane_inventory_open.desc"))));
+    public static final Supplier<Item> FURNACE_ENGINE = ITEMS.register("furnace_engine", () -> new DescriptionItem(itemProperties("furnace_engine"), Component.translatable(SimplePlanesMod.MODID + ".press_key", Component.keybind("key.plane_inventory_open.desc"))));
+    public static final Supplier<Item> LIQUID_ENGINE = ITEMS.register("liquid_engine", () -> new DescriptionItem(itemProperties("liquid_engine"), Component.translatable(SimplePlanesMod.MODID + ".press_key", Component.keybind("key.plane_inventory_open.desc"))));
 
-    public static final Supplier<PlaneItem> PLANE_ITEM = ITEMS.register("plane", () -> new PlaneItem(new Item.Properties(), SimplePlanesEntities.PLANE));
-    public static final Supplier<PlaneItem> LARGE_PLANE_ITEM = ITEMS.register("large_plane", () -> new PlaneItem(new Item.Properties(), SimplePlanesEntities.LARGE_PLANE));
-    public static final Supplier<PlaneItem> CARGO_PLANE_ITEM = ITEMS.register("cargo_plane", () -> new PlaneItem(new Item.Properties(), SimplePlanesEntities.CARGO_PLANE));
-    public static final Supplier<PlaneItem> HELICOPTER_ITEM = ITEMS.register("helicopter", () -> new PlaneItem(new Item.Properties(), SimplePlanesEntities.HELICOPTER));
+    public static final Supplier<Item> WRENCH = ITEMS.register("wrench", () -> new Item(itemProperties("wrench")));
+    public static final Supplier<BlockItem> PLANE_WORKBENCH = ITEMS.register("plane_workbench", () -> new BlockItem(SimplePlanesBlocks.PLANE_WORKBENCH_BLOCK.get(), itemProperties("plane_workbench").useBlockDescriptionPrefix()));
+    public static final Supplier<BlockItem> CHARGING_STATION = ITEMS.register("charging_station", () -> new BlockItem(SimplePlanesBlocks.CHARGING_STATION_BLOCK.get(), itemProperties("charging_station").useBlockDescriptionPrefix()));
 
-    public static final Supplier<ParachuteItem> PARACHUTE_ITEM = ITEMS.register("parachute", () -> new ParachuteItem(new Item.Properties()));
+    public static final Supplier<PlaneItem> PLANE_ITEM = ITEMS.register("plane", () -> new PlaneItem(itemProperties("plane"), SimplePlanesEntities.PLANE));
+    public static final Supplier<PlaneItem> LARGE_PLANE_ITEM = ITEMS.register("large_plane", () -> new PlaneItem(itemProperties("large_plane"), SimplePlanesEntities.LARGE_PLANE));
+    public static final Supplier<PlaneItem> CARGO_PLANE_ITEM = ITEMS.register("cargo_plane", () -> new PlaneItem(itemProperties("cargo_plane"), SimplePlanesEntities.CARGO_PLANE));
+    public static final Supplier<PlaneItem> HELICOPTER_ITEM = ITEMS.register("helicopter", () -> new PlaneItem(itemProperties("helicopter"), SimplePlanesEntities.HELICOPTER));
+
+    public static final Supplier<ParachuteItem> PARACHUTE_ITEM = ITEMS.register("parachute", () -> new ParachuteItem(itemProperties("parachute")));
 
     public static final Supplier<CreativeModeTab> PLANES_TAB = CREATIVE_MODE_TABS.register("planes_tab", () -> CreativeModeTab.builder()
             .icon(() -> PLANE_ITEM.get().getDefaultInstance())
