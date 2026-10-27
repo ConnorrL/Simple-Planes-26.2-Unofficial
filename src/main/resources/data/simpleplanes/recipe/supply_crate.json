@@ -1,12 +1,8 @@
 {
     "type": "minecraft:crafting_shapeless",
     "ingredients": [
-        {
-            "item": "minecraft:barrel"
-        },
-        {
-            "item": "simpleplanes:parachute"
-        }
+        "minecraft:barrel",
+        "simpleplanes:parachute"
     ],
     "result": {
         "id": "simpleplanes:supply_crate"

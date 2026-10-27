@@ -6,12 +6,8 @@
         "I I"
     ],
     "key": {
-        "I": {
-            "tag": "c:ingots/iron"
-        },
-        "F": {
-            "item": "minecraft:flint_and_steel"
-        }
+        "I": "#c:ingots/iron",
+        "F": "minecraft:flint_and_steel"
     },
     "result": {
         "id": "simpleplanes:booster"

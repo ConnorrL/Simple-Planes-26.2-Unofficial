@@ -6,12 +6,8 @@
         "ibi"
     ],
     "key": {
-        "i": {
-            "tag": "c:ingots/iron"
-        },
-        "b": {
-            "tag": "c:storage_blocks/iron"
-        }
+        "i": "#c:ingots/iron",
+        "b": "#c:storage_blocks/iron"
     },
     "result": {
         "id": "simpleplanes:armor",

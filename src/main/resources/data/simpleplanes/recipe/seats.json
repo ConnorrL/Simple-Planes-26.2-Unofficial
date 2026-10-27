@@ -5,15 +5,9 @@
         "SPS"
     ],
     "key": {
-        "S": {
-            "tag": "c:slimeballs"
-        },
-        "C": {
-            "tag": "minecraft:planks"
-        },
-        "P": {
-            "item": "minecraft:phantom_membrane"
-        }
+        "S": "#c:slimeballs",
+        "C": "#minecraft:planks",
+        "P": "minecraft:phantom_membrane"
     },
     "result": {
         "id": "simpleplanes:seats"

@@ -6,18 +6,10 @@
         "R#R"
     ],
     "key": {
-        "#": {
-            "tag": "c:ingots/copper"
-        },
-        "/": {
-            "tag": "c:rods/blaze"
-        },
-        "G": {
-            "item": "simpleplanes:propeller"
-        },
-        "R": {
-            "tag": "c:storage_blocks/redstone"
-        }
+        "#": "#c:ingots/copper",
+        "/": "#c:rods/blaze",
+        "G": "simpleplanes:propeller",
+        "R": "#c:storage_blocks/redstone"
     },
     "result": {
         "id": "simpleplanes:electric_engine"

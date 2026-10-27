@@ -6,18 +6,10 @@
         "WWW"
     ],
     "key": {
-        "Q": {
-            "tag": "c:gems/quartz"
-        },
-        "G": {
-            "tag": "c:glass_blocks/colorless"
-        },
-        "W": {
-            "tag": "c:gems/lapis"
-        },
-        "D": {
-            "item": "minecraft:daylight_detector"
-        }
+        "Q": "#c:gems/quartz",
+        "G": "#c:glass_blocks/colorless",
+        "W": "#c:gems/lapis",
+        "D": "minecraft:daylight_detector"
     },
     "result": {
         "id": "simpleplanes:solar_panel",

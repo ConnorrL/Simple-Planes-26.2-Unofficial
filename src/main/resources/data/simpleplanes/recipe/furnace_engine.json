@@ -6,21 +6,11 @@
         "LLL"
     ],
     "key": {
-        "i": {
-            "tag": "c:ingots/iron"
-        },
-        "R": {
-            "item": "simpleplanes:propeller"
-        },
-        "Y": {
-            "tag": "c:dusts/redstone"
-        },
-        "B": {
-            "item": "minecraft:blast_furnace"
-        },
-        "L": {
-            "item": "minecraft:light_weighted_pressure_plate"
-        }
+        "i": "#c:ingots/iron",
+        "R": "simpleplanes:propeller",
+        "Y": "#c:dusts/redstone",
+        "B": "minecraft:blast_furnace",
+        "L": "minecraft:light_weighted_pressure_plate"
     },
     "result": {
         "id": "simpleplanes:furnace_engine"

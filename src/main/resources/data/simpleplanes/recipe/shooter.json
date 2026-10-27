@@ -1,12 +1,8 @@
 {
     "type": "minecraft:crafting_shapeless",
     "ingredients": [
-        {
-            "item": "minecraft:dispenser"
-        },
-        {
-            "item": "minecraft:flint_and_steel"
-        }
+        "minecraft:dispenser",
+        "minecraft:flint_and_steel"
     ],
     "result": {
         "id": "simpleplanes:shooter"

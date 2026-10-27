@@ -12,6 +12,8 @@ jobs:
           distribution: temurin
           java-version: '25'
       - uses: gradle/actions/setup-gradle@v4
+      - name: Validate recipe JSON for Minecraft 26.2
+        run: python3 validate_recipes.py
       - name: Compile
         run: bash ./gradlew build --stacktrace --no-daemon
       - name: Upload output when successful

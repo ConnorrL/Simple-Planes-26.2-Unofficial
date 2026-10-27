@@ -6,15 +6,9 @@
         "III"
     ],
     "key": {
-        "S": {
-            "tag": "c:slimeballs"
-        },
-        "C": {
-            "tag": "minecraft:wool"
-        },
-        "I": {
-            "tag": "c:ingots/iron"
-        }
+        "S": "#c:slimeballs",
+        "C": "#minecraft:wool",
+        "I": "#c:ingots/iron"
     },
     "result": {
         "id": "simpleplanes:floaty_bedding"
