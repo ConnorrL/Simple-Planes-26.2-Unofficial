@@ -14,7 +14,12 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesBlocks;
 
 public class PlaneWorkbenchBlockEntity extends BlockEntity {
 
-    public final ItemStackHandler itemStackHandler = new ItemStackHandler(2);
+    public final ItemStackHandler itemStackHandler = new ItemStackHandler(2) {
+        @Override
+        protected void onContentsChanged(int slot) {
+            PlaneWorkbenchBlockEntity.this.setChanged();
+        }
+    };
     public final DataSlot selectedRecipe = DataSlot.standalone();
 
     public PlaneWorkbenchBlockEntity(BlockPos blockPos, BlockState blockState) {

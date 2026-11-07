@@ -22,6 +22,11 @@ public class PlaneCraftingResultSlot extends SlotItemHandler {
     }
 
     @Override
+    public boolean mayPickup(Player player) {
+        return player.level().isClientSide() || container.canTakeCraftingResult();
+    }
+
+    @Override
     public void onTake(Player thePlayer, ItemStack stack) {
         stack.onCraftedBy(player, 1);
         container.onCrafting();
