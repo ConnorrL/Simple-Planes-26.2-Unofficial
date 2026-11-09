@@ -485,11 +485,18 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
             double speedBefore = Math.sqrt(getHorizontalDistanceSqr(getDeltaMovement()));
             boolean onGroundOld = onGround();
             Vec3 motion = getDeltaMovement();
-            if (motion.lengthSqr() > 0.25 || getPitchUp() != 0) {
-                setOnGround(true);
-            }
+            // In 26.2, forcing onGround=true just because the pilot is pitching
+            // up (or the plane is moving quickly) can keep the aircraft in its
+            // ground handling mode during takeoff. Let the movement collision
+            // check determine actual contact instead.
             move(MoverType.SELF, motion);
-            setOnGround(((motion.y()) == 0.0) ? onGroundOld : onGround());
+            if (motion.y() > 0.0D && !verticalCollisionBelow) {
+                // Leave ground mode immediately after an upward, unblocked move.
+                setOnGround(false);
+                onGroundTicks = 0;
+            } else if (motion.y() == 0.0D) {
+                setOnGround(onGroundOld);
+            }
             if (horizontalCollision && !level().isClientSide() && onGroundTicks <= 0) {
                 if (getHealth() <= 0) {
                     crash(16);
@@ -726,6 +733,20 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
         motion = motion.add(pushVec);
 
         motion = motion.add(0, tempMotionVars.gravity, 0);
+
+        // Give an aircraft a small positive vertical takeoff velocity once it
+        // has sufficient runway speed AND the pilot is actively pulling up.
+        // Unlike a blanket flight boost, this does not affect parked planes,
+        // gliding aircraft, or helicopters (which override tickMotion).
+        if (getOnGround() && !isOnWater() && isPowered() && getPitchUp() > 0
+                && getHealth() > 0) {
+            double horizontalSpeed = Math.sqrt(motion.x * motion.x + motion.z * motion.z);
+            double excessSpeed = horizontalSpeed - tempMotionVars.takeOffSpeed;
+            if (excessSpeed > 0.0D) {
+                double takeoffLift = Math.min(0.09D, excessSpeed * 0.12D);
+                motion = new Vec3(motion.x, Math.max(motion.y, takeoffLift), motion.z);
+            }
+        }
 
         setDeltaMovement(motion);
     }
